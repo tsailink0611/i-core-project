@@ -1,0 +1,38 @@
+{
+  "name": "agentic-document-analysis",
+  "version": "1.0.0",
+  "description": "Universal Document Analysis Platform powered by Amazon Bedrock",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "bedrock",
+    "agentic",
+    "document-analysis",
+    "ai",
+    "llm"
+  ],
+  "author": "tsailink0611",
+  "license": "MIT",
+  "dependencies": {
+    "@headlessui/react": "^2.2.7",
+    "@heroicons/react": "^2.2.0",
+    "@types/node": "^24.3.1",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "autoprefixer": "^10.4.21",
+    "next": "^15.5.2",
+    "postcss": "^8.5.6",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.5.2"
+  }
+}
