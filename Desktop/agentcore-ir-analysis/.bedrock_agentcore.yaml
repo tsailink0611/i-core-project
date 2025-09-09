@@ -1,0 +1,11 @@
+agents:
+  official_agent:
+    name: official_agent
+    entrypoint: official_agent.py
+    aws:
+      account: "424926560071"
+      region: us-east-1
+      execution_role: AmazonBedrockAgentCoreRuntimeExampleRole
+      ecr_auto_create: true
+    protocol: HTTP
+default_agent: official_agent
