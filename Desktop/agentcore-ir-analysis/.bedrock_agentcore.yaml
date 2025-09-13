@@ -1,11 +1,30 @@
+default_agent: japanese_ir_agent
 agents:
-  official_agent:
-    name: official_agent
-    entrypoint: official_agent.py
+  japanese_ir_agent:
+    name: japanese_ir_agent
+    entrypoint: japanese_ir_agent.py
+    platform: linux/amd64
+    container_runtime: docker
     aws:
-      account: "424926560071"
+      execution_role: AmazonBedrockAgentCoreRuntimeDefaultServiceRole-avacz
+      execution_role_auto_create: false
+      account: '424926560071'
       region: us-east-1
-      execution_role: AmazonBedrockAgentCoreRuntimeExampleRole
-      ecr_auto_create: true
-    protocol: HTTP
-default_agent: official_agent
+      ecr_repository: 424926560071.dkr.ecr.us-east-1.amazonaws.com/bedrock-agentcore-minimal_agent
+      ecr_auto_create: false
+      network_configuration:
+        network_mode: PUBLIC
+      protocol_configuration:
+        server_protocol: HTTP
+      observability:
+        enabled: true
+    bedrock_agentcore:
+      agent_id: null
+      agent_arn: null
+      agent_session_id: null
+    codebuild:
+      project_name: null
+      execution_role: null
+      source_bucket: null
+    authorizer_configuration: null
+    oauth_configuration: null

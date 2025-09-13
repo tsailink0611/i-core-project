@@ -51,21 +51,56 @@ export default function ChatInterface() {
     setIsLoading(true)
 
     try {
-      // エージェント分析をシミュレート
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // 実際のエージェントAPIを呼び出し
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage.content
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      // 思考プロセスを動的に生成
+      const generateThinking = (reasoning: any) => {
+        if (!reasoning) return undefined
+        const thinking = []
+        if (reasoning.intent) thinking.push(`1. 意図分析: ${reasoning.intent}`)
+        if (reasoning.actions) thinking.push(`2. 実行計画: ${reasoning.actions.join(', ')}`)
+        if (reasoning.complexity) thinking.push(`3. 複雑度: ${reasoning.complexity}`)
+        thinking.push('4. 結果統合完了')
+        return thinking
+      }
+
+      // 参照元を動的に生成
+      const generateSources = (executionResults: any) => {
+        if (!executionResults) return ['Agent実行結果']
+        const sources = []
+        Object.keys(executionResults).forEach(step => {
+          const result = executionResults[step]
+          if (result.top_results) {
+            result.top_results.forEach((r: any) => {
+              if (r.source) sources.push(r.source)
+            })
+          }
+        })
+        return sources.length > 0 ? sources : ['Agent実行結果']
+      }
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: `「${userMessage.content}」について分析しました。\n\n**分析結果:**\n- 意図分析: financial_analysis\n- 検索実行: Vector検索で関連文書を発見\n- コード実行: 財務計算を実行\n- 結論: 詳細な分析結果をお示しします\n\n実際のAgentCoreエージェントと連携すると、より詳細な分析が可能になります。`,
+        content: data.response || 'Analysis completed',
         role: 'assistant',
         timestamp: new Date(),
-        thinking: [
-          '1. 質問を解析中...',
-          '2. Vector検索実行中...',
-          '3. 財務データ計算中...',
-          '4. 結果統合中...'
-        ],
-        sources: ['トヨタIR資料.pdf', 'Vector検索結果', 'AgentCore計算']
+        thinking: generateThinking(data.reasoning),
+        sources: generateSources(data.execution_results)
       }
 
       setMessages(prev => [...prev, assistantMessage])
