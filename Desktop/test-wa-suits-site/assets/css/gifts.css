@@ -1,0 +1,835 @@
+/* Gifts Page Specific Styles */
+
+/* ギフトヒーロー */
+.gift-hero {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    margin-top: 80px;
+    overflow: hidden;
+}
+
+.gift-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(74, 92, 58, 0.8) 0%,
+        rgba(74, 92, 58, 0.6) 50%,
+        rgba(212, 175, 55, 0.8) 100%
+    ),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23f5f3f0"/><rect x="40" y="40" width="120" height="120" fill="%23d4af37" opacity="0.3"/><circle cx="100" cy="100" r="60" fill="%234a5c3a" opacity="0.2"/></svg>');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+.gift-hero-content {
+    text-align: center;
+    color: var(--neutral-white);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--spacing-xxl) 0;
+}
+
+.gift-hero-title {
+    font-family: var(--font-serif);
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gift-hero-subtitle {
+    font-size: 1.3rem;
+    font-weight: 300;
+    margin-bottom: var(--spacing-lg);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    opacity: 0.95;
+}
+
+.gift-hero-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: var(--spacing-xl);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    opacity: 0.9;
+}
+
+.gift-hero-features {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.gift-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-lg);
+    backdrop-filter: blur(10px);
+    transition: var(--transition-default);
+}
+
+.gift-feature:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.gift-feature-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+/* シーン別ギフト */
+.scene-gifts {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-white);
+}
+
+.scene-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.scene-card {
+    background-color: var(--neutral-white);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: var(--transition-default);
+    cursor: pointer;
+}
+
+.scene-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.scene-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.scene-image-placeholder {
+    width: 100%;
+    height: 100%;
+    transition: var(--transition-default);
+}
+
+.scene-card:hover .scene-image-placeholder {
+    transform: scale(1.1);
+}
+
+.scene-image-placeholder.celebration {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+}
+
+.scene-image-placeholder.seasonal {
+    background: linear-gradient(135deg, #8BC34A 0%, #4CAF50 100%);
+}
+
+.scene-image-placeholder.business {
+    background: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
+}
+
+.scene-image-placeholder.personal {
+    background: linear-gradient(135deg, #F8BBD9 0%, #E1BEE7 100%);
+}
+
+.scene-info {
+    padding: var(--spacing-lg);
+}
+
+.scene-title {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+}
+
+.scene-description {
+    color: var(--neutral-gray);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+    font-size: 0.9rem;
+}
+
+.scene-price-range {
+    font-weight: 600;
+    color: var(--accent-gold);
+    margin-bottom: var(--spacing-lg);
+}
+
+.scene-link {
+    display: inline-block;
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition-default);
+    position: relative;
+    overflow: hidden;
+}
+
+.scene-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
+}
+
+.scene-link:hover::before {
+    left: 100%;
+}
+
+.scene-link:hover {
+    background-color: var(--primary-green-dark);
+    transform: translateY(-2px);
+}
+
+/* 人気ギフトセット */
+.popular-gifts {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-cream);
+}
+
+.gift-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.gift-card {
+    background-color: var(--neutral-white);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: var(--transition-default);
+    position: relative;
+}
+
+.gift-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+
+.gift-image {
+    height: 240px;
+    overflow: hidden;
+    position: relative;
+}
+
+.gift-image-placeholder {
+    width: 100%;
+    height: 100%;
+    transition: var(--transition-default);
+}
+
+.gift-card:hover .gift-image-placeholder {
+    transform: scale(1.1);
+}
+
+.gift-image-placeholder.premium-set {
+    background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+}
+
+.gift-image-placeholder.seasonal-set {
+    background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
+}
+
+.gift-image-placeholder.traditional-set {
+    background: linear-gradient(135deg, #DEB887 0%, #D2B48C 100%);
+}
+
+.gift-image-placeholder.mini-set {
+    background: linear-gradient(135deg, #98FB98 0%, #90EE90 100%);
+}
+
+.gift-badge {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--neutral-white);
+    z-index: 2;
+}
+
+.gift-badge.bestseller {
+    background-color: #E91E63;
+}
+
+.gift-badge.seasonal {
+    background-color: var(--accent-gold);
+}
+
+.gift-badge.traditional {
+    background-color: var(--primary-green);
+}
+
+.gift-badge.gift {
+    background-color: #9C27B0;
+}
+
+.gift-info {
+    padding: var(--spacing-lg);
+}
+
+.gift-name {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+}
+
+.gift-description {
+    color: var(--neutral-gray);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+    font-size: 0.9rem;
+}
+
+.gift-contents {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+}
+
+.gift-item {
+    background-color: var(--neutral-beige);
+    color: var(--primary-green);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.gift-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-lg);
+}
+
+.gift-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.gift-cart-btn {
+    flex: 2;
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+    border: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+.gift-cart-btn:hover {
+    background-color: var(--primary-green-dark);
+    transform: translateY(-2px);
+}
+
+.customize-btn {
+    flex: 1;
+    background: transparent;
+    color: var(--accent-gold);
+    border: 2px solid var(--accent-gold);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+.customize-btn:hover {
+    background-color: var(--accent-gold);
+    color: var(--neutral-white);
+    transform: translateY(-2px);
+}
+
+/* ギフトサービス */
+.gift-services {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-white);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.service-item {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background-color: var(--neutral-cream);
+    border-radius: var(--border-radius-lg);
+    transition: var(--transition-default);
+}
+
+.service-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.service-icon {
+    margin-bottom: var(--spacing-lg);
+}
+
+.service-icon-placeholder {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: var(--primary-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: var(--transition-default);
+}
+
+.service-item:hover .service-icon-placeholder {
+    background: var(--accent-gold);
+    transform: rotate(360deg);
+}
+
+.service-icon-placeholder::before {
+    content: '';
+    width: 50px;
+    height: 50px;
+    background-color: var(--neutral-white);
+    border-radius: 8px;
+}
+
+.service-title {
+    font-size: 1.3rem;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.service-description {
+    color: var(--neutral-gray);
+    line-height: 1.7;
+    margin-bottom: var(--spacing-lg);
+}
+
+.service-options {
+    list-style: none;
+    text-align: left;
+}
+
+.service-options li {
+    color: var(--neutral-gray);
+    margin-bottom: var(--spacing-xs);
+    padding-left: var(--spacing-md);
+    position: relative;
+}
+
+.service-options li::before {
+    content: '✓';
+    color: var(--primary-green);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+/* カスタマイズギフト */
+.custom-gift {
+    padding: var(--spacing-xxl) 0;
+    background: linear-gradient(135deg, var(--neutral-cream) 0%, var(--neutral-beige) 100%);
+}
+
+.custom-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xxl);
+    align-items: center;
+}
+
+.custom-image {
+    height: 400px;
+    overflow: hidden;
+    border-radius: var(--border-radius-lg);
+}
+
+.custom-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 100%);
+    transition: var(--transition-default);
+}
+
+.custom-image:hover .custom-image-placeholder {
+    transform: scale(1.05);
+}
+
+.custom-title {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.custom-description {
+    color: var(--neutral-gray);
+    line-height: 1.7;
+    margin-bottom: var(--spacing-xl);
+}
+
+.custom-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xl);
+}
+
+.custom-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex: 1;
+    position: relative;
+}
+
+.custom-step::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-green);
+    z-index: -1;
+}
+
+.custom-step:last-child::after {
+    display: none;
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.step-text {
+    font-size: 0.9rem;
+    color: var(--neutral-gray);
+    text-align: center;
+}
+
+.custom-actions {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.custom-start-btn {
+    background-color: var(--accent-gold);
+    color: var(--neutral-white);
+    padding: var(--spacing-md) var(--spacing-xl);
+    text-decoration: none;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-default);
+}
+
+.custom-contact-btn {
+    color: var(--primary-green);
+    text-decoration: none;
+    padding: var(--spacing-md) var(--spacing-xl);
+    border: 2px solid var(--primary-green);
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: var(--transition-default);
+}
+
+.custom-contact-btn:hover {
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+    transform: translateY(-2px);
+}
+
+/* ギフトガイド */
+.gift-guide {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-white);
+}
+
+.guide-tabs {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-xl) 0;
+    flex-wrap: wrap;
+}
+
+.guide-tab {
+    background: transparent;
+    border: 2px solid var(--neutral-beige);
+    color: var(--neutral-gray);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition-default);
+}
+
+.guide-tab:hover {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+}
+
+.guide-tab.active {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: var(--neutral-white);
+}
+
+.guide-content {
+    margin-top: var(--spacing-xl);
+}
+
+.guide-panel {
+    display: none;
+}
+
+.guide-panel.active {
+    display: block;
+}
+
+.price-ranges {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.price-range {
+    background-color: var(--neutral-cream);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    border-left: 4px solid var(--accent-gold);
+}
+
+.price-range h4 {
+    color: var(--primary-green);
+    font-size: 1.2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.price-range p {
+    color: var(--neutral-gray);
+    margin-bottom: var(--spacing-md);
+}
+
+.price-range ul {
+    list-style: none;
+}
+
+.price-range li {
+    color: var(--neutral-gray);
+    margin-bottom: var(--spacing-xs);
+    padding-left: var(--spacing-md);
+    position: relative;
+}
+
+.price-range li::before {
+    content: '•';
+    color: var(--accent-gold);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.occasion-list,
+.recipient-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.occasion-item,
+.recipient-item {
+    background-color: var(--neutral-cream);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    border-left: 4px solid var(--primary-green);
+}
+
+.occasion-item h4,
+.recipient-item h4 {
+    color: var(--primary-green);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.occasion-item p,
+.recipient-item p {
+    color: var(--neutral-gray);
+    line-height: 1.6;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .gift-hero-title {
+        font-size: 2.5rem;
+    }
+
+    .gift-hero-features {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .scene-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .gift-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .gift-actions {
+        flex-direction: column;
+    }
+
+    .custom-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .custom-steps {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .custom-step::after {
+        display: none;
+    }
+
+    .custom-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .guide-tabs {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .guide-tab {
+        width: 200px;
+        text-align: center;
+    }
+
+    .price-ranges,
+    .occasion-list,
+    .recipient-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .gift-hero-title {
+        font-size: 2rem;
+    }
+
+    .gift-hero-content {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .scene-info,
+    .gift-info,
+    .service-item {
+        padding: var(--spacing-md);
+    }
+
+    .custom-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* アニメーション強化 */
+@keyframes giftFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.gift-feature:hover {
+    animation: giftFloat 2s ease-in-out infinite;
+}
+
+/* 高コントラストモード */
+@media (prefers-contrast: high) {
+    .gift-badge {
+        border: 2px solid var(--neutral-white);
+    }
+
+    .scene-link,
+    .gift-cart-btn {
+        border: 2px solid var(--neutral-white);
+    }
+}
+
+/* モーション軽減 */
+@media (prefers-reduced-motion: reduce) {
+    .gift-card,
+    .scene-card,
+    .service-item {
+        transition: none;
+    }
+
+    .gift-card:hover,
+    .scene-card:hover,
+    .service-item:hover {
+        transform: none;
+    }
+
+    .gift-feature:hover {
+        animation: none;
+    }
+}

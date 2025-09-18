@@ -1,0 +1,892 @@
+/* Contact Page Specific Styles */
+
+/* ページヘッダー */
+.contact-page-header {
+    background: linear-gradient(135deg, var(--neutral-cream) 0%, var(--neutral-beige) 100%);
+    padding: var(--spacing-xxl) 0 var(--spacing-xl);
+    margin-top: 80px;
+    text-align: center;
+}
+
+.contact-header-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* お問い合わせ方法 */
+.contact-methods {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-white);
+}
+
+.contact-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.contact-option {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background-color: var(--neutral-cream);
+    border-radius: var(--border-radius-lg);
+    transition: var(--transition-default);
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(74, 92, 58, 0.05), transparent);
+    transition: left 0.6s ease;
+}
+
+.contact-option:hover::before {
+    left: 100%;
+}
+
+.contact-option:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.contact-icon {
+    margin-bottom: var(--spacing-lg);
+}
+
+.contact-icon-placeholder {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: var(--primary-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: var(--transition-default);
+}
+
+.contact-option:hover .contact-icon-placeholder {
+    background: var(--accent-gold);
+    transform: rotate(360deg);
+}
+
+.contact-icon-placeholder::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    background-color: var(--neutral-white);
+    border-radius: 8px;
+}
+
+.contact-icon-placeholder.phone::before {
+    border-radius: 20px;
+}
+
+.contact-option-title {
+    font-size: 1.3rem;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.contact-details {
+    margin-bottom: var(--spacing-lg);
+}
+
+.contact-details p {
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.contact-phone,
+.contact-email {
+    font-size: 1.1rem;
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.contact-description {
+    color: var(--neutral-gray);
+    line-height: 1.6;
+}
+
+/* お問い合わせフォーム */
+.contact-form-section {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-cream);
+}
+
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--neutral-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xxl);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.form-step {
+    display: none;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.form-step.active {
+    display: block;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-step-title {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-xl);
+    text-align: center;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-dark);
+    font-weight: 500;
+    position: relative;
+}
+
+.form-label.required::after {
+    content: '*';
+    color: #e74c3c;
+    margin-left: 4px;
+}
+
+.form-input,
+.form-textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--neutral-beige);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: var(--transition-default);
+    background-color: var(--neutral-white);
+}
+
+.form-input:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(74, 92, 58, 0.1);
+}
+
+.form-input.error,
+.form-textarea.error {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.char-count {
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--neutral-gray);
+    margin-top: var(--spacing-xs);
+}
+
+/* お問い合わせタイプ選択 */
+.contact-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.contact-type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-lg);
+    border: 2px solid var(--neutral-beige);
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    transition: var(--transition-default);
+    position: relative;
+}
+
+.contact-type:hover {
+    border-color: var(--primary-green);
+    background-color: var(--neutral-cream);
+    transform: translateY(-3px);
+}
+
+.contact-type input[type="radio"] {
+    display: none;
+}
+
+.radio-mark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--neutral-gray);
+    border-radius: 50%;
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    transition: var(--transition-default);
+}
+
+.contact-type input[type="radio"]:checked + .radio-mark {
+    border-color: var(--primary-green);
+    background-color: var(--primary-green);
+}
+
+.contact-type input[type="radio"]:checked + .radio-mark::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--neutral-white);
+}
+
+.contact-type input[type="radio"]:checked ~ .type-icon,
+.contact-type input[type="radio"]:checked ~ .type-text {
+    color: var(--primary-green);
+}
+
+.type-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+    transition: var(--transition-default);
+}
+
+.type-text {
+    font-weight: 500;
+    transition: var(--transition-default);
+}
+
+/* フォームアクション */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+.form-btn {
+    padding: var(--spacing-md) var(--spacing-xl);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-default);
+    position: relative;
+    overflow: hidden;
+}
+
+.next-btn,
+.submit-btn {
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+    flex: 1;
+}
+
+.next-btn:hover,
+.submit-btn:hover {
+    background-color: var(--primary-green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(74, 92, 58, 0.3);
+}
+
+.prev-btn {
+    background-color: var(--neutral-beige);
+    color: var(--neutral-gray);
+    flex: 0.5;
+}
+
+.prev-btn:hover {
+    background-color: var(--neutral-gray);
+    color: var(--neutral-white);
+    transform: translateY(-2px);
+}
+
+/* ボタンのリップル効果 */
+.form-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.form-btn:active::before {
+    width: 200px;
+    height: 200px;
+}
+
+/* ステップインジケーター */
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--neutral-beige);
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    position: relative;
+}
+
+.step-item::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 100%;
+    width: 60px;
+    height: 2px;
+    background-color: var(--neutral-beige);
+    z-index: -1;
+}
+
+.step-item:last-child::after {
+    display: none;
+}
+
+.step-item.active::after {
+    background-color: var(--primary-green);
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--neutral-beige);
+    color: var(--neutral-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    transition: var(--transition-default);
+}
+
+.step-item.active .step-number {
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+}
+
+.step-label {
+    font-size: 0.9rem;
+    color: var(--neutral-gray);
+    transition: var(--transition-default);
+}
+
+.step-item.active .step-label {
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+/* 確認画面 */
+.confirmation-content {
+    background-color: var(--neutral-cream);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-lg);
+}
+
+.confirmation-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.confirmation-section:last-child {
+    margin-bottom: 0;
+}
+
+.confirmation-section h4 {
+    color: var(--primary-green);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+    border-bottom: 1px solid var(--neutral-beige);
+    padding-bottom: var(--spacing-xs);
+}
+
+.confirmation-item {
+    display: flex;
+    margin-bottom: var(--spacing-sm);
+    align-items: flex-start;
+}
+
+.confirmation-label {
+    font-weight: 500;
+    color: var(--neutral-gray);
+    min-width: 80px;
+    flex-shrink: 0;
+}
+
+.confirmation-value {
+    color: var(--text-dark);
+    flex: 1;
+}
+
+.confirmation-message {
+    color: var(--text-dark);
+    line-height: 1.6;
+    background-color: var(--neutral-white);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--primary-green);
+}
+
+/* プライバシー同意 */
+.form-privacy {
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-md);
+    background-color: var(--neutral-cream);
+    border-radius: var(--border-radius);
+}
+
+.privacy-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.privacy-checkbox input {
+    display: none;
+}
+
+.privacy-checkbox .checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--neutral-gray);
+    border-radius: 3px;
+    margin-right: var(--spacing-sm);
+    position: relative;
+    transition: var(--transition-default);
+}
+
+.privacy-checkbox input:checked + .checkmark {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+}
+
+.privacy-checkbox input:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 3px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.privacy-link {
+    color: var(--primary-green);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+/* FAQ */
+.faq-section {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-white);
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: var(--spacing-xl) auto 0;
+}
+
+.faq-item {
+    border: 1px solid var(--neutral-beige);
+    border-radius: var(--border-radius);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    transition: var(--transition-default);
+}
+
+.faq-item:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.faq-question {
+    width: 100%;
+    padding: var(--spacing-lg);
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    transition: var(--transition-default);
+}
+
+.faq-question:hover {
+    background-color: var(--neutral-cream);
+}
+
+.faq-icon {
+    font-size: 1.5rem;
+    color: var(--primary-green);
+    transition: var(--transition-default);
+    transform-origin: center;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+}
+
+.faq-answer p {
+    padding: 0 var(--spacing-lg) var(--spacing-lg);
+    color: var(--neutral-gray);
+    line-height: 1.7;
+}
+
+/* 店舗情報 */
+.store-info {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--neutral-cream);
+}
+
+.store-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.store-item {
+    background-color: var(--neutral-white);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: var(--transition-default);
+}
+
+.store-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.store-image {
+    height: 200px;
+    overflow: hidden;
+}
+
+.store-image-placeholder {
+    width: 100%;
+    height: 100%;
+    transition: var(--transition-default);
+}
+
+.store-item:hover .store-image-placeholder {
+    transform: scale(1.1);
+}
+
+.store-image-placeholder.main-store {
+    background: linear-gradient(135deg, #8BC34A 0%, #4CAF50 100%);
+}
+
+.store-image-placeholder.branch-store {
+    background: linear-gradient(135deg, #FF9800 0%, #FF5722 100%);
+}
+
+.store-details {
+    padding: var(--spacing-lg);
+}
+
+.store-name {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: var(--primary-green);
+    margin-bottom: var(--spacing-md);
+    font-weight: 600;
+}
+
+.store-address,
+.store-contact,
+.store-access {
+    margin-bottom: var(--spacing-md);
+}
+
+.store-address p,
+.store-contact p,
+.store-access p {
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-dark);
+}
+
+.store-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.map-btn,
+.call-btn {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    text-align: center;
+    font-weight: 500;
+    transition: var(--transition-default);
+}
+
+.map-btn {
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+    border: none;
+    cursor: pointer;
+}
+
+.map-btn:hover {
+    background-color: var(--primary-green-dark);
+    transform: translateY(-2px);
+}
+
+.call-btn {
+    background: transparent;
+    color: var(--primary-green);
+    border: 2px solid var(--primary-green);
+}
+
+.call-btn:hover {
+    background-color: var(--primary-green);
+    color: var(--neutral-white);
+    transform: translateY(-2px);
+}
+
+/* エラーメッセージ */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: var(--spacing-xs);
+    padding-left: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.error-message::before {
+    content: '⚠️';
+    font-size: 0.8rem;
+}
+
+/* 成功メッセージ */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    border-left: 4px solid #28a745;
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.success-message::before {
+    content: '✅';
+    font-size: 1.2rem;
+}
+
+/* ローディング状態 */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--neutral-beige);
+    border-top: 2px solid var(--primary-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .contact-options {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .form-container {
+        padding: var(--spacing-lg);
+        margin: 0 var(--spacing-md);
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+
+    .contact-types {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .step-indicator {
+        gap: var(--spacing-sm);
+    }
+
+    .step-item::after {
+        display: none;
+    }
+
+    .store-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+
+    .store-actions {
+        flex-direction: column;
+    }
+
+    .confirmation-item {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .confirmation-label {
+        min-width: auto;
+        font-weight: 600;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-option {
+        padding: var(--spacing-lg);
+    }
+
+    .form-container {
+        padding: var(--spacing-md);
+        margin: 0 var(--spacing-sm);
+    }
+
+    .form-step-title {
+        font-size: 1.5rem;
+    }
+
+    .contact-type {
+        padding: var(--spacing-md);
+    }
+
+    .store-details {
+        padding: var(--spacing-md);
+    }
+}
+
+/* アクセシビリティ */
+@media (prefers-reduced-motion: reduce) {
+    .contact-option,
+    .form-btn,
+    .store-item,
+    .faq-item {
+        transition: none;
+    }
+
+    .contact-option:hover,
+    .store-item:hover {
+        transform: none;
+    }
+
+    .form-step {
+        animation: none;
+    }
+}
+
+/* 高コントラストモード */
+@media (prefers-contrast: high) {
+    .form-input,
+    .form-textarea {
+        border: 3px solid var(--text-dark);
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+        border-color: var(--primary-green);
+        box-shadow: 0 0 0 3px var(--primary-green);
+    }
+
+    .contact-type {
+        border: 3px solid var(--neutral-gray);
+    }
+
+    .contact-type:hover {
+        border-color: var(--primary-green);
+    }
+}

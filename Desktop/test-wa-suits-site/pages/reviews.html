@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お客様の声 | 和粋 - WASUI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/reviews.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="../index.html">
+                        <span class="logo-main">和粋</span>
+                        <span class="logo-sub">WASUI</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <ul class="nav-list">
+                        <li><a href="../index.html">ホーム</a></li>
+                        <li><a href="about.html">私たちについて</a></li>
+                        <li><a href="products.html">商品一覧</a></li>
+                        <li><a href="gifts.html">ギフト</a></li>
+                        <li><a href="news.html">お知らせ</a></li>
+                        <li><a href="reviews.html" class="active">お客様の声</a></li>
+                        <li><a href="contact.html">お問い合わせ</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <button class="cart-btn">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-count">0</span>
+                    </button>
+                    <button class="mobile-menu-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="page-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="page-title">お客様の声</h1>
+                    <p class="page-subtitle">和粋をお選びいただいたお客様からの<br>温かいお言葉をご紹介いたします</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-summary">
+            <div class="container">
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-number">4.8</div>
+                        <div class="summary-label">平均評価</div>
+                        <div class="stars">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-number">1,247</div>
+                        <div class="summary-label">総レビュー数</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-number">98%</div>
+                        <div class="summary-label">満足度</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-filters">
+            <div class="container">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="product-filter">商品で絞り込み</label>
+                        <select id="product-filter" class="filter-select">
+                            <option value="">すべての商品</option>
+                            <option value="治一郎のバウムクーヘン">治一郎のバウムクーヘン</option>
+                            <option value="季節限定品">季節限定品</option>
+                            <option value="ギフトセット">ギフトセット</option>
+                            <option value="焼き菓子">焼き菓子</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="rating-filter">評価で絞り込み</label>
+                        <select id="rating-filter" class="filter-select">
+                            <option value="">すべての評価</option>
+                            <option value="5">★★★★★ (5つ星)</option>
+                            <option value="4">★★★★☆ (4つ星以上)</option>
+                            <option value="3">★★★☆☆ (3つ星以上)</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sort-filter">並び替え</label>
+                        <select id="sort-filter" class="filter-select">
+                            <option value="newest">新しい順</option>
+                            <option value="oldest">古い順</option>
+                            <option value="rating-high">評価の高い順</option>
+                            <option value="rating-low">評価の低い順</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="reviews-grid">
+            <div class="container">
+                <div class="reviews-list" id="reviews-list">
+                    <div class="review-card" data-product="治一郎のバウムクーヘン" data-rating="5" data-date="2024-03-15">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <span>田</span>
+                                </div>
+                                <div class="reviewer-details">
+                                    <div class="reviewer-name">田中 美香様</div>
+                                    <div class="review-date">2024年3月15日</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                            </div>
+                        </div>
+                        <div class="review-product">治一郎のバウムクーヘン</div>
+                        <div class="review-content">
+                            <p>母の誕生日にプレゼントしました。しっとりとした食感と上品な甘さに、母もとても喜んでくれました。包装も美しく、贈り物として最適だと思います。次回も利用したいです。</p>
+                        </div>
+                        <div class="review-actions">
+                            <button class="helpful-btn">
+                                <span class="helpful-icon">👍</span>
+                                参考になった (12)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="review-card" data-product="季節限定品" data-rating="5" data-date="2024-03-10">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <span>佐</span>
+                                </div>
+                                <div class="reviewer-details">
+                                    <div class="reviewer-name">佐藤 雄太様</div>
+                                    <div class="review-date">2024年3月10日</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                            </div>
+                        </div>
+                        <div class="review-product">春の限定バウムクーヘン</div>
+                        <div class="review-content">
+                            <p>桜の季節にぴったりの美しいバウムクーヘンでした。桜の風味が上品で、見た目も華やかです。友人との茶会で大変好評でした。季節感を大切にした商品作りに感動しています。</p>
+                        </div>
+                        <div class="review-actions">
+                            <button class="helpful-btn">
+                                <span class="helpful-icon">👍</span>
+                                参考になった (8)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="review-card" data-product="ギフトセット" data-rating="4" data-date="2024-03-08">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <span>山</span>
+                                </div>
+                                <div class="reviewer-details">
+                                    <div class="reviewer-name">山田 花子様</div>
+                                    <div class="review-date">2024年3月8日</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                        <div class="review-product">お祝いギフトセット</div>
+                        <div class="review-content">
+                            <p>結婚祝いで購入しました。バウムクーヘンと焼き菓子の詰め合わせで、どれも美味しく、相手の方にも大変喜んでいただけました。ただ、もう少し種類があると嬉しいです。</p>
+                        </div>
+                        <div class="review-actions">
+                            <button class="helpful-btn">
+                                <span class="helpful-icon">👍</span>
+                                参考になった (15)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="review-card" data-product="治一郎のバウムクーヘン" data-rating="5" data-date="2024-03-05">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <span>鈴</span>
+                                </div>
+                                <div class="reviewer-details">
+                                    <div class="reviewer-name">鈴木 一郎様</div>
+                                    <div class="review-date">2024年3月5日</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                            </div>
+                        </div>
+                        <div class="review-product">治一郎のバウムクーヘン</div>
+                        <div class="review-content">
+                            <p>何度もリピートしています。他のバウムクーヘンとは全く違う、しっとりとした食感と深い味わい。職場での差し入れにも大好評です。和粋さんの商品は間違いありません。</p>
+                        </div>
+                        <div class="review-actions">
+                            <button class="helpful-btn">
+                                <span class="helpful-icon">👍</span>
+                                参考になった (23)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="review-card" data-product="焼き菓子" data-rating="4" data-date="2024-03-02">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <span>高</span>
+                                </div>
+                                <div class="reviewer-details">
+                                    <div class="reviewer-name">高橋 恵美様</div>
+                                    <div class="review-date">2024年3月2日</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                        <div class="review-product">焼き菓子詰め合わせ</div>
+                        <div class="review-content">
+                            <p>どの焼き菓子も丁寧に作られていて美味しいです。特にマドレーヌがお気に入りです。お茶の時間が豊かになりました。もう少しお手頃価格だと嬉しいのですが...</p>
+                        </div>
+                        <div class="review-actions">
+                            <button class="helpful-btn">
+                                <span class="helpful-icon">👍</span>
+                                参考になった (7)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="review-card" data-product="ギフトセット" data-rating="5" data-date="2024-02-28">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar">
+                                    <span>中</span>
+                                </div>
+                                <div class="reviewer-details">
+                                    <div class="reviewer-name">中村 正子様</div>
+                                    <div class="review-date">2024年2月28日</div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                            </div>
+                        </div>
+                        <div class="review-product">法事用ギフトセット</div>
+                        <div class="review-content">
+                            <p>法事のお返しに利用させていただきました。落ち着いた包装で、どなたにも喜んでいただけました。スタッフの方の対応も丁寧で、安心してお任せできました。また利用します。</p>
+                        </div>
+                        <div class="review-actions">
+                            <button class="helpful-btn">
+                                <span class="helpful-icon">👍</span>
+                                参考になった (19)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagination">
+                    <button class="pagination-btn prev" disabled>前へ</button>
+                    <div class="pagination-numbers">
+                        <button class="pagination-number active">1</button>
+                        <button class="pagination-number">2</button>
+                        <button class="pagination-number">3</button>
+                        <span class="pagination-dots">...</span>
+                        <button class="pagination-number">12</button>
+                    </div>
+                    <button class="pagination-btn next">次へ</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="review-submit-cta">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>レビューを投稿する</h2>
+                    <p>和粋の商品をご利用いただいた感想をお聞かせください</p>
+                    <button class="btn btn-primary" id="review-submit-btn">レビューを書く</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-main">和粋</span>
+                        <span class="logo-sub">WASUI</span>
+                    </div>
+                    <p class="footer-description">
+                        伝統の技と現代の感性を融合させた<br>
+                        上質な和菓子をお届けいたします
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h4>商品情報</h4>
+                    <ul>
+                        <li><a href="products.html">バウムクーヘン</a></li>
+                        <li><a href="products.html">季節限定品</a></li>
+                        <li><a href="products.html">焼き菓子</a></li>
+                        <li><a href="gifts.html">ギフト</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>サービス</h4>
+                    <ul>
+                        <li><a href="contact.html">お問い合わせ</a></li>
+                        <li><a href="#">配送について</a></li>
+                        <li><a href="#">返品・交換</a></li>
+                        <li><a href="#">よくある質問</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>会社情報</h4>
+                    <ul>
+                        <li><a href="about.html">私たちについて</a></li>
+                        <li><a href="news.html">お知らせ</a></li>
+                        <li><a href="#">採用情報</a></li>
+                        <li><a href="#">プライバシーポリシー</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 和粋 WASUI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Review Submission Modal -->
+    <div class="modal" id="review-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>レビューを投稿</h3>
+                <button class="modal-close" id="review-modal-close">&times;</button>
+            </div>
+            <form class="review-form" id="review-form">
+                <div class="form-group">
+                    <label for="review-product">商品名</label>
+                    <select id="review-product" required>
+                        <option value="">商品を選択してください</option>
+                        <option value="治一郎のバウムクーヘン">治一郎のバウムクーヘン</option>
+                        <option value="季節限定品">季節限定品</option>
+                        <option value="ギフトセット">ギフトセット</option>
+                        <option value="焼き菓子">焼き菓子</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="review-rating-input">評価</label>
+                    <div class="rating-input" id="review-rating-input">
+                        <span class="rating-star" data-rating="1">★</span>
+                        <span class="rating-star" data-rating="2">★</span>
+                        <span class="rating-star" data-rating="3">★</span>
+                        <span class="rating-star" data-rating="4">★</span>
+                        <span class="rating-star" data-rating="5">★</span>
+                    </div>
+                    <input type="hidden" id="rating-value" required>
+                </div>
+                <div class="form-group">
+                    <label for="reviewer-name">お名前</label>
+                    <input type="text" id="reviewer-name" placeholder="田中 太郎" required>
+                </div>
+                <div class="form-group">
+                    <label for="review-text">レビュー内容</label>
+                    <textarea id="review-text" rows="5" placeholder="商品の感想をお聞かせください..." required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="review-cancel">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">投稿する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/reviews.js"></script>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ギフト - 和粋</title>
+    <meta name="description" content="大切な方への贈り物に最適な和菓子ギフトセット。お祝い、お中元、お歳暮など、様々なシーンに合わせた美しい詰め合わせをご用意しています。">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/gifts.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">和粋</span>
+                    <span class="logo-subtitle">WASUI</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="./products.html" class="nav-link">商品一覧</a></li>
+                    <li><a href="./gifts.html" class="nav-link active">ギフト</a></li>
+                    <li><a href="./about.html" class="nav-link">私たちについて</a></li>
+                    <li><a href="./news.html" class="nav-link">お知らせ</a></li>
+                    <li><a href="./contact.html" class="nav-link">お問い合わせ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="#" class="cart-btn">カート</a>
+                <button class="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ギフトヒーロー -->
+    <section class="gift-hero">
+        <div class="gift-hero-bg"></div>
+        <div class="container">
+            <div class="gift-hero-content fade-in">
+                <h1 class="gift-hero-title">心を込めた贈り物</h1>
+                <p class="gift-hero-subtitle">大切な人への想いを美しい和菓子で</p>
+                <p class="gift-hero-description">
+                    特別な日の贈り物から、いつもの感謝の気持ちまで。<br>
+                    一つひとつ丁寧に包装した和菓子ギフトで、<br>
+                    あなたの想いをお届けします。
+                </p>
+                <div class="gift-hero-features">
+                    <div class="gift-feature">
+                        <div class="gift-feature-icon">🎁</div>
+                        <span>美しい包装</span>
+                    </div>
+                    <div class="gift-feature">
+                        <div class="gift-feature-icon">📝</div>
+                        <span>メッセージカード</span>
+                    </div>
+                    <div class="gift-feature">
+                        <div class="gift-feature-icon">🚚</div>
+                        <span>全国配送</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- シーン別ギフト -->
+    <section class="scene-gifts">
+        <div class="container">
+            <h2 class="section-title fade-in">シーン別ギフト</h2>
+            <div class="scene-grid">
+                <div class="scene-card fade-in" data-scene="celebration">
+                    <div class="scene-image">
+                        <div class="scene-image-placeholder celebration"></div>
+                    </div>
+                    <div class="scene-info">
+                        <h3 class="scene-title">お祝い</h3>
+                        <p class="scene-description">結婚式、出産祝い、新築祝いなど、喜びを分かち合う特別な日に</p>
+                        <div class="scene-price-range">¥2,000 - ¥8,000</div>
+                        <a href="#celebration-gifts" class="scene-link">商品を見る</a>
+                    </div>
+                </div>
+
+                <div class="scene-card fade-in" data-scene="seasonal">
+                    <div class="scene-image">
+                        <div class="scene-image-placeholder seasonal"></div>
+                    </div>
+                    <div class="scene-info">
+                        <h3 class="scene-title">季節のご挨拶</h3>
+                        <p class="scene-description">お中元、お歳暮、母の日など、季節の贈り物として</p>
+                        <div class="scene-price-range">¥3,000 - ¥10,000</div>
+                        <a href="#seasonal-gifts" class="scene-link">商品を見る</a>
+                    </div>
+                </div>
+
+                <div class="scene-card fade-in" data-scene="business">
+                    <div class="scene-image">
+                        <div class="scene-image-placeholder business"></div>
+                    </div>
+                    <div class="scene-info">
+                        <h3 class="scene-title">ビジネス</h3>
+                        <p class="scene-description">取引先への挨拶、会議のお茶菓子など、ビジネスシーンに</p>
+                        <div class="scene-price-range">¥1,500 - ¥5,000</div>
+                        <a href="#business-gifts" class="scene-link">商品を見る</a>
+                    </div>
+                </div>
+
+                <div class="scene-card fade-in" data-scene="personal">
+                    <div class="scene-image">
+                        <div class="scene-image-placeholder personal"></div>
+                    </div>
+                    <div class="scene-info">
+                        <h3 class="scene-title">お返し・お礼</h3>
+                        <p class="scene-description">内祝い、お返し、ちょっとしたお礼の気持ちを込めて</p>
+                        <div class="scene-price-range">¥1,000 - ¥4,000</div>
+                        <a href="#personal-gifts" class="scene-link">商品を見る</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 人気ギフトセット -->
+    <section class="popular-gifts" id="celebration-gifts">
+        <div class="container">
+            <h2 class="section-title fade-in">人気ギフトセット</h2>
+            <div class="gift-grid">
+                <article class="gift-card fade-in">
+                    <div class="gift-image">
+                        <div class="gift-image-placeholder premium-set"></div>
+                        <div class="gift-badge bestseller">人気No.1</div>
+                    </div>
+                    <div class="gift-info">
+                        <h3 class="gift-name">プレミアムギフトセット</h3>
+                        <p class="gift-description">
+                            厳選された和菓子を美しい桐箱に詰め合わせた最高級ギフト。
+                            特別な方への贈り物に最適です。
+                        </p>
+                        <div class="gift-contents">
+                            <span class="gift-item">栗饅頭 × 4</span>
+                            <span class="gift-item">羊羹 × 2</span>
+                            <span class="gift-item">最中 × 4</span>
+                        </div>
+                        <div class="gift-price">¥5,500</div>
+                        <div class="gift-actions">
+                            <button class="add-to-cart-btn gift-cart-btn">カートに追加</button>
+                            <button class="customize-btn">カスタマイズ</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="gift-card fade-in">
+                    <div class="gift-image">
+                        <div class="gift-image-placeholder seasonal-set"></div>
+                        <div class="gift-badge seasonal">季節限定</div>
+                    </div>
+                    <div class="gift-info">
+                        <h3 class="gift-name">春の詰め合わせ</h3>
+                        <p class="gift-description">
+                            桜の季節にぴったりの和菓子を集めた期間限定ギフト。
+                            美しい包装でお届けします。
+                        </p>
+                        <div class="gift-contents">
+                            <span class="gift-item">桜餅 × 6</span>
+                            <span class="gift-item">抹茶どら焼き × 4</span>
+                            <span class="gift-item">上生菓子 × 2</span>
+                        </div>
+                        <div class="gift-price">¥3,800</div>
+                        <div class="gift-actions">
+                            <button class="add-to-cart-btn gift-cart-btn">カートに追加</button>
+                            <button class="customize-btn">カスタマイズ</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="gift-card fade-in">
+                    <div class="gift-image">
+                        <div class="gift-image-placeholder traditional-set"></div>
+                        <div class="gift-badge traditional">伝統</div>
+                    </div>
+                    <div class="gift-info">
+                        <h3 class="gift-name">伝統和菓子セット</h3>
+                        <p class="gift-description">
+                            創業以来変わらぬ製法で作る伝統の和菓子を詰め合わせました。
+                            日本の美味しさをお楽しみください。
+                        </p>
+                        <div class="gift-contents">
+                            <span class="gift-item">栗饅頭 × 6</span>
+                            <span class="gift-item">豆大福 × 4</span>
+                            <span class="gift-item">どら焼き × 4</span>
+                        </div>
+                        <div class="gift-price">¥2,900</div>
+                        <div class="gift-actions">
+                            <button class="add-to-cart-btn gift-cart-btn">カートに追加</button>
+                            <button class="customize-btn">カスタマイズ</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="gift-card fade-in">
+                    <div class="gift-image">
+                        <div class="gift-image-placeholder mini-set"></div>
+                        <div class="gift-badge gift">ギフト</div>
+                    </div>
+                    <div class="gift-info">
+                        <h3 class="gift-name">ミニギフトセット</h3>
+                        <p class="gift-description">
+                            ちょっとした感謝の気持ちを伝えるのに最適な、
+                            手頃なサイズのギフトセットです。
+                        </p>
+                        <div class="gift-contents">
+                            <span class="gift-item">栗饅頭 × 2</span>
+                            <span class="gift-item">最中 × 2</span>
+                            <span class="gift-item">豆大福 × 2</span>
+                        </div>
+                        <div class="gift-price">¥1,800</div>
+                        <div class="gift-actions">
+                            <button class="add-to-cart-btn gift-cart-btn">カートに追加</button>
+                            <button class="customize-btn">カスタマイズ</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ギフトサービス -->
+    <section class="gift-services">
+        <div class="container">
+            <h2 class="section-title fade-in">ギフトサービス</h2>
+            <div class="services-grid">
+                <div class="service-item fade-in">
+                    <div class="service-icon">
+                        <div class="service-icon-placeholder wrapping"></div>
+                    </div>
+                    <h3 class="service-title">美しいギフト包装</h3>
+                    <p class="service-description">
+                        熟練の職人が一つひとつ丁寧に包装いたします。
+                        のし紙やリボンもお選びいただけます。
+                    </p>
+                    <ul class="service-options">
+                        <li>和紙包装（無料）</li>
+                        <li>桐箱入り（+500円）</li>
+                        <li>風呂敷包み（+300円）</li>
+                    </ul>
+                </div>
+
+                <div class="service-item fade-in">
+                    <div class="service-icon">
+                        <div class="service-icon-placeholder message"></div>
+                    </div>
+                    <h3 class="service-title">メッセージカード</h3>
+                    <p class="service-description">
+                        お気持ちを込めたメッセージカードを無料でお付けします。
+                        手書き風フォントでお作りいたします。
+                    </p>
+                    <ul class="service-options">
+                        <li>メッセージカード（無料）</li>
+                        <li>手書きカード（+200円）</li>
+                        <li>写真入りカード（+500円）</li>
+                    </ul>
+                </div>
+
+                <div class="service-item fade-in">
+                    <div class="service-icon">
+                        <div class="service-icon-placeholder delivery"></div>
+                    </div>
+                    <h3 class="service-title">配送サービス</h3>
+                    <p class="service-description">
+                        全国どこでも新鮮な状態でお届けします。
+                        お急ぎの場合は即日配送も承ります。
+                    </p>
+                    <ul class="service-options">
+                        <li>通常配送（2-3日）</li>
+                        <li>翌日配送（+500円）</li>
+                        <li>時間指定配送（+300円）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- カスタマイズギフト -->
+    <section class="custom-gift">
+        <div class="container">
+            <div class="custom-content">
+                <div class="custom-image fade-in">
+                    <div class="custom-image-placeholder"></div>
+                </div>
+                <div class="custom-info fade-in">
+                    <h2 class="custom-title">オリジナルギフトセット</h2>
+                    <p class="custom-description">
+                        お客様のご要望に合わせて、オリジナルのギフトセットをお作りいたします。
+                        商品の組み合わせから包装まで、お気軽にご相談ください。
+                    </p>
+                    <div class="custom-steps">
+                        <div class="custom-step">
+                            <span class="step-number">1</span>
+                            <span class="step-text">商品選択</span>
+                        </div>
+                        <div class="custom-step">
+                            <span class="step-number">2</span>
+                            <span class="step-text">包装選択</span>
+                        </div>
+                        <div class="custom-step">
+                            <span class="step-number">3</span>
+                            <span class="step-text">メッセージ入力</span>
+                        </div>
+                        <div class="custom-step">
+                            <span class="step-number">4</span>
+                            <span class="step-text">完成</span>
+                        </div>
+                    </div>
+                    <div class="custom-actions">
+                        <button class="custom-start-btn water-wave-btn">カスタマイズを始める</button>
+                        <a href="../pages/contact.html" class="custom-contact-btn">ご相談・お問い合わせ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ギフトガイド -->
+    <section class="gift-guide">
+        <div class="container">
+            <h2 class="section-title fade-in">ギフト選びのガイド</h2>
+            <div class="guide-tabs">
+                <button class="guide-tab active" data-guide="price">予算から選ぶ</button>
+                <button class="guide-tab" data-guide="occasion">用途から選ぶ</button>
+                <button class="guide-tab" data-guide="recipient">贈る相手から選ぶ</button>
+            </div>
+            
+            <div class="guide-content">
+                <div class="guide-panel active" id="price-guide">
+                    <div class="price-ranges">
+                        <div class="price-range fade-in">
+                            <h4>¥1,000 - ¥2,000</h4>
+                            <p>ちょっとしたお礼や内祝いに</p>
+                            <ul>
+                                <li>ミニギフトセット</li>
+                                <li>季節の和菓子詰め合わせ</li>
+                            </ul>
+                        </div>
+                        <div class="price-range fade-in">
+                            <h4>¥3,000 - ¥5,000</h4>
+                            <p>お祝いや季節のご挨拶に</p>
+                            <ul>
+                                <li>伝統和菓子セット</li>
+                                <li>春の詰め合わせ</li>
+                            </ul>
+                        </div>
+                        <div class="price-range fade-in">
+                            <h4>¥5,000以上</h4>
+                            <p>特別な方への贈り物に</p>
+                            <ul>
+                                <li>プレミアムギフトセット</li>
+                                <li>オリジナルカスタマイズセット</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-panel" id="occasion-guide">
+                    <div class="occasion-list">
+                        <div class="occasion-item fade-in">
+                            <h4>結婚祝い・出産祝い</h4>
+                            <p>おめでたい席にふさわしい、縁起の良い和菓子をお選びください。</p>
+                        </div>
+                        <div class="occasion-item fade-in">
+                            <h4>お中元・お歳暮</h4>
+                            <p>季節感のある上品な詰め合わせが喜ばれます。</p>
+                        </div>
+                        <div class="occasion-item fade-in">
+                            <h4>母の日・父の日</h4>
+                            <p>日頃の感謝を込めて、特別な和菓子をお贈りください。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="guide-panel" id="recipient-guide">
+                    <div class="recipient-list">
+                        <div class="recipient-item fade-in">
+                            <h4>ご年配の方</h4>
+                            <p>優しい味わいの伝統的な和菓子がおすすめです。</p>
+                        </div>
+                        <div class="recipient-item fade-in">
+                            <h4>若い方・お子様</h4>
+                            <p>見た目も楽しい季節の和菓子が人気です。</p>
+                        </div>
+                        <div class="recipient-item fade-in">
+                            <h4>海外の方</h4>
+                            <p>日本らしさを感じられる伝統的な詰め合わせを。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-text">和粋</span>
+                        <span class="logo-subtitle">WASUI</span>
+                    </div>
+                    <p class="footer-description">
+                        伝統の技と心で、<br>
+                        美味しい和菓子をお届けします。
+                    </p>
+                    <div class="footer-contact">
+                        <p>TEL: 03-1234-5678</p>
+                        <p>営業時間: 9:00-18:00（定休日：水曜日）</p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">商品</h4>
+                    <ul class="footer-links">
+                        <li><a href="./products.html">商品一覧</a></li>
+                        <li><a href="./products.html?category=seasonal">季節の和菓子</a></li>
+                        <li><a href="./products.html?category=traditional">伝統の和菓子</a></li>
+                        <li><a href="./gifts.html">ギフトセット</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">ご利用案内</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" data-page="guide">ご利用ガイド</a></li>
+                        <li><a href="#" data-page="shipping">配送について</a></li>
+                        <li><a href="#" data-page="payment">お支払い方法</a></li>
+                        <li><a href="#" data-page="return">返品・交換</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">会社情報</h4>
+                    <ul class="footer-links">
+                        <li><a href="./about.html">私たちについて</a></li>
+                        <li><a href="./news.html">お知らせ</a></li>
+                        <li><a href="./contact.html">お問い合わせ</a></li>
+                        <li><a href="./reviews.html">お客様の声</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <a href="#" data-page="privacy">プライバシーポリシー</a>
+                    <a href="#" data-page="terms">利用規約</a>
+                    <a href="#" data-page="law">特定商取引法に基づく表記</a>
+                </div>
+                <p class="footer-copyright">
+                    &copy; 2024 和粋 WASUI. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/gifts.js"></script>
+</body>
+</html>

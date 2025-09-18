@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.jiichiro-shop.com)",
+      "mcp__filesystem__write_file"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お問い合わせ - 和粋</title>
+    <meta name="description" content="和粋へのお問い合わせはこちら。商品についてのご質問、ご注文、店舗へのアクセスなど、お気軽にお問い合わせください。">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/contact.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">和粋</span>
+                    <span class="logo-subtitle">WASUI</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="./products.html" class="nav-link">商品一覧</a></li>
+                    <li><a href="./gifts.html" class="nav-link">ギフト</a></li>
+                    <li><a href="./about.html" class="nav-link">私たちについて</a></li>
+                    <li><a href="./news.html" class="nav-link">お知らせ</a></li>
+                    <li><a href="./contact.html" class="nav-link active">お問い合わせ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="#" class="cart-btn">カート</a>
+                <button class="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ページヘッダー -->
+    <section class="contact-page-header">
+        <div class="container">
+            <div class="contact-header-content fade-in">
+                <h1 class="page-title">お問い合わせ</h1>
+                <p class="page-description">
+                    商品についてのご質問、ご注文、その他ご不明な点がございましたら<br>
+                    お気軽にお問い合わせください。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- お問い合わせ方法 -->
+    <section class="contact-methods">
+        <div class="container">
+            <h2 class="section-title fade-in">お問い合わせ方法</h2>
+            <div class="contact-options">
+                <div class="contact-option fade-in">
+                    <div class="contact-icon">
+                        <div class="contact-icon-placeholder phone"></div>
+                    </div>
+                    <h3 class="contact-option-title">お電話でのお問い合わせ</h3>
+                    <div class="contact-details">
+                        <p class="contact-phone">TEL: 03-1234-5678</p>
+                        <p class="contact-hours">営業時間: 9:00-18:00</p>
+                        <p class="contact-closed">定休日: 水曜日</p>
+                    </div>
+                    <div class="contact-description">
+                        <p>お急ぎの場合やご注文のご相談は、お電話が最も迅速です。</p>
+                    </div>
+                </div>
+
+                <div class="contact-option fade-in">
+                    <div class="contact-icon">
+                        <div class="contact-icon-placeholder email"></div>
+                    </div>
+                    <h3 class="contact-option-title">メールでのお問い合わせ</h3>
+                    <div class="contact-details">
+                        <p class="contact-email">info@wasui-shop.com</p>
+                        <p class="contact-response">返信: 24時間以内</p>
+                        <p class="contact-available">年中無休</p>
+                    </div>
+                    <div class="contact-description">
+                        <p>詳細なご質問や資料のご請求はメールでお気軽に。</p>
+                    </div>
+                </div>
+
+                <div class="contact-option fade-in">
+                    <div class="contact-icon">
+                        <div class="contact-icon-placeholder form"></div>
+                    </div>
+                    <h3 class="contact-option-title">お問い合わせフォーム</h3>
+                    <div class="contact-details">
+                        <p class="contact-form-benefit">24時間受付</p>
+                        <p class="contact-response">返信: 営業日以内</p>
+                        <p class="contact-convenience">いつでも送信可能</p>
+                    </div>
+                    <div class="contact-description">
+                        <p>下記フォームより、いつでもお問い合わせいただけます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- お問い合わせフォーム -->
+    <section class="contact-form-section">
+        <div class="container">
+            <h2 class="section-title fade-in">お問い合わせフォーム</h2>
+            <div class="form-container fade-in">
+                <form class="contact-form" id="contactForm">
+                    <div class="form-step active" id="step1">
+                        <h3 class="form-step-title">お問い合わせ内容</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">お問い合わせの種類</label>
+                            <div class="contact-types">
+                                <label class="contact-type">
+                                    <input type="radio" name="inquiryType" value="product" required>
+                                    <span class="radio-mark"></span>
+                                    <span class="type-icon">🍰</span>
+                                    <span class="type-text">商品について</span>
+                                </label>
+                                <label class="contact-type">
+                                    <input type="radio" name="inquiryType" value="order" required>
+                                    <span class="radio-mark"></span>
+                                    <span class="type-icon">🛍️</span>
+                                    <span class="type-text">ご注文について</span>
+                                </label>
+                                <label class="contact-type">
+                                    <input type="radio" name="inquiryType" value="gift" required>
+                                    <span class="radio-mark"></span>
+                                    <span class="type-icon">🎁</span>
+                                    <span class="type-text">ギフトについて</span>
+                                </label>
+                                <label class="contact-type">
+                                    <input type="radio" name="inquiryType" value="store" required>
+                                    <span class="radio-mark"></span>
+                                    <span class="type-icon">🏪</span>
+                                    <span class="type-text">店舗について</span>
+                                </label>
+                                <label class="contact-type">
+                                    <input type="radio" name="inquiryType" value="other" required>
+                                    <span class="radio-mark"></span>
+                                    <span class="type-icon">💬</span>
+                                    <span class="type-text">その他</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject" class="form-label required">件名</label>
+                            <input type="text" id="subject" name="subject" class="form-input" placeholder="お問い合わせの件名を入力してください" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message" class="form-label required">お問い合わせ内容</label>
+                            <textarea id="message" name="message" class="form-textarea" rows="6" placeholder="お問い合わせの詳細をご記入ください" required></textarea>
+                            <div class="char-count">
+                                <span id="charCount">0</span> / 1000文字
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="form-btn next-btn" onclick="nextStep()">次へ</button>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step2">
+                        <h3 class="form-step-title">お客様情報</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="lastName" class="form-label required">姓</label>
+                                <input type="text" id="lastName" name="lastName" class="form-input" placeholder="山田" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="firstName" class="form-label required">名</label>
+                                <input type="text" id="firstName" name="firstName" class="form-input" placeholder="太郎" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="lastNameKana" class="form-label required">セイ</label>
+                                <input type="text" id="lastNameKana" name="lastNameKana" class="form-input" placeholder="ヤマダ" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="firstNameKana" class="form-label required">メイ</label>
+                                <input type="text" id="firstNameKana" name="firstNameKana" class="form-input" placeholder="タロウ" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label required">メールアドレス</label>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="example@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailConfirm" class="form-label required">メールアドレス（確認用）</label>
+                            <input type="email" id="emailConfirm" name="emailConfirm" class="form-input" placeholder="example@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone" class="form-label">電話番号</label>
+                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="03-1234-5678">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="form-btn prev-btn" onclick="prevStep()">戻る</button>
+                            <button type="button" class="form-btn next-btn" onclick="nextStep()">確認へ</button>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step3">
+                        <h3 class="form-step-title">確認</h3>
+                        
+                        <div class="confirmation-content">
+                            <div class="confirmation-section">
+                                <h4>お問い合わせ内容</h4>
+                                <div class="confirmation-item">
+                                    <span class="confirmation-label">種類:</span>
+                                    <span class="confirmation-value" id="confirmType"></span>
+                                </div>
+                                <div class="confirmation-item">
+                                    <span class="confirmation-label">件名:</span>
+                                    <span class="confirmation-value" id="confirmSubject"></span>
+                                </div>
+                                <div class="confirmation-item">
+                                    <span class="confirmation-label">内容:</span>
+                                    <div class="confirmation-message" id="confirmMessage"></div>
+                                </div>
+                            </div>
+
+                            <div class="confirmation-section">
+                                <h4>お客様情報</h4>
+                                <div class="confirmation-item">
+                                    <span class="confirmation-label">お名前:</span>
+                                    <span class="confirmation-value" id="confirmName"></span>
+                                </div>
+                                <div class="confirmation-item">
+                                    <span class="confirmation-label">フリガナ:</span>
+                                    <span class="confirmation-value" id="confirmNameKana"></span>
+                                </div>
+                                <div class="confirmation-item">
+                                    <span class="confirmation-label">メール:</span>
+                                    <span class="confirmation-value" id="confirmEmail"></span>
+                                </div>
+                                <div class="confirmation-item">
+                                    <span class="confirmation-label">電話番号:</span>
+                                    <span class="confirmation-value" id="confirmPhone"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-privacy">
+                            <label class="privacy-checkbox">
+                                <input type="checkbox" id="privacyAgree" required>
+                                <span class="checkmark"></span>
+                                <a href="#" class="privacy-link">プライバシーポリシー</a>に同意します
+                            </label>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="form-btn prev-btn" onclick="prevStep()">戻る</button>
+                            <button type="submit" class="form-btn submit-btn">送信する</button>
+                        </div>
+                    </div>
+
+                    <!-- ステップインジケーター -->
+                    <div class="step-indicator">
+                        <div class="step-item active">
+                            <div class="step-number">1</div>
+                            <div class="step-label">内容</div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-label">情報</div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-label">確認</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title fade-in">よくあるご質問</h2>
+            <div class="faq-container">
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        <span>注文から配送まではどのくらいかかりますか？</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>通常、ご注文から2-3営業日以内に発送いたします。配送地域により、発送から1-2日でお届けいたします。お急ぎの場合は、お電話にてご相談ください。</p>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        <span>ギフト包装は無料ですか？</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>基本的なギフト包装（和紙包装）は無料でお承りしております。桐箱入りや風呂敷包みをご希望の場合は、別途料金が発生いたします。</p>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        <span>アレルギー対応商品はありますか？</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>一部、小麦粉や卵を使用していない商品もございます。アレルギーをお持ちの方は、事前にお問い合わせいただければ、原材料の詳細をお伝えいたします。</p>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        <span>賞味期限はどのくらいですか？</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>商品により異なりますが、生菓子は製造日より3日、焼き菓子は1週間程度です。各商品ページに詳細を記載しておりますので、ご確認ください。</p>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        <span>店舗での直接購入は可能ですか？</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>はい、本店・支店ともに直接ご購入いただけます。人気商品は売り切れの場合もございますので、事前にお電話でお確認いただくことをお勧めいたします。</p>
+                    </div>
+                </div>
+
+                <div class="faq-item fade-in">
+                    <button class="faq-question">
+                        <span>キャンセル・返品は可能ですか？</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>食品という性質上、お客様都合での返品はお受けできません。ただし、不良品や配送中の破損については、商品到着後24時間以内にご連絡ください。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 店舗情報 -->
+    <section class="store-info">
+        <div class="container">
+            <h2 class="section-title fade-in">店舗情報</h2>
+            <div class="store-grid">
+                <div class="store-item fade-in">
+                    <div class="store-image">
+                        <div class="store-image-placeholder main-store"></div>
+                    </div>
+                    <div class="store-details">
+                        <h3 class="store-name">本店</h3>
+                        <div class="store-address">
+                            <p>〒123-4567</p>
+                            <p>東京都渋谷区○○○○ 1-2-3</p>
+                        </div>
+                        <div class="store-contact">
+                            <p>TEL: 03-1234-5678</p>
+                            <p>営業時間: 9:00-19:00</p>
+                            <p>定休日: 水曜日</p>
+                        </div>
+                        <div class="store-access">
+                            <p>JR山手線「○○駅」徒歩5分</p>
+                            <p>地下鉄「△△駅」徒歩3分</p>
+                        </div>
+                        <div class="store-actions">
+                            <button class="map-btn" data-store="main">地図を見る</button>
+                            <a href="tel:03-1234-5678" class="call-btn">電話をかける</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="store-item fade-in">
+                    <div class="store-image">
+                        <div class="store-image-placeholder branch-store"></div>
+                    </div>
+                    <div class="store-details">
+                        <h3 class="store-name">支店</h3>
+                        <div class="store-address">
+                            <p>〒987-6543</p>
+                            <p>東京都新宿区○○○○ 2-3-4</p>
+                        </div>
+                        <div class="store-contact">
+                            <p>TEL: 03-2345-6789</p>
+                            <p>営業時間: 10:00-20:00</p>
+                            <p>定休日: 水曜日</p>
+                        </div>
+                        <div class="store-access">
+                            <p>JR中央線「□□駅」徒歩2分</p>
+                            <p>地下鉄「◇◇駅」徒歩4分</p>
+                        </div>
+                        <div class="store-actions">
+                            <button class="map-btn" data-store="branch">地図を見る</button>
+                            <a href="tel:03-2345-6789" class="call-btn">電話をかける</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-text">和粋</span>
+                        <span class="logo-subtitle">WASUI</span>
+                    </div>
+                    <p class="footer-description">
+                        伝統の技と心で、<br>
+                        美味しい和菓子をお届けします。
+                    </p>
+                    <div class="footer-contact">
+                        <p>TEL: 03-1234-5678</p>
+                        <p>営業時間: 9:00-18:00（定休日：水曜日）</p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">商品</h4>
+                    <ul class="footer-links">
+                        <li><a href="./products.html">商品一覧</a></li>
+                        <li><a href="./products.html?category=seasonal">季節の和菓子</a></li>
+                        <li><a href="./products.html?category=traditional">伝統の和菓子</a></li>
+                        <li><a href="./gifts.html">ギフトセット</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">ご利用案内</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" data-page="guide">ご利用ガイド</a></li>
+                        <li><a href="#" data-page="shipping">配送について</a></li>
+                        <li><a href="#" data-page="payment">お支払い方法</a></li>
+                        <li><a href="#" data-page="return">返品・交換</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">会社情報</h4>
+                    <ul class="footer-links">
+                        <li><a href="./about.html">私たちについて</a></li>
+                        <li><a href="./news.html">お知らせ</a></li>
+                        <li><a href="./contact.html">お問い合わせ</a></li>
+                        <li><a href="./reviews.html">お客様の声</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <a href="#" data-page="privacy">プライバシーポリシー</a>
+                    <a href="#" data-page="terms">利用規約</a>
+                    <a href="#" data-page="law">特定商取引法に基づく表記</a>
+                </div>
+                <p class="footer-copyright">
+                    &copy; 2024 和粋 WASUI. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/contact.js"></script>
+</body>
+</html>

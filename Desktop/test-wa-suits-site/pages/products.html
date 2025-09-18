@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品一覧 - 和粋</title>
+    <meta name="description" content="和粋の商品一覧。季節の和菓子から伝統の和菓子まで、厳選された素材で作る美味しい和菓子をご紹介します。">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/products.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">和粋</span>
+                    <span class="logo-subtitle">WASUI</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="./products.html" class="nav-link active">商品一覧</a></li>
+                    <li><a href="./gifts.html" class="nav-link">ギフト</a></li>
+                    <li><a href="./about.html" class="nav-link">私たちについて</a></li>
+                    <li><a href="./news.html" class="nav-link">お知らせ</a></li>
+                    <li><a href="./contact.html" class="nav-link">お問い合わせ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="#" class="cart-btn">カート</a>
+                <button class="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ページヘッダー -->
+    <section class="page-header">
+        <div class="container">
+            <div class="page-header-content fade-in">
+                <h1 class="page-title">商品一覧</h1>
+                <p class="page-description">
+                    厳選された素材と伝統の技で作る、<br>
+                    心を込めた和菓子をお楽しみください
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- カテゴリフィルター -->
+    <section class="category-filter">
+        <div class="container">
+            <div class="filter-tabs fade-in">
+                <button class="filter-tab active" data-category="all">すべて</button>
+                <button class="filter-tab" data-category="seasonal">季節の和菓子</button>
+                <button class="filter-tab" data-category="traditional">伝統の和菓子</button>
+                <button class="filter-tab" data-category="gift">ギフトセット</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 商品グリッド -->
+    <section class="products-grid-section">
+        <div class="container">
+            <div class="products-grid">
+                <!-- 季節の和菓子 -->
+                <article class="product-card fade-in" data-category="seasonal">
+                    <div class="product-image">
+                        <div class="product-image-placeholder matcha-dorayaki"></div>
+                        <div class="product-label seasonal">季節限定</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">抹茶の和どら焼き</h3>
+                        <p class="product-description">上質な宇治抹茶を使用した季節限定の和どら焼き</p>
+                        <div class="product-price">¥380</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card fade-in" data-category="seasonal">
+                    <div class="product-image">
+                        <div class="product-image-placeholder sakura-mochi"></div>
+                        <div class="product-label seasonal">春限定</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">桜餅セット</h3>
+                        <p class="product-description">春の訪れを感じる美しい桜餅の詰め合わせ</p>
+                        <div class="product-price">¥1,200</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 伝統の和菓子 -->
+                <article class="product-card fade-in" data-category="traditional">
+                    <div class="product-image">
+                        <div class="product-image-placeholder kuri-manjuu"></div>
+                        <div class="product-label traditional">伝統</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">栗饅頭</h3>
+                        <p class="product-description">創業以来変わらぬ製法で作る自慢の栗饅頭</p>
+                        <div class="product-price">¥320</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card fade-in" data-category="traditional">
+                    <div class="product-image">
+                        <div class="product-image-placeholder yokan"></div>
+                        <div class="product-label traditional">伝統</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">小豆羊羹</h3>
+                        <p class="product-description">上質な小豆を使用した滑らかな口当たりの羊羹</p>
+                        <div class="product-price">¥850</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card fade-in" data-category="traditional">
+                    <div class="product-image">
+                        <div class="product-image-placeholder daifuku"></div>
+                        <div class="product-label traditional">伝統</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">豆大福</h3>
+                        <p class="product-description">もちもちの皮とあんこのハーモニーが絶妙</p>
+                        <div class="product-price">¥280</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- ギフトセット -->
+                <article class="product-card fade-in" data-category="gift">
+                    <div class="product-image">
+                        <div class="product-image-placeholder premium-gift"></div>
+                        <div class="product-label gift">ギフト</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">プレミアムギフトセット</h3>
+                        <p class="product-description">特別な方への贈り物に最適な詰め合わせ</p>
+                        <div class="product-price">¥3,500</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card fade-in" data-category="gift">
+                    <div class="product-image">
+                        <div class="product-image-placeholder seasonal-gift"></div>
+                        <div class="product-label gift">ギフト</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">季節の詰め合わせ</h3>
+                        <p class="product-description">季節の和菓子を美しい化粧箱に詰め合わせ</p>
+                        <div class="product-price">¥2,800</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card fade-in" data-category="seasonal">
+                    <div class="product-image">
+                        <div class="product-image-placeholder autumn-wagashi"></div>
+                        <div class="product-label seasonal">秋限定</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">もみじ饅頭</h3>
+                        <p class="product-description">秋の味覚を楽しむ美しいもみじ形の饅頭</p>
+                        <div class="product-price">¥350</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card fade-in" data-category="traditional">
+                    <div class="product-image">
+                        <div class="product-image-placeholder monaka"></div>
+                        <div class="product-label traditional">伝統</div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">最中</h3>
+                        <p class="product-description">サクサクの皮と上品なあんこが自慢の最中</p>
+                        <div class="product-price">¥290</div>
+                        <div class="product-actions">
+                            <button class="add-to-cart-btn">カートに追加</button>
+                            <button class="product-detail-btn">詳細を見る</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- 読み込みボタン -->
+            <div class="load-more-section fade-in">
+                <button class="load-more-btn">さらに表示</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特集セクション -->
+    <section class="featured-section">
+        <div class="container">
+            <h2 class="section-title fade-in">今月の特集</h2>
+            <div class="featured-content">
+                <div class="featured-item fade-in">
+                    <div class="featured-image">
+                        <div class="featured-image-placeholder spring-special"></div>
+                    </div>
+                    <div class="featured-info">
+                        <h3 class="featured-title">春の和菓子フェア</h3>
+                        <p class="featured-description">
+                            桜の季節にぴったりの和菓子を特別価格でご提供。
+                            期間限定の美しい春の味わいをお楽しみください。
+                        </p>
+                        <a href="#" class="featured-link">特集を見る</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-text">和粋</span>
+                        <span class="logo-subtitle">WASUI</span>
+                    </div>
+                    <p class="footer-description">
+                        伝統の技と心で、<br>
+                        美味しい和菓子をお届けします。
+                    </p>
+                    <div class="footer-contact">
+                        <p>TEL: 03-1234-5678</p>
+                        <p>営業時間: 9:00-18:00（定休日：水曜日）</p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">商品</h4>
+                    <ul class="footer-links">
+                        <li><a href="./products.html">商品一覧</a></li>
+                        <li><a href="./products.html?category=seasonal">季節の和菓子</a></li>
+                        <li><a href="./products.html?category=traditional">伝統の和菓子</a></li>
+                        <li><a href="./gifts.html">ギフトセット</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">ご利用案内</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" data-page="guide">ご利用ガイド</a></li>
+                        <li><a href="#" data-page="shipping">配送について</a></li>
+                        <li><a href="#" data-page="payment">お支払い方法</a></li>
+                        <li><a href="#" data-page="return">返品・交換</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">会社情報</h4>
+                    <ul class="footer-links">
+                        <li><a href="./about.html">私たちについて</a></li>
+                        <li><a href="./news.html">お知らせ</a></li>
+                        <li><a href="./contact.html">お問い合わせ</a></li>
+                        <li><a href="./reviews.html">お客様の声</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <a href="#" data-page="privacy">プライバシーポリシー</a>
+                    <a href="#" data-page="terms">利用規約</a>
+                    <a href="#" data-page="law">特定商取引法に基づく表記</a>
+                </div>
+                <p class="footer-copyright">
+                    &copy; 2024 和粋 WASUI. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/products.js"></script>
+</body>
+</html>

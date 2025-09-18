@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お知らせ - 和粋</title>
+    <meta name="description" content="和粋の最新情報、新商品のお知らせ、キャンペーン情報、イベント情報などをお届けします。">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/news.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <span class="logo-text">和粋</span>
+                    <span class="logo-subtitle">WASUI</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="./products.html" class="nav-link">商品一覧</a></li>
+                    <li><a href="./gifts.html" class="nav-link">ギフト</a></li>
+                    <li><a href="./about.html" class="nav-link">私たちについて</a></li>
+                    <li><a href="./news.html" class="nav-link active">お知らせ</a></li>
+                    <li><a href="./contact.html" class="nav-link">お問い合わせ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="#" class="cart-btn">カート</a>
+                <button class="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ページヘッダー -->
+    <section class="news-page-header">
+        <div class="container">
+            <div class="news-header-content fade-in">
+                <h1 class="page-title">お知らせ</h1>
+                <p class="page-description">
+                    和粋の最新情報をお届けします。<br>
+                    新商品情報やキャンペーン、イベントなどをご確認ください。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 検索・フィルター -->
+    <section class="news-filter">
+        <div class="container">
+            <div class="filter-controls fade-in">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="キーワードで検索">
+                    <button class="search-btn">🔍</button>
+                </div>
+                <div class="category-filter">
+                    <button class="filter-btn active" data-category="all">すべて</button>
+                    <button class="filter-btn" data-category="news">お知らせ</button>
+                    <button class="filter-btn" data-category="campaign">キャンペーン</button>
+                    <button class="filter-btn" data-category="event">イベント</button>
+                    <button class="filter-btn" data-category="product">新商品</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 重要なお知らせ -->
+    <section class="important-news">
+        <div class="container">
+            <div class="important-notice fade-in">
+                <div class="notice-icon">📢</div>
+                <div class="notice-content">
+                    <h3 class="notice-title">重要なお知らせ</h3>
+                    <p class="notice-text">
+                        4月1日より配送料金を改定いたします。詳細は<a href="#news-001" class="notice-link">こちら</a>をご確認ください。
+                    </p>
+                </div>
+                <button class="notice-close">&times;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ニュース一覧 -->
+    <section class="news-list">
+        <div class="container">
+            <div class="news-grid">
+                <!-- 新商品情報 -->
+                <article class="news-item fade-in" data-category="product" data-date="2024-03-20" id="news-001">
+                    <div class="news-image">
+                        <div class="news-image-placeholder spring-product"></div>
+                        <div class="news-label product">新商品</div>
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">2024.03.20</span>
+                            <span class="news-category">新商品</span>
+                        </div>
+                        <h3 class="news-title">春限定「桜餅セット」の販売開始について</h3>
+                        <p class="news-excerpt">
+                            桜の季節にぴったりの美しい桜餅セットの販売を開始いたします。
+                            職人が一つひとつ丁寧に作る季節限定の和菓子をお楽しみください。
+                        </p>
+                        <div class="news-tags">
+                            <span class="news-tag">春限定</span>
+                            <span class="news-tag">桜餅</span>
+                            <span class="news-tag">季節商品</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="read-more-btn" data-news="spring-product">続きを読む</button>
+                            <button class="share-btn">シェア</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- キャンペーン情報 -->
+                <article class="news-item fade-in" data-category="campaign" data-date="2024-03-15">
+                    <div class="news-image">
+                        <div class="news-image-placeholder white-day"></div>
+                        <div class="news-label campaign">キャンペーン</div>
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">2024.03.15</span>
+                            <span class="news-category">キャンペーン</span>
+                        </div>
+                        <h3 class="news-title">ホワイトデーギフト包装無料キャンペーン実施中</h3>
+                        <p class="news-excerpt">
+                            3月14日のホワイトデーに向けて、ギフト包装を無料で承っております。
+                            大切な方への感謝の気持ちを美しい包装でお届けします。
+                        </p>
+                        <div class="news-tags">
+                            <span class="news-tag">ホワイトデー</span>
+                            <span class="news-tag">ギフト包装</span>
+                            <span class="news-tag">無料</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="read-more-btn" data-news="white-day">続きを読む</button>
+                            <button class="share-btn">シェア</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- お知らせ -->
+                <article class="news-item fade-in" data-category="news" data-date="2024-03-10">
+                    <div class="news-image">
+                        <div class="news-image-placeholder delivery-info"></div>
+                        <div class="news-label news">お知らせ</div>
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">2024.03.10</span>
+                            <span class="news-category">お知らせ</span>
+                        </div>
+                        <h3 class="news-title">配送日時指定サービスの改善について</h3>
+                        <p class="news-excerpt">
+                            お客様により良いサービスをご提供するため、配送日時指定サービスを改善いたします。
+                            より柔軟な配送時間の選択が可能になります。
+                        </p>
+                        <div class="news-tags">
+                            <span class="news-tag">配送サービス</span>
+                            <span class="news-tag">改善</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="read-more-btn" data-news="delivery-info">続きを読む</button>
+                            <button class="share-btn">シェア</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- イベント情報 -->
+                <article class="news-item fade-in" data-category="event" data-date="2024-03-05">
+                    <div class="news-image">
+                        <div class="news-image-placeholder wagashi-event"></div>
+                        <div class="news-label event">イベント</div>
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">2024.03.05</span>
+                            <span class="news-category">イベント</span>
+                        </div>
+                        <h3 class="news-title">和菓子作り体験教室開催のお知らせ</h3>
+                        <p class="news-excerpt">
+                            4月より月1回、和菓子作り体験教室を開催いたします。
+                            職人の指導のもと、伝統的な和菓子作りをお楽しみいただけます。
+                        </p>
+                        <div class="news-tags">
+                            <span class="news-tag">体験教室</span>
+                            <span class="news-tag">和菓子作り</span>
+                            <span class="news-tag">月1回開催</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="read-more-btn" data-news="wagashi-event">続きを読む</button>
+                            <button class="share-btn">シェア</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 新商品情報2 -->
+                <article class="news-item fade-in" data-category="product" data-date="2024-02-28">
+                    <div class="news-image">
+                        <div class="news-image-placeholder matcha-series"></div>
+                        <div class="news-label product">新商品</div>
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">2024.02.28</span>
+                            <span class="news-category">新商品</span>
+                        </div>
+                        <h3 class="news-title">抹茶シリーズの新商品3種類を発売</h3>
+                        <p class="news-excerpt">
+                            上質な宇治抹茶を使用した新しい和菓子3種類を発売いたします。
+                            抹茶の豊かな風味をお楽しみいただける逸品です。
+                        </p>
+                        <div class="news-tags">
+                            <span class="news-tag">抹茶</span>
+                            <span class="news-tag">宇治抹茶</span>
+                            <span class="news-tag">3種類</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="read-more-btn" data-news="matcha-series">続きを読む</button>
+                            <button class="share-btn">シェア</button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- お知らせ2 -->
+                <article class="news-item fade-in" data-category="news" data-date="2024-02-20">
+                    <div class="news-image">
+                        <div class="news-image-placeholder store-hours"></div>
+                        <div class="news-label news">お知らせ</div>
+                    </div>
+                    <div class="news-content">
+                        <div class="news-meta">
+                            <span class="news-date">2024.02.20</span>
+                            <span class="news-category">お知らせ</span>
+                        </div>
+                        <h3 class="news-title">営業時間変更のお知らせ</h3>
+                        <p class="news-excerpt">
+                            3月1日より、本店の営業時間を変更いたします。
+                            新しい営業時間：9:00-19:00（従来：9:00-18:00）
+                        </p>
+                        <div class="news-tags">
+                            <span class="news-tag">営業時間</span>
+                            <span class="news-tag">本店</span>
+                            <span class="news-tag">変更</span>
+                        </div>
+                        <div class="news-actions">
+                            <button class="read-more-btn" data-news="store-hours">続きを読む</button>
+                            <button class="share-btn">シェア</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- ページネーション -->
+            <div class="pagination fade-in">
+                <button class="pagination-btn prev" disabled>前へ</button>
+                <div class="pagination-numbers">
+                    <button class="pagination-number active">1</button>
+                    <button class="pagination-number">2</button>
+                    <button class="pagination-number">3</button>
+                    <span class="pagination-dots">...</span>
+                    <button class="pagination-number">10</button>
+                </div>
+                <button class="pagination-btn next">次へ</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ニュースレター登録 -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content fade-in">
+                <div class="newsletter-info">
+                    <h2 class="newsletter-title">最新情報をお届け</h2>
+                    <p class="newsletter-description">
+                        新商品情報やキャンペーン、イベントの最新情報を<br>
+                        メールでお届けします。
+                    </p>
+                    <div class="newsletter-benefits">
+                        <div class="newsletter-benefit">
+                            <span class="benefit-icon">📧</span>
+                            <span>新商品の先行情報</span>
+                        </div>
+                        <div class="newsletter-benefit">
+                            <span class="benefit-icon">🎁</span>
+                            <span>限定キャンペーン</span>
+                        </div>
+                        <div class="newsletter-benefit">
+                            <span class="benefit-icon">📅</span>
+                            <span>イベント情報</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="newsletter-form">
+                    <form class="newsletter-signup">
+                        <div class="form-group">
+                            <input type="email" class="newsletter-input" placeholder="メールアドレスを入力" required>
+                            <button type="submit" class="newsletter-submit">登録する</button>
+                        </div>
+                        <div class="form-privacy">
+                            <label class="privacy-checkbox">
+                                <input type="checkbox" required>
+                                <span class="checkmark"></span>
+                                <a href="#" class="privacy-link">プライバシーポリシー</a>に同意します
+                            </label>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- アーカイブ -->
+    <section class="news-archive">
+        <div class="container">
+            <h2 class="section-title fade-in">過去のお知らせ</h2>
+            <div class="archive-grid fade-in">
+                <div class="archive-year">
+                    <h3 class="archive-year-title">2024年</h3>
+                    <ul class="archive-months">
+                        <li><a href="#" class="archive-link">3月 (6件)</a></li>
+                        <li><a href="#" class="archive-link">2月 (4件)</a></li>
+                        <li><a href="#" class="archive-link">1月 (3件)</a></li>
+                    </ul>
+                </div>
+                <div class="archive-year">
+                    <h3 class="archive-year-title">2023年</h3>
+                    <ul class="archive-months">
+                        <li><a href="#" class="archive-link">12月 (5件)</a></li>
+                        <li><a href="#" class="archive-link">11月 (3件)</a></li>
+                        <li><a href="#" class="archive-link">10月 (4件)</a></li>
+                    </ul>
+                </div>
+                <div class="archive-year">
+                    <h3 class="archive-year-title">カテゴリ別</h3>
+                    <ul class="archive-categories">
+                        <li><a href="#" class="archive-link">新商品 (12件)</a></li>
+                        <li><a href="#" class="archive-link">キャンペーン (8件)</a></li>
+                        <li><a href="#" class="archive-link">イベント (6件)</a></li>
+                        <li><a href="#" class="archive-link">お知らせ (15件)</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-text">和粋</span>
+                        <span class="logo-subtitle">WASUI</span>
+                    </div>
+                    <p class="footer-description">
+                        伝統の技と心で、<br>
+                        美味しい和菓子をお届けします。
+                    </p>
+                    <div class="footer-contact">
+                        <p>TEL: 03-1234-5678</p>
+                        <p>営業時間: 9:00-18:00（定休日：水曜日）</p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">商品</h4>
+                    <ul class="footer-links">
+                        <li><a href="./products.html">商品一覧</a></li>
+                        <li><a href="./products.html?category=seasonal">季節の和菓子</a></li>
+                        <li><a href="./products.html?category=traditional">伝統の和菓子</a></li>
+                        <li><a href="./gifts.html">ギフトセット</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">ご利用案内</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" data-page="guide">ご利用ガイド</a></li>
+                        <li><a href="#" data-page="shipping">配送について</a></li>
+                        <li><a href="#" data-page="payment">お支払い方法</a></li>
+                        <li><a href="#" data-page="return">返品・交換</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">会社情報</h4>
+                    <ul class="footer-links">
+                        <li><a href="./about.html">私たちについて</a></li>
+                        <li><a href="./news.html">お知らせ</a></li>
+                        <li><a href="./contact.html">お問い合わせ</a></li>
+                        <li><a href="./reviews.html">お客様の声</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <a href="#" data-page="privacy">プライバシーポリシー</a>
+                    <a href="#" data-page="terms">利用規約</a>
+                    <a href="#" data-page="law">特定商取引法に基づく表記</a>
+                </div>
+                <p class="footer-copyright">
+                    &copy; 2024 和粋 WASUI. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/news.js"></script>
+</body>
+</html>

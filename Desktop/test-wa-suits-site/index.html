@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和粋 - 伝統和菓子の専門店</title>
+    <meta name="description" content="厳選された素材で作る伝統和菓子の専門店「和粋」。季節の和菓子から贈り物まで、心を込めてお作りしています。">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <span class="logo-text">和粋</span>
+                    <span class="logo-subtitle">WASUI</span>
+                </a>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="./pages/products.html" class="nav-link">商品一覧</a></li>
+                    <li><a href="./pages/gifts.html" class="nav-link">ギフト</a></li>
+                    <li><a href="./pages/about.html" class="nav-link">私たちについて</a></li>
+                    <li><a href="./pages/news.html" class="nav-link">お知らせ</a></li>
+                    <li><a href="./pages/contact.html" class="nav-link">お問い合わせ</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <a href="#" class="cart-btn">カート</a>
+                <button class="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインビジュアル -->
+    <section class="hero">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <p class="hero-season">季節限定</p>
+                        <h1 class="hero-title">抹茶の和どら焼き</h1>
+                        <p class="hero-description">上質な宇治抹茶を使用した<br>季節限定の和どら焼き</p>
+                        <a href="./pages/products.html" class="hero-btn">商品を見る</a>
+                    </div>
+                    <div class="hero-image">
+                        <div class="hero-image-placeholder matcha"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <p class="hero-season">人気商品</p>
+                        <h1 class="hero-title">伝統の栗饅頭</h1>
+                        <p class="hero-description">創業以来変わらぬ製法で<br>作り続けている自慢の一品</p>
+                        <a href="./pages/products.html" class="hero-btn">商品を見る</a>
+                    </div>
+                    <div class="hero-image">
+                        <div class="hero-image-placeholder chestnut"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-dots">
+            <span class="dot active" data-slide="0"></span>
+            <span class="dot" data-slide="1"></span>
+        </div>
+    </section>
+
+    <!-- お知らせ -->
+    <section class="news-banner fade-in">
+        <div class="container">
+            <div class="news-content">
+                <h2 class="news-title">お知らせ</h2>
+                <div class="news-items">
+                    <div class="news-item">
+                        <span class="news-date">2024.03.15</span>
+                        <span class="news-label info">お知らせ</span>
+                        <p class="news-text">春の新商品「桜餅セット」の販売を開始いたします</p>
+                    </div>
+                    <div class="news-item">
+                        <span class="news-date">2024.03.10</span>
+                        <span class="news-label campaign">キャンペーン</span>
+                        <p class="news-text">ホワイトデーギフト包装無料キャンペーン実施中</p>
+                    </div>
+                    <div class="news-item">
+                        <span class="news-date">2024.03.05</span>
+                        <span class="news-label info">お知らせ</span>
+                        <p class="news-text">配送日時指定サービスの改善について</p>
+                    </div>
+                </div>
+                <a href="./pages/news.html" class="news-more">お知らせ一覧へ</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 商品情報 -->
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title fade-in">商品情報</h2>
+            
+            <!-- 季節の和菓子 -->
+            <div class="product-category fade-in">
+                <div class="product-info">
+                    <h3 class="product-title">季節の和菓子</h3>
+                    <p class="product-description">
+                        四季を感じる美しい和菓子を、厳選された素材で丁寧にお作りしています。
+                        その時々の旬の味わいをお楽しみください。
+                    </p>
+                    <a href="./pages/products.html?category=seasonal" class="product-link">商品を見る</a>
+                </div>
+                <div class="product-image">
+                    <div class="product-image-placeholder seasonal"></div>
+                </div>
+            </div>
+
+            <!-- 伝統の和菓子 -->
+            <div class="product-category fade-in">
+                <div class="product-image">
+                    <div class="product-image-placeholder traditional"></div>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">伝統の和菓子</h3>
+                    <p class="product-description">
+                        創業以来変わらぬ製法で作り続けている伝統的な和菓子。
+                        昔ながらの味わいを現代に受け継いでいます。
+                    </p>
+                    <a href="./pages/products.html?category=traditional" class="product-link">商品を見る</a>
+                </div>
+            </div>
+
+            <!-- 贈り物セット -->
+            <div class="product-category fade-in">
+                <div class="product-info">
+                    <h3 class="product-title">贈り物セット</h3>
+                    <p class="product-description">
+                        大切な方への贈り物に最適な詰め合わせセット。
+                        美しい包装でお届けいたします。
+                    </p>
+                    <a href="./pages/gifts.html" class="product-link">商品を見る</a>
+                </div>
+                <div class="product-image">
+                    <div class="product-image-placeholder gift"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- サービス特徴 -->
+    <section class="features-section">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-item fade-in">
+                    <div class="feature-icon">
+                        <div class="icon-placeholder delivery"></div>
+                    </div>
+                    <h3 class="feature-title">全国配送対応</h3>
+                    <p class="feature-description">
+                        全国どこでも新鮮な状態で<br>お届けいたします。
+                    </p>
+                </div>
+                <div class="feature-item fade-in">
+                    <div class="feature-icon">
+                        <div class="icon-placeholder gift-wrap"></div>
+                    </div>
+                    <h3 class="feature-title">ギフト包装無料</h3>
+                    <p class="feature-description">
+                        大切な方への贈り物に<br>美しい包装を承ります。
+                    </p>
+                </div>
+                <div class="feature-item fade-in">
+                    <div class="feature-icon">
+                        <div class="icon-placeholder handmade"></div>
+                    </div>
+                    <h3 class="feature-title">職人の手作り</h3>
+                    <p class="feature-description">
+                        熟練の職人が一つひとつ<br>心を込めて作っています。
+                    </p>
+                </div>
+                <div class="feature-item fade-in">
+                    <div class="feature-icon">
+                        <div class="icon-placeholder ingredients"></div>
+                    </div>
+                    <h3 class="feature-title">厳選素材</h3>
+                    <p class="feature-description">
+                        最高品質の素材のみを<br>使用しています。
+                    </p>
+                </div>
+                <div class="feature-item fade-in">
+                    <div class="feature-icon">
+                        <div class="icon-placeholder custom"></div>
+                    </div>
+                    <h3 class="feature-title">オーダーメイド対応</h3>
+                    <p class="feature-description">
+                        特別なご要望にも<br>お応えいたします。
+                    </p>
+                </div>
+                <div class="feature-item fade-in">
+                    <div class="feature-icon">
+                        <div class="icon-placeholder support"></div>
+                    </div>
+                    <h3 class="feature-title">安心のサポート</h3>
+                    <p class="feature-description">
+                        ご不明な点はお気軽に<br>お問い合わせください。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <span class="logo-text">和粋</span>
+                        <span class="logo-subtitle">WASUI</span>
+                    </div>
+                    <p class="footer-description">
+                        伝統の技と心で、<br>
+                        美味しい和菓子をお届けします。
+                    </p>
+                    <div class="footer-contact">
+                        <p>TEL: 03-1234-5678</p>
+                        <p>営業時間: 9:00-18:00（定休日：水曜日）</p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">商品</h4>
+                    <ul class="footer-links">
+                        <li><a href="./pages/products.html">商品一覧</a></li>
+                        <li><a href="./pages/products.html?category=seasonal">季節の和菓子</a></li>
+                        <li><a href="./pages/products.html?category=traditional">伝統の和菓子</a></li>
+                        <li><a href="./pages/gifts.html">ギフトセット</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">ご利用案内</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" data-page="guide">ご利用ガイド</a></li>
+                        <li><a href="#" data-page="shipping">配送について</a></li>
+                        <li><a href="#" data-page="payment">お支払い方法</a></li>
+                        <li><a href="#" data-page="return">返品・交換</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4 class="footer-title">会社情報</h4>
+                    <ul class="footer-links">
+                        <li><a href="./pages/about.html">私たちについて</a></li>
+                        <li><a href="./pages/news.html">お知らせ</a></li>
+                        <li><a href="./pages/contact.html">お問い合わせ</a></li>
+                        <li><a href="./pages/reviews.html">お客様の声</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <a href="#" data-page="privacy">プライバシーポリシー</a>
+                    <a href="#" data-page="terms">利用規約</a>
+                    <a href="#" data-page="law">特定商取引法に基づく表記</a>
+                </div>
+                <p class="footer-copyright">
+                    &copy; 2024 和粋 WASUI. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./assets/js/main.js"></script>
+</body>
+</html>
