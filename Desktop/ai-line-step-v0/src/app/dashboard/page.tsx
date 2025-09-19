@@ -22,7 +22,7 @@ export default function DashboardPage() {
         // 店舗情報を取得
         const shopDoc = await getDoc(doc(db, 'shops', user.uid));
         if (shopDoc.exists()) {
-          setShop({ id: user.uid, ...shopDoc.data() } as Shop);
+          setShop(shopDoc.data() as Shop);
         }
         // モック配信履歴（実際はGoogleドライブから取得）
         setCampaigns([

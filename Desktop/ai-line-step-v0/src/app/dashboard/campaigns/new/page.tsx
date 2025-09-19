@@ -38,7 +38,7 @@ export default function NewCampaignPage() {
         setUser(user);
         const shopDoc = await getDoc(doc(db, 'shops', user.uid));
         if (shopDoc.exists()) {
-          setShop({ id: user.uid, ...shopDoc.data() } as Shop);
+          setShop(shopDoc.data() as Shop);
         }
       } else {
         router.push('/login');
@@ -67,7 +67,7 @@ export default function NewCampaignPage() {
 
     setIsGenerating(true);
     try {
-      const response = await generateProposals(request, shop, shopConfig);
+      const response = await generateProposals(request, shop);
       setProposals(response.proposals);
       setStep('proposals');
     } catch (error) {
@@ -85,7 +85,7 @@ export default function NewCampaignPage() {
   }, []);
 
   const handleSendMessage = useCallback(async () => {
-    if (!editedMessage.trim() || !shop?.lineChannelAccessToken) {
+    if (!editedMessage.trim() || !shop?.line?.accessToken) {
       alert('LINEの設定が完了していません。');
       return;
     }
@@ -100,7 +100,7 @@ export default function NewCampaignPage() {
     setIsSending(true);
     try {
       const success = await broadcastLineMessage(
-        shop.lineChannelAccessToken,
+        shop.line.accessToken,
         editedMessage
       );
 
@@ -116,7 +116,7 @@ export default function NewCampaignPage() {
     } finally {
       setIsSending(false);
     }
-  }, [editedMessage, shop?.lineChannelAccessToken, router]);
+  }, [editedMessage, shop?.line?.accessToken, router]);
 
   if (!user || !shop) {
     return (

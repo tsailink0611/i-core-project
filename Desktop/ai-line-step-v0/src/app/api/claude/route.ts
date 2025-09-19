@@ -10,15 +10,14 @@ export async function POST(request: NextRequest) {
   try {
     // リクエストボディの解析
     const body = await request.json();
-    const { request: userRequest, shop, config } = body;
+    const { request: userRequest, shop } = body;
 
     // 入力検証
-    if (!userRequest || !shop || !config) {
+    if (!userRequest || !shop) {
       console.warn('Claude API: Missing parameters', {
         ip: clientIP,
         hasRequest: !!userRequest,
-        hasShop: !!shop,
-        hasConfig: !!config
+        hasShop: !!shop
       });
       return NextResponse.json(
         { error: 'Missing required parameters' },
@@ -30,7 +29,7 @@ export async function POST(request: NextRequest) {
     const sanitizedRequest = sanitizeInput(userRequest);
 
     // Claude API呼び出し
-    const response = await generateProposals(sanitizedRequest, shop, config);
+    const response = await generateProposals(sanitizedRequest, shop);
 
     // レスポンス時間ログ
     const duration = Date.now() - startTime;
