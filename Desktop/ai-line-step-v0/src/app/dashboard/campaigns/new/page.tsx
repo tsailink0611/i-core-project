@@ -29,7 +29,7 @@ export default function NewCampaignPage() {
   const [editedMessage, setEditedMessage] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [step, setStep] = useState<'input' | 'proposals' | 'edit' | 'confirm'>('input');
+  const [step, setStep] = useState<'input' | 'select' | 'confirm'>('input');
   const router = useRouter();
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function NewCampaignPage() {
     try {
       const response = await generateProposals(request, shop);
       setProposals(response.proposals);
-      setStep('proposals');
+      setStep('select');
     } catch (error) {
       console.error('Error generating proposals:', error);
       alert('提案の生成に失敗しました。もう一度お試しください。');
@@ -81,7 +81,7 @@ export default function NewCampaignPage() {
   const handleSelectProposal = useCallback((proposal: Proposal) => {
     setSelectedProposal(proposal);
     setEditedMessage(proposal.content);
-    setStep('edit');
+    setStep('confirm');
   }, []);
 
   const handleSendMessage = useCallback(async () => {
@@ -142,7 +142,7 @@ export default function NewCampaignPage() {
                 </svg>
               </button>
               <h1 className="text-xl font-semibold text-gray-900">
-                {UI_TEXT.TITLE_AI_PROPOSAL}
+                AI配信アシスタント
               </h1>
             </div>
           </div>
@@ -176,21 +176,84 @@ export default function NewCampaignPage() {
           </div>
         )}
 
-        {/* Step 2: Proposal Selection */}
-        {step === 'proposals' && (
+        {/* Step 2: Proposal Selection with Inline Editing */}
+        {step === 'select' && (
           <div className="space-y-6">
             <div>
               <h2 className="text-lg font-medium text-gray-900 mb-4">
-                AIからの提案（3パターン）
+                AIからの提案（3パターン）- 編集して配信
               </h2>
-              <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-1">
                 {proposals.map((proposal, index) => (
-                  <ProposalCard
+                  <div
                     key={index}
-                    proposal={proposal}
-                    isSelected={false}
-                    onSelect={() => handleSelectProposal(proposal)}
-                  />
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      selectedProposal?.type === proposal.type
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                          proposal.type === '王道' ? 'bg-green-100 text-green-800' :
+                          proposal.type === '挑戦' ? 'bg-orange-100 text-orange-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {proposal.type}
+                        </span>
+                        <h3 className="font-semibold text-gray-900">{proposal.title}</h3>
+                      </div>
+                      <div className="text-sm text-gray-500">{proposal.timing}</div>
+                    </div>
+
+                    {selectedProposal?.type === proposal.type ? (
+                      <div className="space-y-4">
+                        <textarea
+                          value={editedMessage}
+                          onChange={(e) => setEditedMessage(e.target.value)}
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <div className="flex justify-between items-center text-sm text-gray-500">
+                          <span>文字数: {editedMessage.length}</span>
+                          <span>効果: {proposal.reason}</span>
+                        </div>
+                        <div className="flex space-x-3">
+                          <button
+                            onClick={() => {
+                              setSelectedProposal(null);
+                              setEditedMessage('');
+                            }}
+                            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                          >
+                            キャンセル
+                          </button>
+                          <button
+                            onClick={() => setStep('confirm')}
+                            disabled={!editedMessage.trim()}
+                            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md"
+                          >
+                            配信確認へ
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-gray-700 mb-2">{proposal.content}</p>
+                        <p className="text-sm text-gray-500 mb-3">{proposal.reason}</p>
+                        <button
+                          onClick={() => {
+                            setSelectedProposal(proposal);
+                            setEditedMessage(proposal.content);
+                          }}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md"
+                        >
+                          この提案を編集
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
@@ -203,83 +266,57 @@ export default function NewCampaignPage() {
           </div>
         )}
 
-        {/* Step 3: Message Editing */}
-        {step === 'edit' && selectedProposal && (
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-medium text-gray-900 mb-4">
-                  メッセージを編集
-                </h2>
-                <div className="mb-4 p-3 bg-blue-50 rounded-md">
-                  <div className="text-sm text-blue-700">
-                    選択した提案: <span className="font-medium">{selectedProposal.type}</span>
-                  </div>
-                </div>
-                <textarea
-                  value={editedMessage}
-                  onChange={(e) => setEditedMessage(e.target.value)}
-                  rows={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                />
-                <div className="text-sm text-gray-500">
-                  文字数: {editedMessage.length}
-                </div>
-              </div>
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setStep('proposals')}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  ← 提案に戻る
-                </button>
-                <button
-                  onClick={() => setStep('confirm')}
-                  disabled={!editedMessage.trim()}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md"
-                >
-                  {UI_TEXT.BUTTON_PREVIEW}
-                </button>
-              </div>
-            </div>
-            <div>
-              <LinePreview message={editedMessage} />
-            </div>
-          </div>
-        )}
 
-        {/* Step 4: Final Confirmation */}
-        {step === 'confirm' && (
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-lg font-medium text-gray-900 mb-4">
-                  配信内容の確認
-                </h2>
-                <div className="bg-white p-4 rounded-lg border">
-                  <div className="whitespace-pre-wrap text-gray-900">
-                    {editedMessage}
-                  </div>
+        {/* Step 3: Final Confirmation */}
+        {step === 'confirm' && selectedProposal && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                配信内容の最終確認
+              </h2>
+              <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                <div className="text-sm text-blue-700 mb-1">
+                  選択した提案: <span className="font-medium">{selectedProposal.type}</span>
+                </div>
+                <div className="text-sm text-blue-600">
+                  推奨配信時間: {selectedProposal.timing}
                 </div>
               </div>
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setStep('edit')}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  ← 編集に戻る
-                </button>
-                <button
-                  onClick={handleSendMessage}
-                  disabled={isSending}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md"
-                >
-                  {isSending ? '配信中...' : UI_TEXT.BUTTON_SEND}
-                </button>
+
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">配信メッセージ</h3>
+                  <div className="bg-white p-4 rounded-lg border">
+                    <div className="whitespace-pre-wrap text-gray-900">
+                      {editedMessage}
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-500 mt-2">
+                    文字数: {editedMessage.length}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-medium text-gray-900 mb-3">プレビュー</h3>
+                  <LinePreview message={editedMessage} />
+                </div>
               </div>
             </div>
-            <div>
-              <LinePreview message={editedMessage} />
+
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setStep('select')}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                ← 提案に戻る
+              </button>
+              <button
+                onClick={handleSendMessage}
+                disabled={isSending}
+                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-2 px-6 rounded-md"
+              >
+                {isSending ? '配信中...' : UI_TEXT.BUTTON_SEND}
+              </button>
             </div>
           </div>
         )}
