@@ -1,100 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
-import { getClientIP, sanitizeLogData } from '@/lib/security';
-import { validateLineMessage } from '@/lib/validation';
+import { logger } from '@/lib/monitoring';
+import { getClientIP } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
-  const startTime = Date.now();
   const clientIP = getClientIP(request);
 
-  try {
-    const body = await request.text();
-    const signature = request.headers.get('x-line-signature');
+  // v0.1では店舗別WebhookのみサポートするBREAKING CHANGE通知
+  logger.warn('Legacy webhook endpoint accessed', {
+    ip: clientIP,
+    userAgent: request.headers.get('user-agent'),
+    timestamp: new Date().toISOString()
+  });
 
-    // 署名検証
-    if (!signature) {
-      console.warn('LINE webhook: Missing signature', { ip: clientIP });
-      return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
+  return NextResponse.json({
+    error: 'This endpoint is deprecated',
+    message: 'Please use shop-specific webhook: /api/line/webhook/[shopId]',
+    migration_guide: {
+      old_url: '/api/line/webhook',
+      new_url: '/api/line/webhook/{your-shop-id}',
+      note: 'Each shop must use their unique shopId in the webhook URL'
     }
-
-    // LINEシグネチャ検証
-    const channelSecret = process.env.LINE_CHANNEL_SECRET;
-    if (!channelSecret) {
-      console.error('LINE webhook: Missing channel secret');
-      return NextResponse.json({ error: 'Configuration error' }, { status: 500 });
+  }, {
+    status: 410, // Gone
+    headers: {
+      'X-Deprecated': 'true',
+      'X-Migration-Guide': 'Use /api/line/webhook/[shopId]'
     }
+  });
+}
 
-    const hash = crypto
-      .createHmac('sha256', channelSecret)
-      .update(body)
-      .digest('base64');
-
-    if (signature !== hash) {
-      console.warn('LINE webhook: Invalid signature', {
-        ip: clientIP,
-        receivedSignature: signature.substring(0, 10) + '...'
-      });
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-    }
-
-    // イベント処理
-    const webhookData = JSON.parse(body);
-    const events = webhookData.events || [];
-
-    for (const event of events) {
-      if (event.type === 'message' && event.message.type === 'text') {
-        const messageText = event.message.text;
-        const userId = event.source.userId;
-
-        // メッセージの検証
-        const validation = validateLineMessage(messageText);
-        if (!validation.isValid) {
-          console.warn('LINE webhook: Invalid message', {
-            userId: userId ? userId.substring(0, 8) + '...' : 'unknown',
-            errors: validation.errors
-          });
-          continue;
-        }
-
-        // ログ記録（機密情報を除外）
-        console.log('LINE message received:', {
-          userId: userId ? userId.substring(0, 8) + '...' : 'unknown',
-          messageLength: messageText.length,
-          timestamp: new Date().toISOString()
-        });
-
-        // 自動返信やトリガー処理をここで実装
-        // 例: 特定のキーワードで自動応答
-        if (messageText.includes('問い合わせ')) {
-          // カスタマーサポートに通知
-          console.log('Customer support notification triggered');
-        }
-      }
-    }
-
-    const duration = Date.now() - startTime;
-    console.log('LINE webhook processed:', {
-      eventsCount: events.length,
-      duration: `${duration}ms`,
-      ip: clientIP
-    });
-
-    return NextResponse.json({ status: 'ok' }, {
-      headers: {
-        'X-Response-Time': `${duration}ms`
-      }
-    });
-  } catch (error) {
-    const duration = Date.now() - startTime;
-    console.error('LINE webhook error:', {
-      error: sanitizeLogData(error),
-      ip: clientIP,
-      duration: `${duration}ms`
-    });
-
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    status: 'LINE Webhook API v0.1',
+    endpoints: {
+      webhook: '/api/line/webhook/[shopId]',
+      method: 'POST',
+      description: 'Shop-specific LINE webhook endpoint'
+    },
+    documentation: 'Each shop requires a unique webhook URL with their shopId'
+  });
 }
