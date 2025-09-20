@@ -21,13 +21,10 @@ const key = (() => {
 export function encrypt(plaintext: string): string {
   try {
     const iv = crypto.randomBytes(12); // GCMでは12バイト推奨
-    const cipher = crypto.createCipherGCM('aes-256-gcm', key);
-    cipher.setIVBytes(iv);
+    const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
     
-    const encrypted = Buffer.concat([
-      cipher.update(plaintext, 'utf8'),
-      cipher.final()
-    ]);
+    let encrypted = cipher.update(plaintext, 'utf8');
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
     
     const tag = cipher.getAuthTag(); // 16バイト認証タグ
     
@@ -56,14 +53,11 @@ export function decrypt(ciphertext: string): string {
     const tag = data.subarray(12, 28);
     const encrypted = data.subarray(28);
     
-    const decipher = crypto.createDecipherGCM('aes-256-gcm', key);
-    decipher.setIVBytes(iv);
+    const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
     decipher.setAuthTag(tag);
     
-    const decrypted = Buffer.concat([
-      decipher.update(encrypted),
-      decipher.final()
-    ]);
+    let decrypted = decipher.update(encrypted);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
     
     return decrypted.toString('utf8');
   } catch (error) {

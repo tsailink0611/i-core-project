@@ -8,6 +8,9 @@ import { validateLineMessage } from '@/lib/validation';
 import { logger } from '@/lib/monitoring';
 import { Shop } from '@/types';
 
+export const runtime = 'nodejs';
+export const preferredRegion = ['hnd1'];
+
 interface RouteParams {
   params: Promise<{ shopId: string }>;
 }

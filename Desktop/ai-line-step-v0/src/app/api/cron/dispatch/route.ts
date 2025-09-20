@@ -5,6 +5,9 @@ import { decryptLineCredentials } from '@/lib/crypto';
 import { broadcastLineMessage } from '@/lib/line';
 import { performanceMonitor, logger } from '@/lib/monitoring';
 
+export const runtime = 'nodejs';
+export const preferredRegion = ['hnd1'];
+
 // Vercel Cron認証
 const CRON_SECRET = process.env.CRON_SECRET || 'dev-secret';
 

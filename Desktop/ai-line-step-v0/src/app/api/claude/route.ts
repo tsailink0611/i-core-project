@@ -3,6 +3,9 @@ import { generateProposals } from '@/lib/claude';
 import { validateLineMessage, sanitizeInput } from '@/lib/validation';
 import { getClientIP, sanitizeLogData } from '@/lib/security';
 
+export const runtime = 'nodejs';
+export const preferredRegion = ['hnd1'];
+
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   const clientIP = getClientIP(request);

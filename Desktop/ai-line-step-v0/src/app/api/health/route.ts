@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { healthCheckHandler } from '@/lib/health';
 import { performanceMonitor, logger } from '@/lib/monitoring';
 
+export const runtime = 'nodejs';
+export const preferredRegion = ['hnd1'];
+
 export async function GET() {
   const startTime = Date.now();
   
