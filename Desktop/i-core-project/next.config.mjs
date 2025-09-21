@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
-  },
+  // App Router is stable in Next.js 14
 }
 
 export default nextConfig

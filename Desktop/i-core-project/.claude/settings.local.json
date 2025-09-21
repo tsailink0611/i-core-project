@@ -10,7 +10,10 @@
       "Bash(git remote set-url:*)",
       "Bash(git push:*)",
       "Bash(npm run dev:*)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "mcp__puppeteer__puppeteer_navigate",
+      "mcp__puppeteer__puppeteer_screenshot",
+      "mcp__puppeteer__puppeteer_click"
     ],
     "deny": [],
     "ask": []
