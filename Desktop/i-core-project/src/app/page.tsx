@@ -45,8 +45,14 @@ export default function Home() {
           {/* アクションボタン */}
           <div className="space-x-4">
             <Link
-              href="/setup"
+              href="/auth/login"
               className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              ログイン
+            </Link>
+            <Link
+              href="/setup"
+              className="inline-block bg-green-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
             >
               セットアップ開始
             </Link>

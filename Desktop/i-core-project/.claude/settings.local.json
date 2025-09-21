@@ -7,7 +7,10 @@
       "Bash(npm install)",
       "Read(//c/Users/tsail/Desktop/スクリーンショット/**)",
       "Bash(git remote add:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "Bash(git push:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx next:*)"
     ],
     "deny": [],
     "ask": []
