@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/tsail/Desktop/**)",
+      "Bash(git clone:*)",
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(git push:*)",
+      "Bash(xargs sed:*)",
+      "Bash(git checkout:*)",
+      "mcp__filesystem__read_file",
+      "mcp__filesystem__edit_file",
+      "Bash(git tag:*)",
+      "Read(//c/c/Users/tsail/Desktop/**)",
+      "Bash(gh browse:*)",
+      "Bash(git branch:*)",
+      "Bash(git merge:*)",
+      "Bash(git reset:*)",
+      "Bash(git fetch:*)",
+      "Bash(pkill:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
