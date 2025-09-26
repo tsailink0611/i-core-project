@@ -96,6 +96,9 @@ export default function DashboardPage() {
                 <Link href="/dashboard/messages" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   メッセージ
                 </Link>
+                <Link href="/dashboard/templates" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  テンプレート
+                </Link>
                 <Link href="/dashboard/analytics" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   分析
                 </Link>
