@@ -1,0 +1,141 @@
+// OpenAI API クライアント設定
+import OpenAI from 'openai'
+import { getPromotionTemplates, getSeasonalPromotions, getWeatherPromotions, type PromotionTemplate } from '@/lib/templates/promotionTemplates'
+
+// OpenAI設定
+export const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || '',
+})
+
+// GPT-3.5-turbo（mini）を使用したメッセージ生成
+export async function generateMessage(
+  businessTemplate: {
+    storeName: string
+    priceRange: string
+    atmosphere: string
+    targetCustomers: string[]
+    businessHours: string
+    features: string
+    goals: string
+    messageStyle: string
+    aiPrompt?: string
+    category?: string
+    subCategory?: string
+    businessType?: string
+  },
+  messageType: 'greeting' | 'promotion' | 'announcement' | 'seasonal' = 'promotion',
+  promotionContext?: PromotionTemplate
+): Promise<string> {
+  // プロモーション企画コンテキストを取得
+  let promotionInfo = ''
+  if (promotionContext) {
+    promotionInfo = `
+実施予定のプロモーション企画：
+- 企画名：${promotionContext.title}
+- 内容：${promotionContext.description}
+- ターゲット：${promotionContext.target.join('、')}
+- 期待効果：${promotionContext.expectedEffect}
+- 参考例文：${promotionContext.messageExample}
+`
+  } else if (businessTemplate.category && businessTemplate.subCategory && businessTemplate.businessType) {
+    // 季節のプロモーションを自動取得
+    const seasonalPromotions = getSeasonalPromotions(
+      businessTemplate.category,
+      businessTemplate.subCategory,
+      businessTemplate.businessType
+    )
+    if (seasonalPromotions.length > 0) {
+      const promo = seasonalPromotions[0]
+      promotionInfo = `
+現在実施可能な季節企画：
+- 企画名：${promo.title}
+- 内容：${promo.description}
+- ターゲット：${promo.target.join('、')}
+`
+    }
+  }
+
+  const systemPrompt = `あなたは${businessTemplate.storeName}のプロモーション・マーケティングアシスタントです。
+【店舗情報】
+- 業種：${businessTemplate.category || ''} > ${businessTemplate.subCategory || ''} > ${businessTemplate.businessType || ''}
+- 店舗名：${businessTemplate.storeName}
+- 特徴：${businessTemplate.features}
+- 雰囲気：${businessTemplate.atmosphere}
+- 価格帯：${businessTemplate.priceRange}
+- ターゲット層：${businessTemplate.targetCustomers.join('、')}
+- 営業時間：${businessTemplate.businessHours}
+- 目標：${businessTemplate.goals}
+- メッセージトーン：${businessTemplate.messageStyle}
+${businessTemplate.aiPrompt || ''}
+
+${promotionInfo}
+
+以下の条件でLINE公式アカウント用メッセージを作成してください：
+- 文字数は100-150文字程度
+- 絵文字を1-2個使用して親しみやすく
+- ${businessTemplate.messageStyle}なトーンで
+- 具体的な行動を促すCTAを含める
+- 店舗の特徴や強みを活かした内容に
+- ターゲット層（${businessTemplate.targetCustomers.join('、')}）に響く表現で`
+
+  const userPrompt = {
+    greeting: '初めてのお客様向けの挨拶メッセージを作成してください。店舗の魅力と特徴を伝え、親しみやすい第一印象を与えてください。',
+    promotion: promotionContext
+      ? `「${promotionContext.title}」のプロモーションメッセージを作成してください。企画の魅力を伝え、お客様の来店を促してください。`
+      : '今週のおすすめや特別キャンペーンのメッセージを作成してください。店舗の強みを活かしたお得感のある企画を提案してください。',
+    announcement: '重要なお知らせ（営業時間変更や新サービスなど）のメッセージを作成してください。',
+    seasonal: '現在の季節に合わせた特別企画やメニューのメッセージを作成してください。季節感を演出し、この時期だけの特別感を表現してください。'
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-5-mini', // GPT-5-miniを使用（2025年8月公開）
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt[messageType] }
+      ],
+      max_completion_tokens: 200, // GPT-5-miniの標準パラメータ
+    })
+
+    const content = response.choices[0]?.message?.content?.trim()
+    if (!content) {
+      console.warn('GPT-5-mini returned empty content, retrying with different prompt...')
+      // リトライロジック: より具体的なプロンプトで再試行
+      const retryResponse = await openai.chat.completions.create({
+        model: 'gpt-5-mini',
+        messages: [
+          { role: 'system', content: `あなたは${businessTemplate.storeName}のLINE公式アカウント運用担当です。必ず日本語で100-150文字程度のメッセージを作成してください。` },
+          { role: 'user', content: `${businessTemplate.storeName}の${messageType === 'promotion' ? 'キャンペーン告知' : messageType === 'greeting' ? '初回挨拶' : messageType === 'seasonal' ? '季節のお知らせ' : 'お知らせ'}メッセージを絵文字1-2個を使って作成してください。必ず具体的な内容を含めてください。` }
+        ],
+        max_completion_tokens: 200,
+      })
+      return retryResponse.choices[0]?.message?.content?.trim() || `こんにちは！${businessTemplate.storeName}です🎉 ${businessTemplate.features}でお待ちしています！`
+    }
+    return content
+  } catch (error) {
+    console.error('OpenAI API Error:', error)
+    throw new Error('メッセージの生成に失敗しました。')
+  }
+}
+
+// 複数パターンのメッセージを一度に生成
+export async function generateMultipleMessages(
+  businessTemplate: any,
+  count: number = 3,
+  selectedPromotion?: PromotionTemplate
+): Promise<string[]> {
+  const messageTypes: ('greeting' | 'promotion' | 'announcement' | 'seasonal')[] =
+    ['promotion', 'seasonal', 'greeting']
+
+  const promises = messageTypes.slice(0, count).map(type =>
+    generateMessage(businessTemplate, type, selectedPromotion)
+  )
+
+  try {
+    const messages = await Promise.all(promises)
+    return messages
+  } catch (error) {
+    console.error('Failed to generate multiple messages:', error)
+    return ['メッセージの生成に失敗しました。']
+  }
+}

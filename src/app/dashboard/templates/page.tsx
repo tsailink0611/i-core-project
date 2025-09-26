@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { getBusinessTemplate, BusinessTemplate } from '@/lib/templates/businessTemplates'
+import { getPromotionTemplates, getSeasonalPromotions, type PromotionTemplate, type BusinessPromotions } from '@/lib/templates/promotionTemplates'
 
 // 業種階層データ
 type BusinessCategories = {
@@ -43,7 +45,7 @@ export default function TemplatesPage() {
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('')
   const [selectedBusinessType, setSelectedBusinessType] = useState<string>('')
   const [showCustomization, setShowCustomization] = useState(false)
-  const [businessDetails, setBusinessDetails] = useState({
+  const [businessDetails, setBusinessDetails] = useState<BusinessTemplate>({
     storeName: '',
     priceRange: '',
     atmosphere: '',
@@ -53,6 +55,11 @@ export default function TemplatesPage() {
     goals: '',
     messageStyle: ''
   })
+  const [aiMessages, setAiMessages] = useState<string[]>([])
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [availablePromotions, setAvailablePromotions] = useState<BusinessPromotions | null>(null)
+  const [selectedPromotion, setSelectedPromotion] = useState<PromotionTemplate | null>(null)
+  const [showPromotionSelector, setShowPromotionSelector] = useState(false)
 
   const resetSelection = () => {
     setSelectedCategory('')
@@ -77,6 +84,55 @@ export default function TemplatesPage() {
   const handleBusinessTypeSelect = (businessType: string) => {
     setSelectedBusinessType(businessType)
     setShowCustomization(true)
+
+    // テンプレートデータを自動設定
+    const template = getBusinessTemplate(selectedCategory, selectedSubCategory, businessType)
+    if (template) {
+      setBusinessDetails({
+        ...template,
+        category: selectedCategory,
+        subCategory: selectedSubCategory,
+        businessType: businessType
+      })
+    }
+
+    // プロモーションテンプレートを読み込み
+    const promotions = getPromotionTemplates(selectedCategory, selectedSubCategory, businessType)
+    setAvailablePromotions(promotions)
+    setSelectedPromotion(null)
+    setShowPromotionSelector(true)
+  }
+
+  // AI応答テスト関数
+  const handleAITest = async () => {
+    setIsGenerating(true)
+    setAiMessages([])
+
+    try {
+      const response = await fetch('/api/generate-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          businessTemplate: businessDetails,
+          count: 3,
+          selectedPromotion: selectedPromotion
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setAiMessages(data.messages || [])
+      } else {
+        setAiMessages(['エラー: メッセージの生成に失敗しました。'])
+      }
+    } catch (error) {
+      console.error('AI Test Error:', error)
+      setAiMessages(['エラー: ネットワークエラーが発生しました。'])
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const handleInputChange = (field: string, value: string | string[]) => {
@@ -383,8 +439,127 @@ export default function TemplatesPage() {
               </div>
             </div>
 
+            {/* プロモーション企画選択エリア */}
+            {availablePromotions && (
+              <div className="mt-6 p-6 bg-blue-50 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  📢 プロモーション企画選択 (半自動テンプレート)
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      定期プロモーション
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {availablePromotions.regular.map((promo, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedPromotion(promo)}
+                          className={`p-3 text-left rounded-lg border ${
+                            selectedPromotion?.title === promo.title
+                              ? 'border-blue-500 bg-blue-100'
+                              : 'border-gray-200 bg-white hover:border-blue-300'
+                          }`}
+                        >
+                          <div className="font-medium text-gray-900">{promo.title}</div>
+                          <div className="text-sm text-gray-600 mt-1">{promo.description}</div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            ターゲット: {promo.target.join('、')}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      季節・イベント企画
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {availablePromotions.seasonal.map((promo, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedPromotion(promo)}
+                          className={`p-3 text-left rounded-lg border ${
+                            selectedPromotion?.title === promo.title
+                              ? 'border-blue-500 bg-blue-100'
+                              : 'border-gray-200 bg-white hover:border-blue-300'
+                          }`}
+                        >
+                          <div className="font-medium text-gray-900">{promo.title}</div>
+                          <div className="text-sm text-gray-600 mt-1">{promo.description}</div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            期待効果: {promo.expectedEffect}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      天候連動・特別企画
+                    </label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[...availablePromotions.weather, ...availablePromotions.special].map((promo, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedPromotion(promo)}
+                          className={`p-3 text-left rounded-lg border ${
+                            selectedPromotion?.title === promo.title
+                              ? 'border-blue-500 bg-blue-100'
+                              : 'border-gray-200 bg-white hover:border-blue-300'
+                          }`}
+                        >
+                          <div className="font-medium text-gray-900">{promo.title}</div>
+                          <div className="text-sm text-gray-600 mt-1">{promo.description}</div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            実施条件: {promo.trigger}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {selectedPromotion && (
+                    <div className="mt-4 p-4 bg-white rounded-lg border border-blue-200">
+                      <h4 className="font-medium text-gray-900 mb-2">選択中の企画</h4>
+                      <div className="text-sm space-y-1">
+                        <div><strong>企画名:</strong> {selectedPromotion.title}</div>
+                        <div><strong>内容:</strong> {selectedPromotion.description}</div>
+                        <div><strong>ターゲット:</strong> {selectedPromotion.target.join('、')}</div>
+                        <div><strong>期待効果:</strong> {selectedPromotion.expectedEffect}</div>
+                        <div className="mt-2">
+                          <strong>参考メッセージ例:</strong>
+                          <div className="mt-1 p-2 bg-gray-50 rounded text-gray-700">
+                            {selectedPromotion.messageExample}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-sm text-gray-600">
+                    💡 企画を選択するとAIがその内容に基づいてメッセージを生成します。選択しない場合は一般的なプロモーションメッセージを生成します。
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* アクションボタン */}
             <div className="mt-8 flex space-x-4">
+              <button
+                onClick={handleAITest}
+                disabled={isGenerating}
+                className={`${
+                  isGenerating
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700'
+                } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
+              >
+                <span className="mr-2">🧪</span>
+                {isGenerating ? 'AI生成中...' : 'AIテスト実行 (GPT-5-mini)'}
+              </button>
               <Link
                 href="/dashboard/messages/new"
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 flex items-center"
@@ -396,6 +571,36 @@ export default function TemplatesPage() {
                 テンプレートを保存
               </button>
             </div>
+
+            {/* AI生成メッセージ表示エリア */}
+            {aiMessages.length > 0 && (
+              <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  🤖 AI生成メッセージ (GPT-5-mini)
+                </h3>
+                <div className="space-y-4">
+                  {aiMessages.map((message, index) => (
+                    <div key={index} className="p-4 bg-white rounded-lg border border-gray-200">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-sm font-medium text-gray-600">
+                          パターン {index + 1}
+                        </span>
+                        <button
+                          onClick={() => navigator.clipboard.writeText(message)}
+                          className="text-sm text-blue-600 hover:text-blue-700"
+                        >
+                          📋 コピー
+                        </button>
+                      </div>
+                      <p className="text-gray-800 whitespace-pre-wrap">{message}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 text-sm text-gray-500">
+                  ※ これらは{businessDetails.storeName || 'お店'}の情報を基にAIが自動生成したサンプルメッセージです。
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
