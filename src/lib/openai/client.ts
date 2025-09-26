@@ -33,7 +33,7 @@ export async function generateMessage(
 実施予定のプロモーション企画：
 - 企画名：${promotionContext.title}
 - 内容：${promotionContext.description}
-- ターゲット：${promotionContext.target.join('、')}
+- ターゲット：${Array.isArray(promotionContext.target) ? promotionContext.target.join('、') : (promotionContext.target || '一般のお客様')}
 - 期待効果：${promotionContext.expectedEffect}
 - 参考例文：${promotionContext.messageExample}
 `
@@ -50,7 +50,7 @@ export async function generateMessage(
 現在実施可能な季節企画：
 - 企画名：${promo.title}
 - 内容：${promo.description}
-- ターゲット：${promo.target.join('、')}
+- ターゲット：${Array.isArray(promo.target) ? promo.target.join('、') : (promo.target || '一般のお客様')}
 `
     }
   }
@@ -62,7 +62,7 @@ export async function generateMessage(
 - 特徴：${businessTemplate.features}
 - 雰囲気：${businessTemplate.atmosphere}
 - 価格帯：${businessTemplate.priceRange}
-- ターゲット層：${businessTemplate.targetCustomers.join('、')}
+- ターゲット層：${Array.isArray(businessTemplate.targetCustomers) ? businessTemplate.targetCustomers.join('、') : (businessTemplate.targetCustomers || '一般のお客様')}
 - 営業時間：${businessTemplate.businessHours}
 - 目標：${businessTemplate.goals}
 - メッセージトーン：${businessTemplate.messageStyle}
@@ -76,7 +76,7 @@ ${promotionInfo}
 - ${businessTemplate.messageStyle}なトーンで
 - 具体的な行動を促すCTAを含める
 - 店舗の特徴や強みを活かした内容に
-- ターゲット層（${businessTemplate.targetCustomers.join('、')}）に響く表現で`
+- ターゲット層（${Array.isArray(businessTemplate.targetCustomers) ? businessTemplate.targetCustomers.join('、') : (businessTemplate.targetCustomers || '一般のお客様')}）に響く表現で`
 
   const userPrompt = {
     greeting: '初めてのお客様向けの挨拶メッセージを作成してください。店舗の魅力と特徴を伝え、親しみやすい第一印象を与えてください。',
