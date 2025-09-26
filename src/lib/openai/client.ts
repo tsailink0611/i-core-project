@@ -1,11 +1,19 @@
 // OpenAI API クライアント設定
 import OpenAI from 'openai'
 import { getPromotionTemplates, getSeasonalPromotions, getWeatherPromotions, type PromotionTemplate } from '@/lib/templates/promotionTemplates'
+import { resolveModel } from './modelRouter'
 
-// OpenAI設定
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-})
+// OpenAI シングルトンクライアント
+let _client: OpenAI | null = null
+
+export function getOpenAI(): OpenAI {
+  if (!_client) {
+    _client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || '',
+    })
+  }
+  return _client
+}
 
 // GPT-3.5-turbo（mini）を使用したメッセージ生成
 export async function generateMessage(
@@ -88,26 +96,31 @@ ${promotionInfo}
   }
 
   try {
+    const openai = getOpenAI()
+    const model = await resolveModel(openai)
+
     const response = await openai.chat.completions.create({
-      model: 'gpt-5-mini', // GPT-5-miniを使用（2025年8月公開）
+      model,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt[messageType] }
       ],
-      max_completion_tokens: 200, // GPT-5-miniの標準パラメータ
+      max_tokens: 400, // Chat Completions用の正しいパラメータ
+      temperature: 0.7,
     })
 
     const content = response.choices[0]?.message?.content?.trim()
     if (!content) {
-      console.warn('GPT-5-mini returned empty content, retrying with different prompt...')
+      console.warn('Model returned empty content, retrying with different prompt...')
       // リトライロジック: より具体的なプロンプトで再試行
       const retryResponse = await openai.chat.completions.create({
-        model: 'gpt-5-mini',
+        model,
         messages: [
           { role: 'system', content: `あなたは${businessTemplate.storeName}のLINE公式アカウント運用担当です。必ず日本語で100-150文字程度のメッセージを作成してください。` },
           { role: 'user', content: `${businessTemplate.storeName}の${messageType === 'promotion' ? 'キャンペーン告知' : messageType === 'greeting' ? '初回挨拶' : messageType === 'seasonal' ? '季節のお知らせ' : 'お知らせ'}メッセージを絵文字1-2個を使って作成してください。必ず具体的な内容を含めてください。` }
         ],
-        max_completion_tokens: 200,
+        max_tokens: 400,
+        temperature: 0,
       })
       return retryResponse.choices[0]?.message?.content?.trim() || `こんにちは！${businessTemplate.storeName}です🎉 ${businessTemplate.features}でお待ちしています！`
     }

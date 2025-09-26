@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   try {
     const { personaPrompt, businessTemplate } = await request.json()
@@ -38,10 +41,14 @@ export async function POST(request: NextRequest) {
           'promotion'
         )
 
+        console.log('OpenAI Response:', response)
+
         // レスポンスを個別の提案に分割
         const suggestions = response.split(/\d+\.\s*【/).slice(1).map((item, index) => {
           return `${index + 1}. 【${item.trim()}`
         })
+
+        console.log('Parsed suggestions:', suggestions)
 
         return NextResponse.json({ suggestions })
 
