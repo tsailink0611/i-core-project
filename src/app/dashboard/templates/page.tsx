@@ -2,43 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { getBusinessTemplate, BusinessTemplate } from '@/lib/templates/businessTemplates'
+import { getBusinessTemplate } from '@/lib/templates/businessTemplates'
 import { getPromotionTemplates, getSeasonalPromotions, type PromotionTemplate, type BusinessPromotions } from '@/lib/templates/promotionTemplates'
-
-// 業種階層データ
-type BusinessCategories = {
-  [key: string]: {
-    [key: string]: string[]
-  }
-}
-
-const businessCategories: BusinessCategories = {
-  '飲食業': {
-    '居酒屋': ['個人経営', 'チェーン店', '高級店', 'カジュアル'],
-    '和食': ['懐石', '家庭料理', '寿司', '蕎麦・うどん', '焼き鳥'],
-    '洋食': ['イタリアン', 'フレンチ', 'カフェ', 'ファミレス'],
-    '中華': ['本格中華', 'ラーメン', '餃子専門', '四川料理'],
-    'バー': ['ワインバー', 'ウイスキーバー', 'カクテルバー', 'スポーツバー'],
-    'カフェ': ['コーヒー専門', 'スイーツカフェ', 'コワーキングカフェ']
-  },
-  '小売業': {
-    'アパレル': ['レディース', 'メンズ', 'キッズ', 'アクセサリー'],
-    '雑貨': ['インテリア', '文具', 'キッチン用品', 'ギフト'],
-    '食品': ['生鮮食品', '加工食品', 'スイーツ', '地域特産'],
-    '書籍': ['新刊書店', '古書店', '専門書', 'コミック']
-  },
-  'サービス業': {
-    '美容': ['美容院', 'エステ', 'ネイル', 'マッサージ'],
-    '医療': ['クリニック', '歯科', '整体', '薬局'],
-    '教育': ['学習塾', '語学教室', '音楽教室', 'フィットネス'],
-    '士業': ['法律事務所', '会計事務所', '税理士', '行政書士']
-  },
-  '製造業': {
-    '食品製造': ['パン製造', '和菓子', '惣菜', '調味料'],
-    '工芸品': ['陶芸', '木工', '金属加工', 'テキスタイル'],
-    '印刷': ['商業印刷', 'パッケージ', 'サイン', 'デジタル印刷']
-  }
-}
+import { BUSINESS_CATEGORIES, getMainCategories, getSubCategories, getBusinessTypes } from '@/constants/businessCategories'
+import type { BusinessTemplate } from '@/types/business'
 
 export default function TemplatesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
