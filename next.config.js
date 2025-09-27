@@ -8,8 +8,6 @@ const nextConfig = {
 
   // Experimental features for performance
   experimental: {
-    // Enable app directory features
-    appDir: true,
     // Server components optimization
     serverComponentsExternalPackages: ['openai'],
     // Optimize package imports
@@ -101,15 +99,6 @@ const nextConfig = {
         ],
       },
       {
-        source: '/api/(.*)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, s-maxage=1, stale-while-revalidate=59',
-          },
-        ],
-      },
-      {
         source: '/_next/static/(.*)',
         headers: [
           {
@@ -157,13 +146,6 @@ const nextConfig = {
   // Page extensions
   pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
 
-  // API route configuration
-  api: {
-    bodyParser: {
-      sizeLimit: '1mb',
-    },
-    responseLimit: '8mb',
-  },
 }
 
 module.exports = nextConfig
