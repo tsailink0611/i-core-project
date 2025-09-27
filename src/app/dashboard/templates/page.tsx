@@ -105,6 +105,55 @@ export default function TemplatesPage() {
     setShowPromotionSelector(true)
   }, [selectedCategory, selectedSubCategory, measureUserInteraction])
 
+  // 簡潔なプロモーション生成関数
+  const handlePromotionGeneration = useCallback(async () => {
+    // 基本検証
+    if (!businessDetails.category || !businessDetails.subCategory) {
+      alert('業種を選択してください')
+      return
+    }
+
+    setIsGenerating(true)
+    setAiMessages([])
+
+    try {
+      const response = await fetch('/api/generate-persona-promotions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personaPrompt: `${businessDetails.category}の${businessDetails.subCategory}店舗向けのプロモーション企画を作成してください。`,
+          businessTemplate: {
+            category: businessDetails.category,
+            subCategory: businessDetails.subCategory,
+            storeName: businessDetails.storeName || '店舗',
+            features: businessDetails.features || '',
+            atmosphere: businessDetails.atmosphere || '',
+            priceRange: businessDetails.priceRange || '',
+            targetCustomers: businessDetails.targetCustomers || []
+          }
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('プロモーションの生成に失敗しました。')
+      }
+
+      const data = await response.json()
+      if (data.suggestions && data.suggestions.length > 0) {
+        setAiMessages(data.suggestions)
+      } else {
+        setAiMessages(['プロモーション企画の生成に失敗しました。'])
+      }
+    } catch (error) {
+      console.error('プロモーション生成エラー:', error)
+      setAiMessages(['エラーが発生しました。業種と店舗情報を確認してください。'])
+    } finally {
+      setIsGenerating(false)
+    }
+  }, [businessDetails])
+
   // AI応答テスト関数（キャッシュ対応）
   const handleAITest = useCallback(async () => {
     setIsGenerating(true)
@@ -396,17 +445,19 @@ export default function TemplatesPage() {
                 } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
               >
                 <span className="mr-2">🎉</span>
-                {isGenerating ? 'AI生成中...' : 'プロモーションAI生成 (GPT-5-mini)'}
+                {isGenerating ? 'AI生成中...' : 'プロモーション生成 (GPT-5-mini)'}
               </button>
-              <Link
-                href={`/dashboard/simplified-templates?preset=${encodeURIComponent(JSON.stringify(businessDetails))}`}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 flex items-center"
+              <button
+                onClick={handleAITest}
+                disabled={isGenerating}
+                className={`${
+                  isGenerating
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
               >
-                <span className="mr-2">🤖</span>
-                専用AIアシスタントでメッセージ作成
-              </Link>
-              <button className="bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700">
-                テンプレートを保存
+                <span className="mr-2">📅</span>
+                {isGenerating ? 'AI生成中...' : 'スケジュール生成 (GPT-5-mini)'}
               </button>
             </div>
 

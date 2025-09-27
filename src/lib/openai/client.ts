@@ -86,9 +86,20 @@ ${promotionInfo}
     seasonal: '現在の季節に合わせた特別企画やメニューのメッセージを作成してください。季節感を演出し、この時期だけの特別感を表現してください。'
   }[messageType]
 
+  console.log('Custom Prompt Check:', { customPrompt, messageType, hasCustom: !!customPrompt })
+
   try {
     const openai = getOpenAI()
     const model = await resolveModel(openai)
+
+    // デバッグログ: 送信するプロンプトを確認
+    console.log('=== AI API Debug ===')
+    console.log('Model:', model)
+    console.log('Business Template aiPrompt:', businessTemplate.aiPrompt)
+    console.log('Message Type:', messageType)
+    console.log('System Prompt:', systemPrompt)
+    console.log('User Prompt:', userPrompt)
+    console.log('==================')
 
     const response = await openai.chat.completions.create({
       model,
