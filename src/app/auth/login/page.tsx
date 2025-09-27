@@ -169,13 +169,22 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-3">
             <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
               <p className="text-sm text-blue-800 font-medium">テスト用アカウント</p>
               <p className="text-xs text-blue-600 mt-1">
                 メール: demo@l-core.com<br />
                 パスワード: demo123
               </p>
+            </div>
+
+            <div className="bg-orange-50 border border-orange-200 rounded-md p-3">
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="text-sm text-orange-700 font-medium hover:text-orange-800"
+              >
+                🔧 開発用: 認証をスキップしてダッシュボードへ
+              </button>
             </div>
           </div>
         </div>

@@ -21,7 +21,7 @@ export async function resolveModel(openai: OpenAI): Promise<string> {
     await openai.chat.completions.create({
       model: PINNED_MODEL,
       messages: [{ role: 'user', content: 'ping' }],
-      max_tokens: 1,
+      max_completion_tokens: 1,
     })
 
     cached = PINNED_MODEL
@@ -38,7 +38,7 @@ export async function resolveModel(openai: OpenAI): Promise<string> {
         await openai.chat.completions.create({
           model,
           messages: [{ role: 'user', content: 'ping' }],
-          max_tokens: 1,
+          max_completion_tokens: 1,
         })
 
         cached = model

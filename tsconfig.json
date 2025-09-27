@@ -2,11 +2,14 @@
   "compilerOptions": {
     // Language and Environment
     "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-
     // Module Resolution
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -16,7 +19,6 @@
     "noEmit": true,
     "jsx": "preserve",
     "incremental": true,
-
     // Type Checking - Balanced Mode
     "noImplicitAny": false,
     "strictNullChecks": true,
@@ -28,38 +30,49 @@
     "noUncheckedIndexedAccess": false,
     "noImplicitOverride": false,
     "exactOptionalPropertyTypes": false,
-
     // Advanced Type Checking
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitThis": false,
     "useUnknownInCatchVariables": false,
-
     // Emit
     "noEmitOnError": false,
     "preserveConstEnums": true,
     "declaration": false,
     "declarationMap": false,
     "sourceMap": true,
-
     // Path Mapping
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/types/*": ["./src/types/*"],
-      "@/constants/*": ["./src/constants/*"],
-      "@/utils/*": ["./src/lib/utils/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@/components/*": [
+        "./src/components/*"
+      ],
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@/types/*": [
+        "./src/types/*"
+      ],
+      "@/constants/*": [
+        "./src/constants/*"
+      ],
+      "@/utils/*": [
+        "./src/lib/utils/*"
+      ]
     },
-
     // Plugin Support
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "esModuleInterop": true
   },
   "include": [
     "next-env.d.ts",
