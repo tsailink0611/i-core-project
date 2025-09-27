@@ -395,15 +395,15 @@ export default function TemplatesPage() {
                     : 'bg-green-600 hover:bg-green-700'
                 } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
               >
-                <span className="mr-2">🧪</span>
-                {isGenerating ? 'AI生成中...' : 'AIテスト実行 (GPT-5-mini)'}
+                <span className="mr-2">🎉</span>
+                {isGenerating ? 'AI生成中...' : 'プロモーションAI生成 (GPT-5-mini)'}
               </button>
               <Link
-                href="/dashboard/messages/new"
+                href={`/dashboard/simplified-templates?preset=${encodeURIComponent(JSON.stringify(businessDetails))}`}
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 flex items-center"
               >
                 <span className="mr-2">🤖</span>
-                専用AIアシスタントを作成してメッセージ作成へ
+                専用AIアシスタントでメッセージ作成
               </Link>
               <button className="bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700">
                 テンプレートを保存

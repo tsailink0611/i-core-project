@@ -1,10 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { simplifiedBusinessCategories, simplifiedBusinessTemplates, generatePersonaPrompt, type SimplifiedBusinessTemplate } from '@/lib/templates/simplifiedBusinessTemplates'
+import type { BusinessTemplate } from '@/types/business'
 
 export default function SimplifiedTemplatesPage() {
+  const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('')
   const [selectedTemplate, setSelectedTemplate] = useState<SimplifiedBusinessTemplate | null>(null)
@@ -13,6 +16,45 @@ export default function SimplifiedTemplatesPage() {
   const [messageSchedules, setMessageSchedules] = useState<any[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [isGeneratingSchedules, setIsGeneratingSchedules] = useState(false)
+  const [presetData, setPresetData] = useState<BusinessTemplate | null>(null)
+
+  // プリセットデータを処理
+  useEffect(() => {
+    const preset = searchParams.get('preset')
+    if (preset) {
+      try {
+        const businessTemplate: BusinessTemplate = JSON.parse(decodeURIComponent(preset))
+        setPresetData(businessTemplate)
+
+        // プリセットデータに基づいて自動的にテンプレートを設定
+        if (businessTemplate.category && businessTemplate.subCategory && businessTemplate.businessType) {
+          setSelectedCategory(businessTemplate.category)
+          setSelectedSubCategory(businessTemplate.subCategory)
+
+          // 簡素化テンプレートを作成
+          const simplifiedTemplate: SimplifiedBusinessTemplate = {
+            id: businessTemplate.businessType.replace(/\s+/g, '_').toLowerCase(),
+            name: businessTemplate.storeName || businessTemplate.businessType,
+            category: businessTemplate.category,
+            subCategory: businessTemplate.subCategory,
+            description: businessTemplate.features || `${businessTemplate.businessType}の専門店`,
+            targetCustomers: businessTemplate.targetCustomers || [],
+            businessHours: businessTemplate.businessHours || '',
+            priceRange: businessTemplate.priceRange || '',
+            atmosphere: businessTemplate.atmosphere || '',
+            features: businessTemplate.features || '',
+            goals: businessTemplate.goals || '',
+            messageStyle: businessTemplate.messageStyle || '親しみやすい'
+          }
+
+          setSelectedTemplate(simplifiedTemplate)
+          setShowPersonaAI(true)
+        }
+      } catch (error) {
+        console.error('プリセットデータの解析に失敗:', error)
+      }
+    }
+  }, [searchParams])
 
   const resetSelection = () => {
     setSelectedCategory('')
