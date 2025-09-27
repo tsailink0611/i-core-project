@@ -3,7 +3,7 @@
 
 import OpenAI from 'openai'
 
-export const PINNED_MODEL = 'gpt-5-mini'
+export const PINNED_MODEL = 'gpt-4o-mini'
 const FALLBACKS = ['gpt-4o-mini', 'gpt-4o-mini-2024-07-18', 'gpt-4o', 'gpt-4-turbo'] as const
 
 let cached: string | null = null
