@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import type { SimpleChartProps } from '@/types/analytics'
 
 // ダミーデータ
 const mockAnalytics = {
@@ -73,7 +74,7 @@ const MetricCard = ({ title, value, subtitle, trend, color = 'blue' }: {
   )
 }
 
-const SimpleChart = ({ data, title }: { data: any[], title: string }) => {
+const SimpleChart = ({ data, title }: SimpleChartProps) => {
   const maxValue = Math.max(...data.map(d => Math.max(d.sent, d.opened, d.replied)))
 
   return (

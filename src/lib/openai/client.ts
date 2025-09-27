@@ -2,6 +2,7 @@
 import OpenAI from 'openai'
 import { getPromotionTemplates, getSeasonalPromotions, getWeatherPromotions, type PromotionTemplate } from '@/lib/templates/promotionTemplates'
 import { resolveModel } from './modelRouter'
+import type { BusinessTemplate } from '@/types/business'
 
 // OpenAI シングルトンクライアント
 let _client: OpenAI | null = null
@@ -17,20 +18,7 @@ export function getOpenAI(): OpenAI {
 
 // GPT-3.5-turbo（mini）を使用したメッセージ生成
 export async function generateMessage(
-  businessTemplate: {
-    storeName: string
-    priceRange: string
-    atmosphere: string
-    targetCustomers: string[]
-    businessHours: string
-    features: string
-    goals: string
-    messageStyle: string
-    aiPrompt?: string
-    category?: string
-    subCategory?: string
-    businessType?: string
-  },
+  businessTemplate: BusinessTemplate,
   messageType: 'greeting' | 'promotion' | 'announcement' | 'seasonal' = 'promotion',
   promotionContext?: PromotionTemplate
 ): Promise<string> {
@@ -133,7 +121,7 @@ ${promotionInfo}
 
 // 複数パターンのメッセージを一度に生成
 export async function generateMultipleMessages(
-  businessTemplate: any,
+  businessTemplate: BusinessTemplate,
   count: number = 3,
   selectedPromotion?: PromotionTemplate
 ): Promise<string[]> {

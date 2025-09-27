@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { BusinessTemplate, MessageSchedule } from '@/types/business'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -74,13 +75,13 @@ export async function POST(request: NextRequest) {
 }
 
 // AIレスポンスを解析してスケジュール形式に変換
-function parseScheduleResponse(response: string): any[] {
-  const schedules: any[] = []
+function parseScheduleResponse(response: string): MessageSchedule[] {
+  const schedules: MessageSchedule[] = []
   const sections = response.split('---').filter(section => section.trim())
 
   sections.forEach(section => {
     const lines = section.trim().split('\n')
-    const schedule: any = {}
+    const schedule: Partial<MessageSchedule> = {}
 
     lines.forEach(line => {
       const trimmedLine = line.trim()
@@ -101,7 +102,7 @@ function parseScheduleResponse(response: string): any[] {
     })
 
     if (schedule.title && schedule.timing && schedule.message) {
-      schedules.push(schedule)
+      schedules.push(schedule as MessageSchedule)
     }
   })
 
@@ -109,7 +110,7 @@ function parseScheduleResponse(response: string): any[] {
 }
 
 // 業種別モックスケジュール
-function generateMockSchedules(businessTemplate: any): any[] {
+function generateMockSchedules(businessTemplate: BusinessTemplate): MessageSchedule[] {
   const { category, subCategory, name } = businessTemplate
 
   if (category === '飲食業') {

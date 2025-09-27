@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { BusinessTemplate } from '@/types/business'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
 }
 
 // 業種別モックプロモーション提案
-function generateMockPromotions(businessTemplate: any): string[] {
+function generateMockPromotions(businessTemplate: BusinessTemplate): string[] {
   const { category, subCategory, name } = businessTemplate
 
   if (category === '飲食業') {

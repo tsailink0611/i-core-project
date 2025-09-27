@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { BusinessTemplate } from '@/types/business'
 
 // GPT-3.5-turboを使用したメッセージ生成（モック実装）
 export async function POST(request: NextRequest) {
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
 }
 
 // モックメッセージ生成関数
-function generateMockMessages(businessTemplate: any, count: number): string[] {
+function generateMockMessages(businessTemplate: BusinessTemplate, count: number): string[] {
   const { storeName, features, atmosphere, targetCustomers, messageStyle } = businessTemplate
 
   // ビジネスタイプに応じたモックメッセージを生成
