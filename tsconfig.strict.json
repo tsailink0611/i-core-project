@@ -8,7 +8,6 @@
     "strict": true,
 
     // Module Resolution
-    "module": "esnext",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -17,26 +16,26 @@
     "jsx": "preserve",
     "incremental": true,
 
-    // Type Checking - Balanced Mode
-    "noImplicitAny": false,
+    // Type Checking - Strict Mode
+    "noImplicitAny": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
-    "strictPropertyInitialization": false,
-    "noImplicitReturns": false,
+    "strictPropertyInitialization": true,
+    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": false,
-    "noImplicitOverride": false,
-    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
 
     // Advanced Type Checking
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitThis": false,
-    "useUnknownInCatchVariables": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
 
     // Emit
-    "noEmitOnError": false,
+    "noEmitOnError": true,
     "preserveConstEnums": true,
     "declaration": false,
     "declarationMap": false,

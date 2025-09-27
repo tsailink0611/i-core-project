@@ -1,133 +1,120 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable experimental features for better performance
+  // Enable React Strict Mode for better debugging
+  reactStrictMode: true,
+
+  // Enable SWC minification for better performance
+  swcMinify: true,
+
+  // Experimental features for performance
   experimental: {
-    // Enable React Server Components optimizations
+    // Enable app directory features
+    appDir: true,
+    // Server components optimization
     serverComponentsExternalPackages: ['openai'],
-    // Optimize client-side bundles
-    optimizeCss: true,
-    // Enable modern output
-    typedRoutes: true,
-  },
-
-  // Compress responses
-  compress: true,
-
-  // Enable source maps only in development
-  productionBrowserSourceMaps: false,
-
-  // Optimize images
-  images: {
-    // Enable modern image formats
-    formats: ['image/avif', 'image/webp'],
-    // Optimize images on-demand
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    // Cache optimized images
-    minimumCacheTTL: 31536000, // 1 year
+    // Optimize package imports
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
 
   // Bundle optimization
   webpack: (config, { dev, isServer }) => {
-    // Production optimizations
+    // Optimize bundle in production
     if (!dev) {
-      // Enable tree shaking
-      config.optimization.usedExports = true
-      config.optimization.sideEffects = false
-
-      // Bundle splitting for better caching
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          // Vendor libraries
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-            priority: 20,
-          },
-          // React and related libraries
-          react: {
-            test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
-            name: 'react',
-            chunks: 'all',
-            priority: 30,
-          },
-          // UI libraries
-          ui: {
-            test: /[\\/]node_modules[\\/](@tailwindcss|tailwindcss)[\\/]/,
-            name: 'ui',
-            chunks: 'all',
-            priority: 25,
-          },
-          // OpenAI and AI-related libraries
-          ai: {
-            test: /[\\/]node_modules[\\/](openai)[\\/]/,
-            name: 'ai',
-            chunks: 'all',
-            priority: 25,
-          },
-          // Common chunks
-          common: {
-            name: 'common',
-            minChunks: 2,
-            chunks: 'all',
-            priority: 10,
-            enforce: true,
+      config.optimization = {
+        ...config.optimization,
+        // Enable aggressive tree shaking
+        usedExports: true,
+        sideEffects: false,
+        // Split chunks for better caching
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              chunks: 'all',
+            },
+            common: {
+              name: 'common',
+              minChunks: 2,
+              chunks: 'all',
+            },
           },
         },
       }
     }
 
-    // Resolve modules efficiently
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@': require('path').resolve(__dirname, 'src'),
+    // Optimize for client-side
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+      }
     }
-
-    // Optimize module resolution
-    config.resolve.modules = ['node_modules', require('path').resolve(__dirname, 'src')]
 
     return config
   },
 
-  // Headers for better caching and security
+  // Image optimization
+  images: {
+    domains: ['localhost'],
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
+
+  // Compression and performance
+  compress: true,
+  poweredByHeader: false,
+
+  // Environment variables
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
+
+  // Headers for security and performance
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
+          // Security headers
           {
             key: 'X-Frame-Options',
             value: 'DENY',
           },
           {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
           },
-        ],
-      },
-      {
-        // Cache static assets
-        source: '/static/(.*)',
-        headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          // Performance headers
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
           },
         ],
       },
       {
-        // Cache API responses for a short time
         source: '/api/(.*)',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=60, s-maxage=300, stale-while-revalidate=600',
+            value: 'public, s-maxage=1, stale-while-revalidate=59',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
@@ -138,32 +125,45 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/dashboard',
-        permanent: false,
+        source: '/home',
+        destination: '/',
+        permanent: true,
       },
     ]
   },
 
-  // Environment variables
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  // Output configuration for deployment
+  output: 'standalone',
+
+  // TypeScript configuration
+  typescript: {
+    // Enable type checking during build
+    ignoreBuildErrors: false,
   },
 
-  // Enable React strict mode for better development experience
-  reactStrictMode: true,
+  // ESLint configuration
+  eslint: {
+    // Enable linting during build
+    ignoreDuringBuilds: false,
+    dirs: ['src', 'pages', 'components', 'lib', 'hooks'],
+  },
 
-  // Disable x-powered-by header
-  poweredByHeader: false,
+  // Trailing slash handling
+  trailingSlash: false,
 
-  // Enable SWC minification for better performance
-  swcMinify: true,
+  // Generate ETags for caching
+  generateEtags: true,
 
-  // Optimize fonts
-  optimizeFonts: true,
+  // Page extensions
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx'],
 
-  // Output configuration
-  output: 'standalone',
+  // API route configuration
+  api: {
+    bodyParser: {
+      sizeLimit: '1mb',
+    },
+    responseLimit: '8mb',
+  },
 }
 
 module.exports = nextConfig
