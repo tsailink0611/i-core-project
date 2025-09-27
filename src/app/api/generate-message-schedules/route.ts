@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type { BusinessTemplate, MessageSchedule } from '@/types/business'
+import { LCoreErrorHandler } from '@/lib/errors/errorHandler'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -56,7 +57,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ schedules })
 
       } catch (error) {
-        console.error('OpenAI API Error:', error)
+        const lCoreError = LCoreErrorHandler.handleError(error, 'generate-message-schedules')
+        console.error('OpenAI API Error:', lCoreError)
         // APIエラーの場合はモックにフォールバック
       }
     }
@@ -66,9 +68,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ schedules: mockSchedules })
 
   } catch (error) {
-    console.error('Schedule generation error:', error)
+    const lCoreError = LCoreErrorHandler.handleError(error, 'generate-message-schedules')
+    console.error('Schedule generation error:', lCoreError)
     return NextResponse.json(
-      { error: 'スケジュールの生成に失敗しました' },
+      {
+        error: LCoreErrorHandler.getUserMessage(lCoreError),
+        code: lCoreError.code,
+        retryable: lCoreError.retryable
+      },
       { status: 500 }
     )
   }

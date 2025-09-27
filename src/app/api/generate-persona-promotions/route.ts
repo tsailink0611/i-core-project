@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import type { BusinessTemplate } from '@/types/business'
+import { LCoreErrorHandler, ErrorType } from '@/lib/errors/errorHandler'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -54,7 +55,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ suggestions })
 
       } catch (error) {
-        console.error('OpenAI API Error:', error)
+        const lCoreError = LCoreErrorHandler.handleError(error, 'generate-persona-promotions')
+        console.error('OpenAI API Error:', lCoreError)
         // APIエラーの場合はモックにフォールバック
       }
     }
@@ -64,9 +66,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ suggestions: mockSuggestions })
 
   } catch (error) {
-    console.error('Persona promotion generation error:', error)
+    const lCoreError = LCoreErrorHandler.handleError(error, 'generate-persona-promotions')
+    console.error('Persona promotion generation error:', lCoreError)
     return NextResponse.json(
-      { error: 'プロモーション提案の生成に失敗しました' },
+      {
+        error: LCoreErrorHandler.getUserMessage(lCoreError),
+        code: lCoreError.code,
+        retryable: lCoreError.retryable
+      },
       { status: 500 }
     )
   }
