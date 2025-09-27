@@ -94,7 +94,7 @@ ${promotionInfo}
         { role: 'user', content: userPrompt[messageType] }
       ],
       max_completion_tokens: 1000, // GPT-4o-mini用の正しいパラメータ（詳細プロンプト対応）
-      temperature: 0.7,
+      temperature: 1,
     })
 
     const content = response.choices[0]?.message?.content?.trim()
@@ -108,7 +108,7 @@ ${promotionInfo}
           { role: 'user', content: `${businessTemplate.storeName}の${messageType === 'promotion' ? 'キャンペーン告知' : messageType === 'greeting' ? '初回挨拶' : messageType === 'seasonal' ? '季節のお知らせ' : 'お知らせ'}メッセージを絵文字1-2個を使って作成してください。必ず具体的な内容を含めてください。` }
         ],
         max_completion_tokens: 1000,
-        temperature: 0,
+        temperature: 1,
       })
       return retryResponse.choices[0]?.message?.content?.trim() || `こんにちは！${businessTemplate.storeName}です🎉 ${businessTemplate.features}でお待ちしています！`
     }
