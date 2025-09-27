@@ -1,13 +1,25 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import Link from 'next/link'
 import { getBusinessTemplate } from '@/lib/templates/businessTemplates'
 import { getPromotionTemplates, getSeasonalPromotions, type PromotionTemplate, type BusinessPromotions } from '@/lib/templates/promotionTemplates'
-import { BUSINESS_CATEGORIES, getMainCategories, getSubCategories, getBusinessTypes } from '@/constants/businessCategories'
+import { BUSINESS_CATEGORIES } from '@/constants/businessCategories'
 import type { BusinessTemplate } from '@/types/business'
+import { usePerformanceMonitor } from '@/lib/performance/monitor'
+import { useApiCache } from '@/hooks/useApiCache'
+
+// Lazy load heavy components
+const TemplateHeader = lazy(() => import('@/components/templates/TemplateHeader'))
+const CategorySelector = lazy(() => import('@/components/templates/CategorySelector'))
+const SubCategorySelector = lazy(() => import('@/components/templates/SubCategorySelector'))
+const BusinessTypeSelector = lazy(() => import('@/components/templates/BusinessTypeSelector'))
+const PromotionSelector = lazy(() => import('@/components/templates/PromotionSelector'))
 
 export default function TemplatesPage() {
+  const { measureUserInteraction, measureApiCall } = usePerformanceMonitor()
+  const { fetchWithCache } = useApiCache<string[]>()
+
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('')
   const [selectedBusinessType, setSelectedBusinessType] = useState<string>('')
@@ -28,27 +40,50 @@ export default function TemplatesPage() {
   const [selectedPromotion, setSelectedPromotion] = useState<PromotionTemplate | null>(null)
   const [showPromotionSelector, setShowPromotionSelector] = useState(false)
 
-  const resetSelection = () => {
+  const resetSelection = useCallback(() => {
+    measureUserInteraction('template-reset-selection')
     setSelectedCategory('')
     setSelectedSubCategory('')
     setSelectedBusinessType('')
     setShowCustomization(false)
-  }
+    setAvailablePromotions(null)
+    setSelectedPromotion(null)
+    setShowPromotionSelector(false)
+  }, [measureUserInteraction])
 
-  const handleCategorySelect = (category: string) => {
+  const handleCategorySelect = useCallback((category: string) => {
+    measureUserInteraction('template-category-select', { category })
     setSelectedCategory(category)
     setSelectedSubCategory('')
     setSelectedBusinessType('')
     setShowCustomization(false)
-  }
+  }, [measureUserInteraction])
 
-  const handleSubCategorySelect = (subCategory: string) => {
+  const handleSubCategorySelect = useCallback((subCategory: string) => {
+    measureUserInteraction('template-subcategory-select', { subCategory })
     setSelectedSubCategory(subCategory)
     setSelectedBusinessType('')
     setShowCustomization(false)
-  }
+  }, [measureUserInteraction])
 
-  const handleBusinessTypeSelect = (businessType: string) => {
+  const handleCategoryReset = useCallback(() => {
+    setSelectedSubCategory('')
+    setSelectedBusinessType('')
+    setShowCustomization(false)
+  }, [])
+
+  const handleSubCategoryReset = useCallback(() => {
+    setSelectedBusinessType('')
+    setShowCustomization(false)
+  }, [])
+
+  const handleBusinessTypeSelect = useCallback((businessType: string) => {
+    measureUserInteraction('template-businesstype-select', {
+      category: selectedCategory,
+      subCategory: selectedSubCategory,
+      businessType
+    })
+
     setSelectedBusinessType(businessType)
     setShowCustomization(true)
 
@@ -68,133 +103,88 @@ export default function TemplatesPage() {
     setAvailablePromotions(promotions)
     setSelectedPromotion(null)
     setShowPromotionSelector(true)
-  }
+  }, [selectedCategory, selectedSubCategory, measureUserInteraction])
 
-  // AI応答テスト関数
-  const handleAITest = async () => {
+  // AI応答テスト関数（キャッシュ対応）
+  const handleAITest = useCallback(async () => {
     setIsGenerating(true)
     setAiMessages([])
 
-    try {
-      const response = await fetch('/api/generate-message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          businessTemplate: businessDetails,
-          count: 3,
-          selectedPromotion: selectedPromotion
-        })
-      })
+    const cacheKey = `ai-messages-${JSON.stringify({ businessDetails, selectedPromotion })}`
 
-      if (response.ok) {
-        const data = await response.json()
-        setAiMessages(data.messages || [])
-      } else {
-        setAiMessages(['エラー: メッセージの生成に失敗しました。'])
-      }
+    try {
+      const messages = await measureApiCall(
+        'generate-ai-messages',
+        () => fetchWithCache(
+          cacheKey,
+          async () => {
+            const response = await fetch('/api/generate-message', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                businessTemplate: businessDetails,
+                count: 3,
+                selectedPromotion: selectedPromotion
+              })
+            })
+
+            if (!response.ok) {
+              throw new Error('メッセージの生成に失敗しました。')
+            }
+
+            const data = await response.json()
+            return data.messages || []
+          }
+        ),
+        { category: selectedCategory, subCategory: selectedSubCategory }
+      )
+
+      setAiMessages(messages)
     } catch (error) {
       console.error('AI Test Error:', error)
-      setAiMessages(['エラー: ネットワークエラーが発生しました。'])
+      setAiMessages(['エラー: ' + (error instanceof Error ? error.message : 'ネットワークエラーが発生しました。')])
     } finally {
       setIsGenerating(false)
     }
-  }
+  }, [businessDetails, selectedPromotion, selectedCategory, selectedSubCategory, measureApiCall, fetchWithCache])
 
-  const handleInputChange = (field: string, value: string | string[]) => {
+  const handleInputChange = useCallback((field: string, value: string | string[]) => {
     setBusinessDetails(prev => ({ ...prev, [field]: value }))
-  }
+  }, [])
 
-  const handleCustomerToggle = (customer: string) => {
+  const handleCustomerToggle = useCallback((customer: string) => {
     setBusinessDetails(prev => ({
       ...prev,
       targetCustomers: prev.targetCustomers.includes(customer)
         ? prev.targetCustomers.filter(c => c !== customer)
         : [...prev.targetCustomers, customer]
     }))
-  }
+  }, [])
+
+  const handlePromotionSelect = useCallback((promotion: PromotionTemplate) => {
+    setSelectedPromotion(promotion)
+  }, [])
+
+  // Memoized business categories for performance
+  const businessCategories = useMemo(() => BUSINESS_CATEGORIES, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ヘッダー */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link href="/" className="text-xl font-bold text-blue-600">
-                l-core
-              </Link>
-              <nav className="ml-8 flex space-x-4">
-                <Link href="/dashboard" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-                  概要
-                </Link>
-                <Link href="/dashboard/messages" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-                  メッセージ
-                </Link>
-                <Link href="/dashboard/templates" className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
-                  テンプレート
-                </Link>
-                <Link href="/dashboard/analytics" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
-                  分析
-                </Link>
-              </nav>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Suspense fallback={<div className="h-16 bg-white border-b animate-pulse"></div>}>
+        <TemplateHeader
+          selectedCategory={selectedCategory}
+          selectedSubCategory={selectedSubCategory}
+          selectedBusinessType={selectedBusinessType}
+          onResetSelection={resetSelection}
+          onCategoryReset={handleCategoryReset}
+          onSubCategoryReset={handleSubCategoryReset}
+        />
+      </Suspense>
 
       {/* メインコンテンツ */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* パンくずナビ */}
-        <div className="mb-6">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <button
-              onClick={resetSelection}
-              className="hover:text-blue-600"
-            >
-              業種選択
-            </button>
-            {selectedCategory && (
-              <>
-                <span>{'>'}</span>
-                <button
-                  onClick={() => {
-                    setSelectedSubCategory('')
-                    setSelectedBusinessType('')
-                    setShowCustomization(false)
-                  }}
-                  className="hover:text-blue-600"
-                >
-                  {selectedCategory}
-                </button>
-              </>
-            )}
-            {selectedSubCategory && (
-              <>
-                <span>{'>'}</span>
-                <button
-                  onClick={() => {
-                    setSelectedBusinessType('')
-                    setShowCustomization(false)
-                  }}
-                  className="hover:text-blue-600"
-                >
-                  {selectedSubCategory}
-                </button>
-              </>
-            )}
-            {selectedBusinessType && (
-              <>
-                <span>{'>'}</span>
-                <span className="text-blue-600 font-medium">{selectedBusinessType}</span>
-              </>
-            )}
-          </div>
-        </div>
 
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -213,53 +203,30 @@ export default function TemplatesPage() {
 
         {/* 業種選択 */}
         {!selectedCategory && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Object.keys(businessCategories).map((category) => (
-              <button
-                key={category}
-                onClick={() => handleCategorySelect(category)}
-                className="p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-blue-300 text-left"
-              >
-                <div className="text-lg font-semibold text-gray-900 mb-2">{category}</div>
-                <div className="text-sm text-gray-600">
-                  {Object.keys(businessCategories[category]).length}種類の業態
-                </div>
-              </button>
-            ))}
-          </div>
+          <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">{Array.from({length: 4}).map((_, i) => <div key={i} className="p-6 bg-gray-200 rounded-lg animate-pulse h-24"></div>)}</div>}>
+            <CategorySelector onCategorySelect={handleCategorySelect} />
+          </Suspense>
         )}
 
         {/* サブカテゴリ選択 */}
         {selectedCategory && !selectedSubCategory && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.keys(businessCategories[selectedCategory]).map((subCategory) => (
-              <button
-                key={subCategory}
-                onClick={() => handleSubCategorySelect(subCategory)}
-                className="p-6 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-blue-300 text-left"
-              >
-                <div className="text-lg font-semibold text-gray-900 mb-2">{subCategory}</div>
-                <div className="text-sm text-gray-600">
-                  {businessCategories[selectedCategory][subCategory].length}つのタイプから選択
-                </div>
-              </button>
-            ))}
-          </div>
+          <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{Array.from({length: 3}).map((_, i) => <div key={i} className="p-6 bg-gray-200 rounded-lg animate-pulse h-20"></div>)}</div>}>
+            <SubCategorySelector
+              selectedCategory={selectedCategory}
+              onSubCategorySelect={handleSubCategorySelect}
+            />
+          </Suspense>
         )}
 
         {/* ビジネスタイプ選択 */}
         {selectedSubCategory && !selectedBusinessType && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {businessCategories[selectedCategory][selectedSubCategory].map((businessType: string) => (
-              <button
-                key={businessType}
-                onClick={() => handleBusinessTypeSelect(businessType)}
-                className="p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow border border-gray-200 hover:border-blue-300 text-left"
-              >
-                <div className="text-base font-medium text-gray-900">{businessType}</div>
-              </button>
-            ))}
-          </div>
+          <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{Array.from({length: 6}).map((_, i) => <div key={i} className="p-4 bg-gray-200 rounded-lg animate-pulse h-16"></div>)}</div>}>
+            <BusinessTypeSelector
+              selectedCategory={selectedCategory}
+              selectedSubCategory={selectedSubCategory}
+              onBusinessTypeSelect={handleBusinessTypeSelect}
+            />
+          </Suspense>
         )}
 
         {/* カスタマイズフォーム */}
@@ -408,109 +375,13 @@ export default function TemplatesPage() {
 
             {/* プロモーション企画選択エリア */}
             {availablePromotions && (
-              <div className="mt-6 p-6 bg-blue-50 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  📢 プロモーション企画選択 (半自動テンプレート)
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      定期プロモーション
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {availablePromotions.regular.map((promo, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedPromotion(promo)}
-                          className={`p-3 text-left rounded-lg border ${
-                            selectedPromotion?.title === promo.title
-                              ? 'border-blue-500 bg-blue-100'
-                              : 'border-gray-200 bg-white hover:border-blue-300'
-                          }`}
-                        >
-                          <div className="font-medium text-gray-900">{promo.title}</div>
-                          <div className="text-sm text-gray-600 mt-1">{promo.description}</div>
-                          <div className="text-xs text-gray-500 mt-1">
-                            ターゲット: {promo.target.join('、')}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      季節・イベント企画
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {availablePromotions.seasonal.map((promo, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedPromotion(promo)}
-                          className={`p-3 text-left rounded-lg border ${
-                            selectedPromotion?.title === promo.title
-                              ? 'border-blue-500 bg-blue-100'
-                              : 'border-gray-200 bg-white hover:border-blue-300'
-                          }`}
-                        >
-                          <div className="font-medium text-gray-900">{promo.title}</div>
-                          <div className="text-sm text-gray-600 mt-1">{promo.description}</div>
-                          <div className="text-xs text-gray-500 mt-1">
-                            期待効果: {promo.expectedEffect}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      天候連動・特別企画
-                    </label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {[...availablePromotions.weather, ...availablePromotions.special].map((promo, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedPromotion(promo)}
-                          className={`p-3 text-left rounded-lg border ${
-                            selectedPromotion?.title === promo.title
-                              ? 'border-blue-500 bg-blue-100'
-                              : 'border-gray-200 bg-white hover:border-blue-300'
-                          }`}
-                        >
-                          <div className="font-medium text-gray-900">{promo.title}</div>
-                          <div className="text-sm text-gray-600 mt-1">{promo.description}</div>
-                          <div className="text-xs text-gray-500 mt-1">
-                            実施条件: {promo.trigger}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {selectedPromotion && (
-                    <div className="mt-4 p-4 bg-white rounded-lg border border-blue-200">
-                      <h4 className="font-medium text-gray-900 mb-2">選択中の企画</h4>
-                      <div className="text-sm space-y-1">
-                        <div><strong>企画名:</strong> {selectedPromotion.title}</div>
-                        <div><strong>内容:</strong> {selectedPromotion.description}</div>
-                        <div><strong>ターゲット:</strong> {selectedPromotion.target.join('、')}</div>
-                        <div><strong>期待効果:</strong> {selectedPromotion.expectedEffect}</div>
-                        <div className="mt-2">
-                          <strong>参考メッセージ例:</strong>
-                          <div className="mt-1 p-2 bg-gray-50 rounded text-gray-700">
-                            {selectedPromotion.messageExample}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="text-sm text-gray-600">
-                    💡 企画を選択するとAIがその内容に基づいてメッセージを生成します。選択しない場合は一般的なプロモーションメッセージを生成します。
-                  </div>
-                </div>
-              </div>
+              <Suspense fallback={<div className="mt-6 p-6 bg-blue-50 rounded-lg animate-pulse h-64"></div>}>
+                <PromotionSelector
+                  availablePromotions={availablePromotions}
+                  selectedPromotion={selectedPromotion}
+                  onPromotionSelect={handlePromotionSelect}
+                />
+              </Suspense>
             )}
 
             {/* アクションボタン */}
