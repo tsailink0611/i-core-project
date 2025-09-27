@@ -150,18 +150,32 @@ export default function SimplifiedTemplatesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">L-Core 簡素化テンプレート</h1>
+              <Link href="/" className="text-xl font-bold text-blue-600">
+                l-core
+              </Link>
               <nav className="ml-8 flex space-x-4">
+                <Link href="/dashboard" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  概要
+                </Link>
                 <Link href="/dashboard/messages" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   メッセージ
                 </Link>
                 <Link href="/dashboard/simplified-templates" className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
-                  簡素化テンプレート
+                  テンプレート
                 </Link>
                 <Link href="/dashboard/analytics" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   分析
                 </Link>
+                <Link href="/dashboard/settings" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  設定
+                </Link>
               </nav>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link href="/dashboard/messages/new" className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+                新規メッセージ
+              </Link>
+              <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
             </div>
           </div>
         </div>

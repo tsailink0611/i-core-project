@@ -108,6 +108,9 @@ export default function MessagesPage() {
                 <span className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
                   メッセージ
                 </span>
+                <Link href="/dashboard/templates" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  テンプレート
+                </Link>
                 <Link href="/dashboard/analytics" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   分析
                 </Link>

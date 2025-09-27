@@ -154,6 +154,9 @@ export default function AnalyticsPage() {
                 <Link href="/dashboard/messages" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   メッセージ
                 </Link>
+                <Link href="/dashboard/templates" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  テンプレート
+                </Link>
                 <span className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
                   分析
                 </span>
