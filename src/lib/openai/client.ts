@@ -74,14 +74,17 @@ ${promotionInfo}
 - 店舗の特徴や強みを活かした内容に
 - ターゲット層（${Array.isArray(businessTemplate.targetCustomers) ? businessTemplate.targetCustomers.join('、') : (businessTemplate.targetCustomers || '一般のお客様')}）に響く表現で`
 
-  const userPrompt = {
+  // aiPromptが設定されている場合は、それを直接使用
+  const customPrompt = businessTemplate.aiPrompt
+
+  const userPrompt = customPrompt || {
     greeting: '初めてのお客様向けの挨拶メッセージを作成してください。店舗の魅力と特徴を伝え、親しみやすい第一印象を与えてください。',
     promotion: promotionContext
       ? `「${promotionContext.title}」のプロモーションメッセージを作成してください。企画の魅力を伝え、お客様の来店を促してください。`
       : '今週のおすすめや特別キャンペーンのメッセージを作成してください。店舗の強みを活かしたお得感のある企画を提案してください。',
     announcement: '重要なお知らせ（営業時間変更や新サービスなど）のメッセージを作成してください。',
     seasonal: '現在の季節に合わせた特別企画やメニューのメッセージを作成してください。季節感を演出し、この時期だけの特別感を表現してください。'
-  }
+  }[messageType]
 
   try {
     const openai = getOpenAI()
@@ -91,7 +94,7 @@ ${promotionInfo}
       model,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt[messageType] }
+        { role: 'user', content: userPrompt }
       ],
       max_completion_tokens: 1000, // GPT-4o-mini用の正しいパラメータ（詳細プロンプト対応）
       temperature: 1,
