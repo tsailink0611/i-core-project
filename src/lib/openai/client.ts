@@ -107,7 +107,7 @@ ${promotionInfo}
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      max_completion_tokens: 1000, // GPT-4o-mini用の正しいパラメータ（詳細プロンプト対応）
+      max_completion_tokens: 2000, // GPT-4o-mini用の正しいパラメータ（詳細プロンプト対応）
       temperature: 1,
     })
 
@@ -121,7 +121,7 @@ ${promotionInfo}
           { role: 'system', content: `あなたは${businessTemplate.storeName}のLINE公式アカウント運用担当です。必ず日本語で100-150文字程度のメッセージを作成してください。` },
           { role: 'user', content: `${businessTemplate.storeName}の${messageType === 'promotion' ? 'キャンペーン告知' : messageType === 'greeting' ? '初回挨拶' : messageType === 'seasonal' ? '季節のお知らせ' : 'お知らせ'}メッセージを絵文字1-2個を使って作成してください。必ず具体的な内容を含めてください。` }
         ],
-        max_completion_tokens: 1000,
+        max_completion_tokens: 2000,
         temperature: 1,
       })
       return retryResponse.choices[0]?.message?.content?.trim() || `こんにちは！${businessTemplate.storeName}です🎉 ${businessTemplate.features}でお待ちしています！`

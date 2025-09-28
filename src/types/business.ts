@@ -15,6 +15,8 @@ export interface BusinessTemplate {
   goals: string
   messageStyle: string
   persona?: string // AI用ペルソナ設定
+  sampleMessages?: string[] // サンプルメッセージ
+  aiPrompt?: string // AI生成用プロンプト
 }
 
 // 簡素化ビジネステンプレート型
