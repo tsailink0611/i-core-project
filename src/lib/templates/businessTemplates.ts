@@ -645,12 +645,23 @@ export function getBusinessTemplate(
   subCategory: string,
   businessType: string
 ): BusinessTemplate | null {
-  return businessTemplates[category]?.[subCategory]?.[businessType] || null
+  const template = businessTemplates[category]?.[subCategory]?.[businessType]
+  if (template) {
+    return {
+      ...template,
+      category,
+      subCategory,
+      businessType
+    }
+  }
+  return null
 }
 
 // デフォルトの空テンプレート
 export const emptyTemplate: BusinessTemplate = {
   storeName: '',
+  category: '',
+  subCategory: '',
   priceRange: '',
   atmosphere: '',
   targetCustomers: [],

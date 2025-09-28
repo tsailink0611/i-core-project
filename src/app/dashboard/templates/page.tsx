@@ -36,6 +36,14 @@ export default function TemplatesPage() {
   })
   const [aiMessages, setAiMessages] = useState<string[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
+  const [showMessageForm, setShowMessageForm] = useState(false)
+  const [selectedMessage, setSelectedMessage] = useState('')
+  const [scheduleSettings, setScheduleSettings] = useState({
+    sendDate: '',
+    sendTime: '',
+    frequency: 'once',
+    title: ''
+  })
   const [availablePromotions, setAvailablePromotions] = useState<BusinessPromotions | null>(null)
   const [selectedPromotion, setSelectedPromotion] = useState<PromotionTemplate | null>(null)
   const [showPromotionSelector, setShowPromotionSelector] = useState(false)
@@ -105,30 +113,56 @@ export default function TemplatesPage() {
     setShowPromotionSelector(true)
   }, [selectedCategory, selectedSubCategory, measureUserInteraction])
 
-  // 簡潔なプロモーション生成関数
+  // 統合型プロモーション企画+スケジュール生成関数
   const handlePromotionGeneration = useCallback(async () => {
-    // 基本検証
-    if (!businessDetails.category || !businessDetails.subCategory) {
-      alert('業種を選択してください')
-      return
-    }
-
     setIsGenerating(true)
     setAiMessages([])
 
     try {
+      // 業種別の最適化されたプロンプト作成
+      const businessType = `${selectedCategory}の${selectedSubCategory}`
+      const storeName = businessDetails.storeName || '店舗'
+      const features = businessDetails.features || ''
+      const targetCustomers = businessDetails.targetCustomers.join('、') || '一般のお客様'
+
+      const detailedPrompt = `あなたは${businessType}のマーケティング専門家です。
+
+【店舗情報】
+- 店舗名: ${storeName}
+- 業種: ${businessType}
+- 特徴: ${features}
+- ターゲット層: ${targetCustomers}
+
+以下の形式で、実用的なプロモーション企画を5つ提案してください：
+
+1. 【企画名】: 具体的で魅力的な企画名
+   ■ 内容: 企画の詳細説明（具体的な特典・割引など）
+   ■ 送信タイミング: この業種に最適な曜日・時間（理由も含む）
+   ■ LINEメッセージ: 「実際に送信するメッセージ例（100-150文字、絵文字1-2個）」
+   ■ 期待効果: 狙う効果（新規客獲得、リピーター増加など）
+
+2. 【企画名】: ...
+
+各企画は以下の観点で考えてください：
+- ${businessType}の特性に合った自然な企画
+- 週1〜2回程度の配信頻度に適した内容
+- ターゲット層（${targetCustomers}）に響く魅力的な提案
+- 実施しやすい現実的な内容
+- 季節性や時期を考慮した提案`
+
       const response = await fetch('/api/generate-persona-promotions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          personaPrompt: `${businessDetails.category}の${businessDetails.subCategory}店舗向けのプロモーション企画を作成してください。`,
+          personaPrompt: detailedPrompt,
           businessTemplate: {
-            category: businessDetails.category,
-            subCategory: businessDetails.subCategory,
-            storeName: businessDetails.storeName || '店舗',
-            features: businessDetails.features || '',
+            category: selectedCategory,
+            subCategory: selectedSubCategory,
+            businessType: selectedBusinessType,
+            storeName: storeName,
+            features: features,
             atmosphere: businessDetails.atmosphere || '',
             priceRange: businessDetails.priceRange || '',
             targetCustomers: businessDetails.targetCustomers || []
@@ -137,7 +171,7 @@ export default function TemplatesPage() {
       })
 
       if (!response.ok) {
-        throw new Error('プロモーションの生成に失敗しました。')
+        throw new Error('プロモーション企画の生成に失敗しました。')
       }
 
       const data = await response.json()
@@ -152,7 +186,7 @@ export default function TemplatesPage() {
     } finally {
       setIsGenerating(false)
     }
-  }, [businessDetails])
+  }, [businessDetails, selectedCategory, selectedSubCategory, selectedBusinessType])
 
   // AI応答テスト関数（キャッシュ対応）
   const handleAITest = useCallback(async () => {
@@ -215,6 +249,38 @@ export default function TemplatesPage() {
   const handlePromotionSelect = useCallback((promotion: PromotionTemplate) => {
     setSelectedPromotion(promotion)
   }, [])
+
+  const handleMessageSelect = useCallback((message: string) => {
+    setSelectedMessage(message)
+    setShowMessageForm(true)
+    setScheduleSettings(prev => ({
+      ...prev,
+      title: `${businessDetails.storeName || 'お店'}からのお知らせ`
+    }))
+  }, [businessDetails.storeName])
+
+  const handleScheduleChange = useCallback((field: string, value: string) => {
+    setScheduleSettings(prev => ({ ...prev, [field]: value }))
+  }, [])
+
+  const handleSaveMessage = useCallback(async () => {
+    try {
+      // ここで実際のメッセージ保存処理を実装
+      console.log('Saving message:', {
+        message: selectedMessage,
+        schedule: scheduleSettings,
+        businessTemplate: businessDetails
+      })
+
+      // 成功時の処理
+      setShowMessageForm(false)
+      setSelectedMessage('')
+      alert('メッセージが保存されました！')
+    } catch (error) {
+      console.error('Message save error:', error)
+      alert('メッセージの保存に失敗しました。')
+    }
+  }, [selectedMessage, scheduleSettings, businessDetails])
 
   // Memoized business categories for performance
   const businessCategories = useMemo(() => BUSINESS_CATEGORIES, [])
@@ -434,32 +500,22 @@ export default function TemplatesPage() {
             )}
 
             {/* アクションボタン */}
-            <div className="mt-8 flex space-x-4">
-              <button
-                onClick={handleAITest}
-                disabled={isGenerating}
-                className={`${
-                  isGenerating
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700'
-                } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
-              >
-                <span className="mr-2">🎉</span>
-                {isGenerating ? 'AI生成中...' : 'プロモーション生成 (GPT-5-mini)'}
-              </button>
-              <button
-                onClick={handleAITest}
-                disabled={isGenerating}
-                className={`${
-                  isGenerating
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700'
-                } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
-              >
-                <span className="mr-2">📅</span>
-                {isGenerating ? 'AI生成中...' : 'スケジュール生成 (GPT-5-mini)'}
-              </button>
-            </div>
+            {selectedCategory && selectedSubCategory && selectedBusinessType && (
+              <div className="mt-8 flex space-x-4">
+                <button
+                  onClick={handlePromotionGeneration}
+                  disabled={isGenerating}
+                  className={`${
+                    isGenerating
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-green-600 hover:bg-green-700'
+                  } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
+                >
+                  <span className="mr-2">🎉</span>
+                  {isGenerating ? 'AI生成中...' : 'プロモーション企画+スケジュール生成 (GPT-5-mini)'}
+                </button>
+              </div>
+            )}
 
             {/* AI生成メッセージ表示エリア */}
             {aiMessages.length > 0 && (
@@ -474,12 +530,20 @@ export default function TemplatesPage() {
                         <span className="text-sm font-medium text-gray-600">
                           パターン {index + 1}
                         </span>
-                        <button
-                          onClick={() => navigator.clipboard.writeText(message)}
-                          className="text-sm text-blue-600 hover:text-blue-700"
-                        >
-                          📋 コピー
-                        </button>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => navigator.clipboard.writeText(message)}
+                            className="text-sm text-blue-600 hover:text-blue-700"
+                          >
+                            📋 コピー
+                          </button>
+                          <button
+                            onClick={() => handleMessageSelect(message)}
+                            className="text-sm text-green-600 hover:text-green-700 font-medium"
+                          >
+                            📝 使用する
+                          </button>
+                        </div>
                       </div>
                       <p className="text-gray-800 whitespace-pre-wrap">{message}</p>
                     </div>
@@ -487,6 +551,113 @@ export default function TemplatesPage() {
                 </div>
                 <div className="mt-4 text-sm text-gray-500">
                   ※ これらは{businessDetails.storeName || 'お店'}の情報を基にAIが自動生成したサンプルメッセージです。
+                </div>
+              </div>
+            )}
+
+            {/* メッセージ設定フォーム */}
+            {showMessageForm && (
+              <div className="mt-8 p-6 bg-white rounded-lg shadow-lg border">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    📝 メッセージとスケジュール設定
+                  </h3>
+                  <button
+                    onClick={() => setShowMessageForm(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  {/* 選択されたメッセージ */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      選択されたメッセージ
+                    </label>
+                    <textarea
+                      value={selectedMessage}
+                      onChange={(e) => setSelectedMessage(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                      rows={4}
+                      placeholder="メッセージ内容を編集できます"
+                    />
+                  </div>
+
+                  {/* スケジュール設定 */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        メッセージタイトル
+                      </label>
+                      <input
+                        type="text"
+                        value={scheduleSettings.title}
+                        onChange={(e) => handleScheduleChange('title', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                        placeholder="メッセージのタイトル"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        配信頻度
+                      </label>
+                      <select
+                        value={scheduleSettings.frequency}
+                        onChange={(e) => handleScheduleChange('frequency', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                      >
+                        <option value="once">一回のみ</option>
+                        <option value="daily">毎日</option>
+                        <option value="weekly">毎週</option>
+                        <option value="monthly">毎月</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        配信日
+                      </label>
+                      <input
+                        type="date"
+                        value={scheduleSettings.sendDate}
+                        onChange={(e) => handleScheduleChange('sendDate', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        配信時間
+                      </label>
+                      <input
+                        type="time"
+                        value={scheduleSettings.sendTime}
+                        onChange={(e) => handleScheduleChange('sendTime', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
+
+                  {/* アクションボタン */}
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      onClick={() => setShowMessageForm(false)}
+                      className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      onClick={handleSaveMessage}
+                      disabled={!selectedMessage || !scheduleSettings.sendDate || !scheduleSettings.sendTime}
+                      className={`px-6 py-3 rounded-lg font-medium text-white ${
+                        !selectedMessage || !scheduleSettings.sendDate || !scheduleSettings.sendTime
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-blue-600 hover:bg-blue-700'
+                      }`}
+                    >
+                      💾 メッセージを保存
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
