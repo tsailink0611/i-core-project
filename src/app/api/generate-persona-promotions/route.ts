@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
 // 業種別モックプロモーション提案
 function generateMockPromotions(businessTemplate: BusinessTemplate): string[] {
-  const { category, subCategory, name } = businessTemplate
+  const { category, subCategory, storeName } = businessTemplate
 
   if (category === '飲食業') {
     if (subCategory === '居酒屋') {

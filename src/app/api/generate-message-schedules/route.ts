@@ -113,12 +113,23 @@ function parseScheduleResponse(response: string): MessageSchedule[] {
     }
   })
 
-  return schedules.length > 0 ? schedules : generateMockSchedules({ category: '汎用', subCategory: '一般' })
+  return schedules.length > 0 ? schedules : generateMockSchedules({
+    category: '汎用',
+    subCategory: '一般',
+    storeName: '',
+    priceRange: '',
+    atmosphere: '',
+    targetCustomers: [],
+    businessHours: '',
+    features: '',
+    goals: '',
+    messageStyle: ''
+  } as BusinessTemplate)
 }
 
 // 業種別モックスケジュール
 function generateMockSchedules(businessTemplate: BusinessTemplate): MessageSchedule[] {
-  const { category, subCategory, name } = businessTemplate
+  const { category, subCategory, storeName } = businessTemplate
 
   if (category === '飲食業') {
     if (subCategory === '居酒屋') {

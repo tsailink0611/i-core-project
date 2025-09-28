@@ -9,6 +9,53 @@ import type { BusinessTemplate } from '@/types/business'
 import { usePerformanceMonitor } from '@/lib/performance/monitor'
 import { useApiCache } from '@/hooks/useApiCache'
 
+// Enhanced message structure for integrated format
+interface EnhancedMessage {
+  title: string
+  message: string
+  timing: string
+  frequency: string
+  reason: string
+  seasonal: string
+  effect: string
+  isEnhanced: boolean
+}
+
+// Utility function to parse enhanced AI responses
+function parseEnhancedResponse(response: string): EnhancedMessage | null {
+  // Check if response contains enhanced format markers
+  if (!response.includes('【企画名】') || !response.includes('■ メッセージ内容:')) {
+    return null
+  }
+
+  try {
+    const titleMatch = response.match(/【企画名】:?\s*(.+?)(?:\n|$)/)
+    const messageMatch = response.match(/■ メッセージ内容:?\s*[「『](.+?)[」』]/)
+    const timingMatch = response.match(/■ 配信タイミング:?\s*(.+?)(?:\n|■|$)/)
+    const frequencyMatch = response.match(/■ 配信頻度:?\s*(.+?)(?:\n|■|$)/)
+    const reasonMatch = response.match(/■ 配信理由:?\s*(.+?)(?:\n|■|$)/)
+    const seasonalMatch = response.match(/■ 季節考慮:?\s*(.+?)(?:\n|■|$)/)
+    const effectMatch = response.match(/■ 期待効果:?\s*(.+?)(?:\n|■|$)/)
+
+    if (titleMatch && messageMatch) {
+      return {
+        title: titleMatch[1].trim(),
+        message: messageMatch[1].trim(),
+        timing: timingMatch?.[1]?.trim() || '',
+        frequency: frequencyMatch?.[1]?.trim() || '',
+        reason: reasonMatch?.[1]?.trim() || '',
+        seasonal: seasonalMatch?.[1]?.trim() || '',
+        effect: effectMatch?.[1]?.trim() || '',
+        isEnhanced: true
+      }
+    }
+  } catch (error) {
+    console.error('Error parsing enhanced response:', error)
+  }
+
+  return null
+}
+
 // Lazy load heavy components
 const TemplateHeader = lazy(() => import('@/components/templates/TemplateHeader'))
 const CategorySelector = lazy(() => import('@/components/templates/CategorySelector'))
@@ -149,23 +196,30 @@ export default function TemplatesPage() {
 - 業種: ${businessType}
 - 特徴: ${features}
 - ターゲット層: ${targetCustomers}
+- 営業時間: ${businessDetails.businessHours || '営業時間未設定'}
+- 価格帯: ${businessDetails.priceRange || '価格帯未設定'}
+- 雰囲気: ${businessDetails.atmosphere || '雰囲気未設定'}
+- メッセージスタイル: ${businessDetails.messageStyle || '親しみやすい'}
 
-以下の形式で、実用的なプロモーション企画を5つ提案してください：
+以下の形式で、メッセージ+スケジュール統合企画を5つ提案してください：
 
 1. 【企画名】: 具体的で魅力的な企画名
-   ■ 内容: 企画の詳細説明（具体的な特典・割引など）
-   ■ 送信タイミング: この業種に最適な曜日・時間（理由も含む）
-   ■ LINEメッセージ: 「実際に送信するメッセージ例（100-150文字、絵文字1-2個）」
-   ■ 期待効果: 狙う効果（新規客獲得、リピーター増加など）
+   ■ メッセージ内容: 「実際に送信するLINEメッセージ（100-150文字、絵文字1-2個）」
+   ■ 配信タイミング: 具体的な曜日・時間（例：毎週火曜15:00）
+   ■ 配信頻度: 週1回/月1回/季節限定など
+   ■ 配信理由: なぜこの時間が最適か
+   ■ 季節考慮: 時期特性・イベント連動
+   ■ 期待効果: 狙う成果
 
 2. 【企画名】: ...
 
 各企画は以下の観点で考えてください：
-- ${businessType}の特性に合った自然な企画
-- 週1〜2回程度の配信頻度に適した内容
-- ターゲット層（${targetCustomers}）に響く魅力的な提案
-- 実施しやすい現実的な内容
-- 季節性や時期を考慮した提案`
+- ${businessType}の営業リズム（${businessDetails.businessHours}）に最適化
+- ターゲット層（${targetCustomers}）のライフスタイル考慮
+- ${businessDetails.messageStyle || '親しみやすい'}なトーンでの自然な表現
+- 実施しやすい現実的なタイミング設定
+- 季節性や特別な時期を活用した提案
+- 価格帯（${businessDetails.priceRange}）に応じた企画内容`
 
       const response = await fetch('/api/generate-persona-promotions', {
         method: 'POST',
@@ -268,12 +322,27 @@ export default function TemplatesPage() {
   }, [])
 
   const handleMessageSelect = useCallback((message: string) => {
-    setSelectedMessage(message)
+    const enhancedData = parseEnhancedResponse(message)
+
+    setSelectedMessage(enhancedData ? enhancedData.message : message)
     setShowMessageForm(true)
-    setScheduleSettings(prev => ({
-      ...prev,
-      title: `${businessDetails.storeName || 'お店'}からのお知らせ`
-    }))
+
+    // Set schedule settings based on enhanced data if available
+    if (enhancedData) {
+      setScheduleSettings(prev => ({
+        ...prev,
+        title: enhancedData.title,
+        // Try to extract frequency from the timing/frequency data
+        frequency: enhancedData.frequency.includes('週') ? 'weekly' :
+                  enhancedData.frequency.includes('月') ? 'monthly' :
+                  enhancedData.frequency.includes('日') ? 'daily' : 'once'
+      }))
+    } else {
+      setScheduleSettings(prev => ({
+        ...prev,
+        title: `${businessDetails.storeName || 'お店'}からのお知らせ`
+      }))
+    }
   }, [businessDetails.storeName])
 
   const handleScheduleChange = useCallback((field: string, value: string) => {
@@ -534,37 +603,136 @@ export default function TemplatesPage() {
               </div>
             )}
 
-            {/* AI生成メッセージ表示エリア */}
+            {/* AI生成メッセージ表示エリア - Enhanced */}
             {aiMessages.length > 0 && (
               <div className="mt-8 p-6 bg-gray-50 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   🤖 AI生成メッセージ (GPT-5-mini)
                 </h3>
-                <div className="space-y-4">
-                  {aiMessages.map((message, index) => (
-                    <div key={index} className="p-4 bg-white rounded-lg border border-gray-200">
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="text-sm font-medium text-gray-600">
-                          パターン {index + 1}
-                        </span>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => navigator.clipboard.writeText(message)}
-                            className="text-sm text-blue-600 hover:text-blue-700"
-                          >
-                            📋 コピー
-                          </button>
-                          <button
-                            onClick={() => handleMessageSelect(message)}
-                            className="text-sm text-green-600 hover:text-green-700 font-medium"
-                          >
-                            📝 使用する
-                          </button>
-                        </div>
+                <div className="space-y-6">
+                  {aiMessages.map((message, index) => {
+                    const enhancedData = parseEnhancedResponse(message)
+
+                    return (
+                      <div key={index} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        {enhancedData ? (
+                          // Enhanced format display
+                          <div className="p-6">
+                            {/* Header with title and actions */}
+                            <div className="flex justify-between items-start mb-4">
+                              <div className="flex-1">
+                                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                                  🎉 {enhancedData.title}
+                                </h4>
+                                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                                  パターン {index + 1}
+                                </span>
+                              </div>
+                              <div className="flex space-x-2 ml-4">
+                                <button
+                                  onClick={() => navigator.clipboard.writeText(enhancedData.message)}
+                                  className="px-3 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                >
+                                  📋 コピー
+                                </button>
+                                <button
+                                  onClick={() => handleMessageSelect(enhancedData.message)}
+                                  className="px-3 py-2 text-sm text-white bg-green-600 hover:bg-green-700 rounded-lg font-medium transition-colors"
+                                >
+                                  📝 使用する
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Message content */}
+                            <div className="mb-6">
+                              <h5 className="text-sm font-medium text-gray-700 mb-2">💬 メッセージ内容</h5>
+                              <div className="p-4 bg-gray-50 rounded-lg border-l-4 border-green-500">
+                                <p className="text-gray-800 leading-relaxed">{enhancedData.message}</p>
+                              </div>
+                            </div>
+
+                            {/* Schedule information grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {enhancedData.timing && (
+                                <div className="p-4 bg-blue-50 rounded-lg">
+                                  <h6 className="text-sm font-medium text-blue-800 mb-1 flex items-center">
+                                    ⏰ 配信タイミング
+                                  </h6>
+                                  <p className="text-sm text-blue-700">{enhancedData.timing}</p>
+                                </div>
+                              )}
+
+                              {enhancedData.frequency && (
+                                <div className="p-4 bg-purple-50 rounded-lg">
+                                  <h6 className="text-sm font-medium text-purple-800 mb-1 flex items-center">
+                                    🔄 配信頻度
+                                  </h6>
+                                  <p className="text-sm text-purple-700">{enhancedData.frequency}</p>
+                                </div>
+                              )}
+
+                              {enhancedData.effect && (
+                                <div className="p-4 bg-green-50 rounded-lg">
+                                  <h6 className="text-sm font-medium text-green-800 mb-1 flex items-center">
+                                    🎯 期待効果
+                                  </h6>
+                                  <p className="text-sm text-green-700">{enhancedData.effect}</p>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Additional information */}
+                            {(enhancedData.reason || enhancedData.seasonal) && (
+                              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {enhancedData.reason && (
+                                  <div className="p-4 bg-yellow-50 rounded-lg">
+                                    <h6 className="text-sm font-medium text-yellow-800 mb-1 flex items-center">
+                                      💡 配信理由
+                                    </h6>
+                                    <p className="text-sm text-yellow-700">{enhancedData.reason}</p>
+                                  </div>
+                                )}
+
+                                {enhancedData.seasonal && (
+                                  <div className="p-4 bg-orange-50 rounded-lg">
+                                    <h6 className="text-sm font-medium text-orange-800 mb-1 flex items-center">
+                                      🌸 季節考慮
+                                    </h6>
+                                    <p className="text-sm text-orange-700">{enhancedData.seasonal}</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          // Fallback: Simple format display for backward compatibility
+                          <div className="p-4">
+                            <div className="flex justify-between items-start mb-2">
+                              <span className="text-sm font-medium text-gray-600">
+                                パターン {index + 1}
+                              </span>
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={() => navigator.clipboard.writeText(message)}
+                                  className="text-sm text-blue-600 hover:text-blue-700"
+                                >
+                                  📋 コピー
+                                </button>
+                                <button
+                                  onClick={() => handleMessageSelect(message)}
+                                  className="text-sm text-green-600 hover:text-green-700 font-medium"
+                                >
+                                  📝 使用する
+                                </button>
+                              </div>
+                            </div>
+                            <p className="text-gray-800 whitespace-pre-wrap">{message}</p>
+                          </div>
+                        )}
                       </div>
-                      <p className="text-gray-800 whitespace-pre-wrap">{message}</p>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
                 <div className="mt-4 text-sm text-gray-500">
                   ※ これらは{businessDetails.storeName || 'お店'}の情報を基にAIが自動生成したサンプルメッセージです。
@@ -574,14 +742,17 @@ export default function TemplatesPage() {
 
             {/* メッセージ設定フォーム */}
             {showMessageForm && (
-              <div className="mt-8 p-6 bg-white rounded-lg shadow-lg border">
+              <div className="mt-8 p-6 bg-white rounded-lg shadow-lg border border-blue-200">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900">
+                  <h3 className="text-xl font-semibold text-gray-900 flex items-center">
                     📝 メッセージとスケジュール設定
+                    <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                      設定中
+                    </span>
                   </h3>
                   <button
                     onClick={() => setShowMessageForm(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     ✕
                   </button>
@@ -591,67 +762,77 @@ export default function TemplatesPage() {
                   {/* 選択されたメッセージ */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      選択されたメッセージ
+                      💬 選択されたメッセージ
                     </label>
-                    <textarea
-                      value={selectedMessage}
-                      onChange={(e) => setSelectedMessage(e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg resize-none"
-                      rows={4}
-                      placeholder="メッセージ内容を編集できます"
-                    />
+                    <div className="relative">
+                      <textarea
+                        value={selectedMessage}
+                        onChange={(e) => setSelectedMessage(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        rows={4}
+                        placeholder="メッセージ内容を編集できます"
+                      />
+                      <div className="absolute bottom-2 right-2 text-xs text-gray-400">
+                        {selectedMessage.length}/150文字
+                      </div>
+                    </div>
                   </div>
 
                   {/* スケジュール設定 */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        メッセージタイトル
-                      </label>
-                      <input
-                        type="text"
-                        value={scheduleSettings.title}
-                        onChange={(e) => handleScheduleChange('title', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg"
-                        placeholder="メッセージのタイトル"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        配信頻度
-                      </label>
-                      <select
-                        value={scheduleSettings.frequency}
-                        onChange={(e) => handleScheduleChange('frequency', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg"
-                      >
-                        <option value="once">一回のみ</option>
-                        <option value="daily">毎日</option>
-                        <option value="weekly">毎週</option>
-                        <option value="monthly">毎月</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        配信日
-                      </label>
-                      <input
-                        type="date"
-                        value={scheduleSettings.sendDate}
-                        onChange={(e) => handleScheduleChange('sendDate', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        配信時間
-                      </label>
-                      <input
-                        type="time"
-                        value={scheduleSettings.sendTime}
-                        onChange={(e) => handleScheduleChange('sendTime', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg"
-                      />
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                      📅 スケジュール設定
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          🎯 メッセージタイトル
+                        </label>
+                        <input
+                          type="text"
+                          value={scheduleSettings.title}
+                          onChange={(e) => handleScheduleChange('title', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="メッセージのタイトル"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          🔄 配信頻度
+                        </label>
+                        <select
+                          value={scheduleSettings.frequency}
+                          onChange={(e) => handleScheduleChange('frequency', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="once">一回のみ</option>
+                          <option value="daily">毎日</option>
+                          <option value="weekly">毎週</option>
+                          <option value="monthly">毎月</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          📅 配信日
+                        </label>
+                        <input
+                          type="date"
+                          value={scheduleSettings.sendDate}
+                          onChange={(e) => handleScheduleChange('sendDate', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          ⏰ 配信時間
+                        </label>
+                        <input
+                          type="time"
+                          value={scheduleSettings.sendTime}
+                          onChange={(e) => handleScheduleChange('sendTime', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -666,10 +847,10 @@ export default function TemplatesPage() {
                     <button
                       onClick={handleSaveMessage}
                       disabled={!selectedMessage || !scheduleSettings.sendDate || !scheduleSettings.sendTime}
-                      className={`px-6 py-3 rounded-lg font-medium text-white ${
+                      className={`px-6 py-3 rounded-lg font-medium text-white transition-colors ${
                         !selectedMessage || !scheduleSettings.sendDate || !scheduleSettings.sendTime
                           ? 'bg-gray-400 cursor-not-allowed'
-                          : 'bg-blue-600 hover:bg-blue-700'
+                          : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg'
                       }`}
                     >
                       💾 メッセージを保存
