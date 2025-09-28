@@ -70,6 +70,7 @@ const nextConfig = {
   // Environment variables
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
 
   // Headers for security and performance

@@ -9,8 +9,21 @@ let _client: OpenAI | null = null
 
 export function getOpenAI(): OpenAI {
   if (!_client) {
+    const apiKey = process.env.OPENAI_API_KEY
+
+    // Validate API key before creating client
+    if (!apiKey || apiKey === '' || typeof apiKey !== 'string' || !apiKey.startsWith('sk-')) {
+      console.error('OpenAI API Key validation failed:', {
+        hasKey: !!apiKey,
+        keyType: typeof apiKey,
+        keyLength: apiKey?.length || 0,
+        validFormat: apiKey?.startsWith('sk-') || false
+      })
+      throw new Error('Invalid or missing OPENAI_API_KEY environment variable')
+    }
+
     _client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || '',
+      apiKey: apiKey,
     })
   }
   return _client
