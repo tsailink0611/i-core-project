@@ -17,17 +17,35 @@ export async function POST(request: NextRequest) {
         // ペルソナAIによるプロモーション提案プロンプト
         const promotionPrompt = `${personaPrompt}
 
-以下の形式で、この業種に最適なプロモーション企画を5つ提案してください：
+【重要指示】必ず以下の形式で、この業種に最適なプロモーション企画を5つ提案してください。他の形式は一切禁止です：
 
 1. 【企画名】: 具体的な企画名
    内容: 企画の詳細説明
    実施時期: いつ実施するか
    期待効果: どんな効果を狙うか
 
-2. 【企画名】: ...
+2. 【企画名】: 2つ目の具体的な企画名
+   内容: 企画の詳細説明
+   実施時期: いつ実施するか
+   期待効果: どんな効果を狙うか
+
+3. 【企画名】: 3つ目の具体的な企画名
+   内容: 企画の詳細説明
+   実施時期: いつ実施するか
+   期待効果: どんな効果を狙うか
+
+4. 【企画名】: 4つ目の具体的な企画名
+   内容: 企画の詳細説明
+   実施時期: いつ実施するか
+   期待効果: どんな効果を狙うか
+
+5. 【企画名】: 5つ目の具体的な企画名
+   内容: 企画の詳細説明
+   実施時期: いつ実施するか
+   期待効果: どんな効果を狙うか
 
 各企画は以下の観点で考えてください：
-- 業種の特性に合った自然な企画
+- ${businessTemplate.category}の${businessTemplate.subCategory}の特性に合った自然な企画
 - 実施しやすい現実的な内容
 - ターゲット層に響く魅力的な提案
 - 季節性や時期を考慮した提案
@@ -46,11 +64,34 @@ export async function POST(request: NextRequest) {
         console.log('OpenAI Response:', response)
 
         // レスポンスを個別の提案に分割
-        const suggestions = response.split(/\d+\.\s*【/).slice(1).map((item, index) => {
-          return `${index + 1}. 【${item.trim()}`
-        })
+        let suggestions: string[] = []
+
+        // 企画形式のレスポンスを試行
+        if (response.includes('【') && response.includes('企画名')) {
+          suggestions = response.split(/\d+\.\s*【/).slice(1).map((item, index) => {
+            return `${index + 1}. 【${item.trim()}`
+          })
+        }
+        // 箇条書き形式を試行
+        else if (response.includes('1.') && response.includes('内容:') && response.includes('期待効果:')) {
+          const lines = response.split(/\n/).filter(line =>
+            line.trim().match(/^(\d+\.|・|-)/) && line.trim().length > 10
+          )
+          suggestions = lines.map((line, index) => `${index + 1}. ${line.trim().replace(/^(\d+\.|・|-)\s*/, '')}`)
+        }
+        else {
+          // 期待する形式でない場合はモックにフォールバック
+          console.log('AI response not in expected format, falling back to mock')
+          suggestions = []
+        }
 
         console.log('Parsed suggestions:', suggestions)
+
+        // 適切な企画が生成されなかった場合はモックにフォールバック
+        if (suggestions.length === 0) {
+          const mockSuggestions = generateMockPromotions(businessTemplate)
+          return NextResponse.json({ suggestions: mockSuggestions })
+        }
 
         return NextResponse.json({ suggestions })
 
