@@ -96,14 +96,20 @@ export default function TemplatesPage() {
     setShowCustomization(true)
 
     // テンプレートデータを自動設定
+    console.log('Template Search:', { selectedCategory, selectedSubCategory, businessType })
     const template = getBusinessTemplate(selectedCategory, selectedSubCategory, businessType)
+    console.log('Found template:', template)
     if (template) {
-      setBusinessDetails({
+      const newBusinessDetails = {
         ...template,
         category: selectedCategory,
         subCategory: selectedSubCategory,
         businessType: businessType
-      })
+      }
+      console.log('Setting business details:', newBusinessDetails)
+      setBusinessDetails(newBusinessDetails)
+    } else {
+      console.error('Template not found for:', { selectedCategory, selectedSubCategory, businessType })
     }
 
     // プロモーションテンプレートを読み込み
@@ -124,6 +130,17 @@ export default function TemplatesPage() {
       const storeName = businessDetails.storeName || '店舗'
       const features = businessDetails.features || ''
       const targetCustomers = businessDetails.targetCustomers.join('、') || '一般のお客様'
+
+      console.log('AI Generation Debug:', {
+        selectedCategory,
+        selectedSubCategory,
+        selectedBusinessType,
+        businessType,
+        storeName,
+        features,
+        targetCustomers,
+        businessDetails
+      })
 
       const detailedPrompt = `あなたは${businessType}のマーケティング専門家です。
 
