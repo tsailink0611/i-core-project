@@ -89,7 +89,8 @@ export default function TemplatesPage() {
     sendDate: '',
     sendTime: '',
     frequency: 'once',
-    title: ''
+    title: '',
+    campaignType: ''
   })
   const [availablePromotions, setAvailablePromotions] = useState<BusinessPromotions | null>(null)
   const [selectedPromotion, setSelectedPromotion] = useState<PromotionTemplate | null>(null)
@@ -321,21 +322,130 @@ export default function TemplatesPage() {
     setSelectedPromotion(promotion)
   }, [])
 
+  // Enhanced message parsing with auto-extraction of schedule details
+  const extractScheduleFromMessage = useCallback((message: string, enhancedData: any) => {
+    let scheduleInfo = {
+      title: '',
+      frequency: 'once' as string,
+      dayOfWeek: '',
+      timeOfDay: '',
+      sendDate: '',
+      sendTime: '',
+      campaignType: ''
+    }
+
+    const fullText = message + (enhancedData ? ` ${enhancedData.timing} ${enhancedData.frequency} ${enhancedData.message}` : '')
+
+    if (enhancedData) {
+      // Extract title
+      scheduleInfo.title = enhancedData.title
+
+      // Extract campaign type from message content
+      const campaignPatterns = [
+        { pattern: /誕生日特典|誕生日|バースデー/i, type: '誕生日特典' },
+        { pattern: /記念日|アニバーサリー/i, type: '記念日' },
+        { pattern: /新メニュー|新商品|新サービス/i, type: '新商品・新サービス' },
+        { pattern: /限定|期間限定/i, type: '期間限定' },
+        { pattern: /クーポン|割引|OFF/i, type: 'クーポン・割引' },
+        { pattern: /ポイント/i, type: 'ポイント特典' },
+        { pattern: /キャンペーン|フェア/i, type: 'キャンペーン' },
+        { pattern: /イベント/i, type: 'イベント告知' }
+      ]
+
+      for (const { pattern, type } of campaignPatterns) {
+        if (pattern.test(fullText)) {
+          scheduleInfo.campaignType = type
+          break
+        }
+      }
+
+      // Extract frequency with more patterns
+      if (enhancedData.frequency.includes('週') || /週一|毎週|週ごと/i.test(fullText)) {
+        scheduleInfo.frequency = 'weekly'
+      } else if (enhancedData.frequency.includes('月') || /月一|毎月|月ごと/i.test(fullText)) {
+        scheduleInfo.frequency = 'monthly'
+      } else if (enhancedData.frequency.includes('日') || /毎日|日々/i.test(fullText)) {
+        scheduleInfo.frequency = 'daily'
+      }
+
+      // Extract specific dates (e.g., "15日", "何日")
+      const dateMatch = fullText.match(/(\d{1,2})日/)
+      if (dateMatch) {
+        const day = parseInt(dateMatch[1], 10)
+        const today = new Date()
+        const targetDate = new Date(today.getFullYear(), today.getMonth(), day)
+
+        // If date is in the past, move to next month
+        if (targetDate < today) {
+          targetDate.setMonth(targetDate.getMonth() + 1)
+        }
+
+        scheduleInfo.sendDate = targetDate.toISOString().split('T')[0]
+      }
+
+      // Extract day of week from timing
+      const dayPatterns = {
+        '月曜': 'monday',
+        '火曜': 'tuesday',
+        '水曜': 'wednesday',
+        '木曜': 'thursday',
+        '金曜': 'friday',
+        '土曜': 'saturday',
+        '日曜': 'sunday'
+      }
+
+      for (const [jpDay, enDay] of Object.entries(dayPatterns)) {
+        if (enhancedData.timing.includes(jpDay)) {
+          scheduleInfo.dayOfWeek = enDay
+          break
+        }
+      }
+
+      // Extract time of day
+      const timePatterns = {
+        '朝': '09:00',
+        '午前': '10:00',
+        '昼': '12:00',
+        '午後': '15:00',
+        '夕方': '17:00',
+        '夜': '19:00',
+        '深夜': '22:00'
+      }
+
+      for (const [jpTime, defaultTime] of Object.entries(timePatterns)) {
+        if (enhancedData.timing.includes(jpTime)) {
+          scheduleInfo.timeOfDay = jpTime
+          scheduleInfo.sendTime = defaultTime
+          break
+        }
+      }
+
+      // Set default send date if not specified
+      if (!scheduleInfo.sendDate) {
+        const today = new Date()
+        scheduleInfo.sendDate = today.toISOString().split('T')[0]
+      }
+    }
+
+    return scheduleInfo
+  }, [])
+
   const handleMessageSelect = useCallback((message: string) => {
     const enhancedData = parseEnhancedResponse(message)
 
     setSelectedMessage(enhancedData ? enhancedData.message : message)
     setShowMessageForm(true)
 
-    // Set schedule settings based on enhanced data if available
+    // Auto-extract schedule information
     if (enhancedData) {
+      const extracted = extractScheduleFromMessage(message, enhancedData)
       setScheduleSettings(prev => ({
         ...prev,
-        title: enhancedData.title,
-        // Try to extract frequency from the timing/frequency data
-        frequency: enhancedData.frequency.includes('週') ? 'weekly' :
-                  enhancedData.frequency.includes('月') ? 'monthly' :
-                  enhancedData.frequency.includes('日') ? 'daily' : 'once'
+        title: extracted.title,
+        frequency: extracted.frequency,
+        sendDate: extracted.sendDate,
+        sendTime: extracted.sendTime,
+        campaignType: extracted.campaignType
       }))
     } else {
       setScheduleSettings(prev => ({
@@ -343,7 +453,7 @@ export default function TemplatesPage() {
         title: `${businessDetails.storeName || 'お店'}からのお知らせ`
       }))
     }
-  }, [businessDetails.storeName])
+  }, [businessDetails.storeName, extractScheduleFromMessage])
 
   const handleScheduleChange = useCallback((field: string, value: string) => {
     setScheduleSettings(prev => ({ ...prev, [field]: value }))
@@ -795,6 +905,27 @@ export default function TemplatesPage() {
                           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="メッセージのタイトル"
                         />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          🏷️ キャンペーンタイプ
+                        </label>
+                        <select
+                          value={scheduleSettings.campaignType}
+                          onChange={(e) => handleScheduleChange('campaignType', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="">選択してください</option>
+                          <option value="誕生日特典">誕生日特典</option>
+                          <option value="記念日">記念日</option>
+                          <option value="新商品・新サービス">新商品・新サービス</option>
+                          <option value="期間限定">期間限定</option>
+                          <option value="クーポン・割引">クーポン・割引</option>
+                          <option value="ポイント特典">ポイント特典</option>
+                          <option value="キャンペーン">キャンペーン</option>
+                          <option value="イベント告知">イベント告知</option>
+                          <option value="その他">その他</option>
+                        </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
