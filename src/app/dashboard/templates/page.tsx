@@ -921,6 +921,75 @@ export default function TemplatesPage() {
                     </div>
                   </div>
 
+                  {/* プロモーション詳細入力 */}
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                      🎁 プロモーション詳細情報
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          💰 割引率・特典内容
+                        </label>
+                        <input
+                          type="text"
+                          value={scheduleSettings.discount || ''}
+                          onChange={(e) => handleScheduleChange('discount', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          placeholder="例: 20%OFF、500円引き、2品無料"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          📆 プロモーション期間
+                        </label>
+                        <input
+                          type="text"
+                          value={scheduleSettings.promotionPeriod || ''}
+                          onChange={(e) => handleScheduleChange('promotionPeriod', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          placeholder="例: 2025/10/1〜10/31"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          🎯 対象顧客・条件
+                        </label>
+                        <input
+                          type="text"
+                          value={scheduleSettings.targetCondition || ''}
+                          onChange={(e) => handleScheduleChange('targetCondition', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          placeholder="例: 全会員、初回限定、誕生月の方"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          🔗 予約・詳細URL
+                        </label>
+                        <input
+                          type="url"
+                          value={scheduleSettings.linkUrl || ''}
+                          onChange={(e) => handleScheduleChange('linkUrl', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          📝 補足・注意事項
+                        </label>
+                        <textarea
+                          value={scheduleSettings.notes || ''}
+                          onChange={(e) => handleScheduleChange('notes', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          rows={2}
+                          placeholder="例: ※他のクーポンとの併用不可、※要予約"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   {/* スケジュール設定 */}
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
