@@ -73,6 +73,8 @@ export default function TemplatesPage() {
   const [showCustomization, setShowCustomization] = useState(false)
   const [businessDetails, setBusinessDetails] = useState<BusinessTemplate>({
     storeName: '',
+    category: '',
+    subCategory: '',
     priceRange: '',
     atmosphere: '',
     targetCustomers: [] as string[],
@@ -166,6 +168,37 @@ export default function TemplatesPage() {
     setSelectedPromotion(null)
     setShowPromotionSelector(true)
   }, [selectedCategory, selectedSubCategory, measureUserInteraction])
+  // テンプレート自動読み込み useEffect
+  useEffect(() => {
+    if (selectedCategory && selectedSubCategory && selectedBusinessType) {
+      console.log("🔄 useEffect: Loading template...", { selectedCategory, selectedSubCategory, selectedBusinessType })
+      const template = getBusinessTemplate(selectedCategory, selectedSubCategory, selectedBusinessType)
+      console.log("📦 useEffect: Template result:", template)
+
+      if (template) {
+        const newBusinessDetails = {
+          storeName: template.storeName || "",
+          category: selectedCategory,
+          subCategory: selectedSubCategory,
+          businessType: selectedBusinessType,
+          priceRange: template.priceRange || "",
+          atmosphere: template.atmosphere || "",
+          targetCustomers: template.targetCustomers || [],
+          businessHours: template.businessHours || "",
+          features: template.features || "",
+          goals: template.goals || "",
+          messageStyle: template.messageStyle || "",
+          sampleMessages: template.sampleMessages,
+          aiPrompt: template.aiPrompt
+        }
+        console.log("✅ useEffect: Setting businessDetails:", newBusinessDetails)
+        setBusinessDetails(newBusinessDetails)
+      } else {
+        console.error("❌ useEffect: Template not found")
+      }
+    }
+  }, [selectedCategory, selectedSubCategory, selectedBusinessType])
+
 
   // 統合型プロモーション企画+スケジュール生成関数
   const handlePromotionGeneration = useCallback(async () => {

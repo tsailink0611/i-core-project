@@ -1,10 +1,13 @@
 // Analytics 関連の型定義
 
 export interface ChartDataPoint {
-  name: string
-  value: number
+  name?: string
+  value?: number
   date?: string
   category?: string
+  sent?: number
+  opened?: number
+  replied?: number
 }
 
 export interface SimpleChartProps {

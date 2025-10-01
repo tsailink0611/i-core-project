@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, getByText } from '@/lib/test-utils'
+import { render, screen } from '@/lib/test-utils'
 import { StatCard } from '../StatCard'
 
 describe('StatCard Component', () => {
@@ -19,12 +19,12 @@ describe('StatCard Component', () => {
 
   it('formats numbers correctly', () => {
     render(<StatCard title="Count" value={1234567} />)
-    expect(getByText('1,234,567')).toBeInTheDocument()
+    expect(screen.getByText('1,234,567')).toBeInTheDocument()
   })
 
   it('displays string values as-is', () => {
     render(<StatCard title="Rate" value="15.5%" />)
-    expect(getByText('15.5%')).toBeInTheDocument()
+    expect(screen.getByText('15.5%')).toBeInTheDocument()
   })
 
   it('renders with different colors', () => {
