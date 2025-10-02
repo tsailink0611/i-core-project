@@ -8,6 +8,7 @@ import { BUSINESS_CATEGORIES } from '@/constants/businessCategories'
 import type { BusinessTemplate } from '@/types/business'
 import { usePerformanceMonitor } from '@/lib/performance/monitor'
 import { useApiCache } from '@/hooks/useApiCache'
+import { saveMessage } from '@/lib/messageStorage'
 
 // Enhanced message structure for integrated format
 interface EnhancedMessage {
@@ -494,22 +495,46 @@ export default function TemplatesPage() {
 
   const handleSaveMessage = useCallback(async () => {
     try {
-      // ここで実際のメッセージ保存処理を実装
-      console.log('Saving message:', {
-        message: selectedMessage,
-        schedule: scheduleSettings,
-        businessTemplate: businessDetails
+      if (!selectedMessage || !scheduleSettings.sendDate || !scheduleSettings.sendTime) {
+        alert('メッセージ、配信日、配信時間は必須項目です。')
+        return
+      }
+
+      // localStorageに保存
+      const savedMessage = saveMessage({
+        title: scheduleSettings.title || `${businessDetails.storeName || 'お店'}からのお知らせ`,
+        content: selectedMessage,
+        scheduleSettings: {
+          sendDate: scheduleSettings.sendDate,
+          sendTime: scheduleSettings.sendTime,
+          targetAudience: scheduleSettings.targetCondition || '全会員'
+        },
+        businessTemplate: {
+          businessType: `${selectedCategory} > ${selectedSubCategory} > ${selectedBusinessType}`,
+          targetCustomer: businessDetails.targetCustomers.join('、') || '一般のお客様',
+          objectives: [businessDetails.goals || '顧客満足度向上']
+        },
+        type: 'text'
       })
+
+      console.log('Message saved successfully:', savedMessage)
 
       // 成功時の処理
       setShowMessageForm(false)
       setSelectedMessage('')
-      alert('メッセージが保存されました！')
+      setScheduleSettings({
+        sendDate: '',
+        sendTime: '',
+        frequency: 'once',
+        title: '',
+        campaignType: ''
+      })
+      alert(`メッセージが保存されました！\n配信予定: ${scheduleSettings.sendDate} ${scheduleSettings.sendTime}`)
     } catch (error) {
       console.error('Message save error:', error)
       alert('メッセージの保存に失敗しました。')
     }
-  }, [selectedMessage, scheduleSettings, businessDetails])
+  }, [selectedMessage, scheduleSettings, businessDetails, selectedCategory, selectedSubCategory, selectedBusinessType])
 
   // Memoized business categories for performance
   const businessCategories = useMemo(() => BUSINESS_CATEGORIES, [])
