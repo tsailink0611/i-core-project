@@ -771,18 +771,18 @@ export default function TemplatesPage() {
                                   パターン {index + 1}
                                 </span>
                               </div>
-                              <div className="flex space-x-2 ml-4">
-                                <button
-                                  onClick={() => navigator.clipboard.writeText(enhancedData.message)}
-                                  className="px-3 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
-                                >
-                                  📋 コピー
-                                </button>
+                              <div className="flex flex-col space-y-3 ml-4">
                                 <button
                                   onClick={() => handleMessageSelect(enhancedData.message)}
-                                  className="px-3 py-2 text-sm text-white bg-green-600 hover:bg-green-700 rounded-lg font-medium transition-colors"
+                                  className="px-6 py-4 text-lg text-white bg-green-600 hover:bg-green-700 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                                 >
-                                  📝 使用する
+                                  📝 このメッセージを使用する
+                                </button>
+                                <button
+                                  onClick={() => navigator.clipboard.writeText(enhancedData.message)}
+                                  className="px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                                >
+                                  📋 コピー
                                 </button>
                               </div>
                             </div>
