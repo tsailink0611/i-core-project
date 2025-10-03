@@ -86,7 +86,7 @@ export default function TemplatesPage() {
   })
   const [aiMessages, setAiMessages] = useState<string[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
-  const [showMessageForm, setShowMessageForm] = useState(false)
+  const [showMessageForm, setShowMessageForm] = useState(true)
   const [selectedMessage, setSelectedMessage] = useState('')
   const [scheduleSettings, setScheduleSettings] = useState({
     sendDate: '',
@@ -947,148 +947,46 @@ export default function TemplatesPage() {
                   </div>
 
                   {/* プロモーション詳細入力 */}
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                      🎁 プロモーション詳細情報
+                  {/* シンプル化：必須項目のみ */}
+                  <div className="bg-white p-4 rounded-lg border-2 border-blue-200">
+                    <h4 className="text-lg font-medium text-gray-900 mb-4">
+                      📅 配信設定（必須）
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          💰 割引率・特典内容
-                        </label>
-                        <input
-                          type="text"
-                          value={scheduleSettings.discount || ''}
-                          onChange={(e) => handleScheduleChange('discount', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="例: 20%OFF、500円引き、2品無料"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          📆 プロモーション期間
-                        </label>
-                        <input
-                          type="text"
-                          value={scheduleSettings.promotionPeriod || ''}
-                          onChange={(e) => handleScheduleChange('promotionPeriod', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="例: 2025/10/1〜10/31"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          🎯 対象顧客・条件
-                        </label>
-                        <input
-                          type="text"
-                          value={scheduleSettings.targetCondition || ''}
-                          onChange={(e) => handleScheduleChange('targetCondition', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="例: 全会員、初回限定、誕生月の方"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          🔗 予約・詳細URL
-                        </label>
-                        <input
-                          type="url"
-                          value={scheduleSettings.linkUrl || ''}
-                          onChange={(e) => handleScheduleChange('linkUrl', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="https://..."
-                        />
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          📝 補足・注意事項
-                        </label>
-                        <textarea
-                          value={scheduleSettings.notes || ''}
-                          onChange={(e) => handleScheduleChange('notes', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          rows={2}
-                          placeholder="例: ※他のクーポンとの併用不可、※要予約"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* スケジュール設定 */}
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                      📅 スケジュール設定
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          🎯 メッセージタイトル
-                        </label>
-                        <input
-                          type="text"
-                          value={scheduleSettings.title}
-                          onChange={(e) => handleScheduleChange('title', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="メッセージのタイトル"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          🏷️ キャンペーンタイプ
-                        </label>
-                        <select
-                          value={scheduleSettings.campaignType}
-                          onChange={(e) => handleScheduleChange('campaignType', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          <option value="">選択してください</option>
-                          <option value="誕生日特典">誕生日特典</option>
-                          <option value="記念日">記念日</option>
-                          <option value="新商品・新サービス">新商品・新サービス</option>
-                          <option value="期間限定">期間限定</option>
-                          <option value="クーポン・割引">クーポン・割引</option>
-                          <option value="ポイント特典">ポイント特典</option>
-                          <option value="キャンペーン">キャンペーン</option>
-                          <option value="イベント告知">イベント告知</option>
-                          <option value="その他">その他</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          🔄 配信頻度
-                        </label>
-                        <select
-                          value={scheduleSettings.frequency}
-                          onChange={(e) => handleScheduleChange('frequency', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                          <option value="once">一回のみ</option>
-                          <option value="daily">毎日</option>
-                          <option value="weekly">毎週</option>
-                          <option value="monthly">毎月</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          📅 配信日
+                          配信日 <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="date"
                           value={scheduleSettings.sendDate}
                           onChange={(e) => handleScheduleChange('sendDate', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          required
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          ⏰ 配信時間
+                          配信時間 <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="time"
                           value={scheduleSettings.sendTime}
                           onChange={(e) => handleScheduleChange('sendTime', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          対象顧客
+                        </label>
+                        <input
+                          type="text"
+                          value={scheduleSettings.targetCondition || ''}
+                          onChange={(e) => handleScheduleChange('targetCondition', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="例: 全会員"
                         />
                       </div>
                     </div>
