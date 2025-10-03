@@ -97,6 +97,8 @@ export default function TemplatesPage() {
   })
   const [availablePromotions, setAvailablePromotions] = useState<BusinessPromotions | null>(null)
   const [selectedPromotion, setSelectedPromotion] = useState<PromotionTemplate | null>(null)
+  const [promotionType, setPromotionType] = useState<string>('')
+  const [seasonalContext, setSeasonalContext] = useState<string>('')
   const [showPromotionSelector, setShowPromotionSelector] = useState(false)
 
   const resetSelection = useCallback(() => {
@@ -213,6 +215,20 @@ export default function TemplatesPage() {
       const features = businessDetails.features || ''
       const targetCustomers = businessDetails.targetCustomers.join('、') || '一般のお客様'
 
+      // プロモーション種別に応じた詳細コンテキスト
+      const promotionTypeContext = {
+        birthday: '誕生日特典。顧客の誕生日当日または前後に送る特別なオファー。パーソナライズされた温かみのあるメッセージと、誕生日限定の特典を含める。',
+        discount: '割引・クーポンキャンペーン。期間限定の特別価格や割引率を明示。緊急性を持たせつつ、お得感を強調する。',
+        weather: `天気連動プロモーション。${seasonalContext === 'sunny' ? '晴れの日' : seasonalContext === 'rainy' ? '雨の日' : seasonalContext === 'cloudy' ? '曇りの日' : '雪の日'}に最適な商品やサービスを提案。天気ならではの価値提案を含める。`,
+        season: `季節限定プロモーション。${seasonalContext === 'spring' ? '春（3-5月）' : seasonalContext === 'summer' ? '夏（6-8月）' : seasonalContext === 'autumn' ? '秋（9-11月）' : '冬（12-2月）'}の季節感を活かした企画。旬の商品、季節イベント、気候に応じた提案を含める。`,
+        new_product: '新商品・新サービスの案内。新しさと価値を強調し、初回限定特典や先行体験の機会を提供。',
+        event: 'イベント告知。具体的な日時、場所、参加方法を明記。イベントならではの特別感と限定性を訴求。',
+        anniversary: '登録記念日プロモーション。「登録から○ヶ月/○年経過」を祝い、感謝の気持ちと特別なオファーを伝える。',
+        auto: '季節・トレンドを自動判定したプロモーション。現在の時期（10月）を考慮し、秋の行楽シーズン、ハロウィン、年末に向けた企画を提案。'
+      }
+
+      const selectedContext = promotionTypeContext[promotionType as keyof typeof promotionTypeContext] || promotionTypeContext.auto
+
       console.log('AI Generation Debug:', {
         selectedCategory,
         selectedSubCategory,
@@ -221,6 +237,8 @@ export default function TemplatesPage() {
         storeName,
         features,
         targetCustomers,
+        promotionType,
+        seasonalContext,
         businessDetails
       })
 
@@ -236,25 +254,32 @@ export default function TemplatesPage() {
 - 雰囲気: ${businessDetails.atmosphere || '雰囲気未設定'}
 - メッセージスタイル: ${businessDetails.messageStyle || '親しみやすい'}
 
-以下の形式で、メッセージ+スケジュール統合企画を5つ提案してください：
+【プロモーション種別】
+${selectedContext}
 
-1. 【企画名】: 具体的で魅力的な企画名
-   ■ メッセージ内容: 「実際に送信するLINEメッセージ（100-150文字、絵文字1-2個）」
-   ■ 配信タイミング: 具体的な曜日・時間（例：毎週火曜15:00）
-   ■ 配信頻度: 週1回/月1回/季節限定など
-   ■ 配信理由: なぜこの時間が最適か
-   ■ 季節考慮: 時期特性・イベント連動
-   ■ 期待効果: 狙う成果
+以下の形式で、具体的で実行可能なメッセージ+スケジュール統合企画を5つ提案してください。
+各企画は実際にLINEで送信できる完成度の高いメッセージ、明確な配信スケジュール、期待される効果を含めてください。
+
+1. 【企画名】: 具体的で魅力的な企画名（プロモーション種別を反映）
+   ■ メッセージ内容: 「実際に送信するLINEメッセージ（120-150文字、適切な絵文字2-3個、具体的なオファー内容、行動喚起を含む）」
+   ■ 配信タイミング: 具体的な曜日・時間（例：毎週火曜15:00、誕生日当日10:00）
+   ■ 配信頻度: 週1回/月1回/季節限定/イベント連動など
+   ■ 配信理由: なぜこの時間・タイミングが最適か（顧客行動、業種特性を考慮）
+   ■ 季節考慮: 時期特性・イベント連動・天気連動（該当する場合）
+   ■ 期待効果: 具体的な成果（例：来店率20%向上、リピート率向上、新規獲得など）
 
 2. 【企画名】: ...
 
-各企画は以下の観点で考えてください：
+各企画は以下の観点で深く考えてください：
+- プロモーション種別「${selectedContext}」に完全に沿った内容
 - ${businessType}の営業リズム（${businessDetails.businessHours}）に最適化
-- ターゲット層（${targetCustomers}）のライフスタイル考慮
-- ${businessDetails.messageStyle || '親しみやすい'}なトーンでの自然な表現
-- 実施しやすい現実的なタイミング設定
-- 季節性や特別な時期を活用した提案
-- 価格帯（${businessDetails.priceRange}）に応じた企画内容`
+- ターゲット層（${targetCustomers}）のライフスタイル・行動パターンを深く理解
+- ${businessDetails.messageStyle || '親しみやすい'}なトーンで自然かつ魅力的な表現
+- 実施しやすく効果測定可能なタイミング設定
+- 季節性・天気・特別な時期を最大限活用
+- 価格帯（${businessDetails.priceRange}）に見合った価値提案
+- 競合との差別化と独自性
+- 顧客にとっての明確なベネフィット`
 
       const response = await fetch('/api/generate-persona-promotions', {
         method: 'POST',
@@ -271,7 +296,9 @@ export default function TemplatesPage() {
             features: features,
             atmosphere: businessDetails.atmosphere || '',
             priceRange: businessDetails.priceRange || '',
-            targetCustomers: businessDetails.targetCustomers || []
+            targetCustomers: businessDetails.targetCustomers || [],
+            promotionType: promotionType,
+            seasonalContext: seasonalContext
           }
         })
       })
@@ -292,7 +319,7 @@ export default function TemplatesPage() {
     } finally {
       setIsGenerating(false)
     }
-  }, [businessDetails, selectedCategory, selectedSubCategory, selectedBusinessType])
+  }, [businessDetails, selectedCategory, selectedSubCategory, selectedBusinessType, promotionType, seasonalContext])
 
   // AI応答テスト関数（キャッシュ対応）
   const handleAITest = useCallback(async () => {
@@ -753,8 +780,101 @@ export default function TemplatesPage() {
               </Suspense>
             )}
 
-            {/* アクションボタン */}
+            {/* プロモーション種別選択 */}
             {selectedCategory && selectedSubCategory && selectedBusinessType && (
+              <div className="mt-8 bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border-2 border-purple-200">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  🎯 プロモーション種別を選択
+                  <span className="ml-2 text-sm font-normal text-gray-600">(AI生成の質が向上します)</span>
+                </h3>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
+                  {[
+                    { id: 'birthday', icon: '🎂', label: '誕生日特典', desc: '顧客の誕生日に送る特別オファー' },
+                    { id: 'discount', icon: '💰', label: '割引・クーポン', desc: '期間限定の割引キャンペーン' },
+                    { id: 'weather', icon: '🌤️', label: '天気連動', desc: '天気に応じたプロモーション' },
+                    { id: 'season', icon: '🍂', label: '季節のおすすめ', desc: '春夏秋冬の季節限定' },
+                    { id: 'new_product', icon: '✨', label: '新商品・新サービス', desc: '新しい商品やサービスの案内' },
+                    { id: 'event', icon: '🎉', label: 'イベント告知', desc: 'イベントやキャンペーンの告知' },
+                    { id: 'anniversary', icon: '⏰', label: '登録記念日', desc: '登録から○ヶ月/○年記念' },
+                    { id: 'auto', icon: '🎯', label: 'お任せ', desc: '季節・トレンドを自動判定' }
+                  ].map((type) => (
+                    <button
+                      key={type.id}
+                      onClick={() => setPromotionType(type.id)}
+                      className={`p-4 rounded-lg border-2 transition-all text-left ${
+                        promotionType === type.id
+                          ? 'border-purple-500 bg-purple-100 shadow-md'
+                          : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-sm'
+                      }`}
+                    >
+                      <div className="text-2xl mb-1">{type.icon}</div>
+                      <div className="font-medium text-gray-900 text-sm">{type.label}</div>
+                      <div className="text-xs text-gray-500 mt-1">{type.desc}</div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* 季節選択（季節のおすすめ選択時のみ表示） */}
+                {promotionType === 'season' && (
+                  <div className="mb-6 p-4 bg-white rounded-lg border border-purple-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">季節を選択</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[
+                        { id: 'spring', icon: '🌸', label: '春' },
+                        { id: 'summer', icon: '☀️', label: '夏' },
+                        { id: 'autumn', icon: '🍂', label: '秋' },
+                        { id: 'winter', icon: '❄️', label: '冬' }
+                      ].map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => setSeasonalContext(s.id)}
+                          className={`p-3 rounded-lg border-2 transition-all ${
+                            seasonalContext === s.id
+                              ? 'border-purple-500 bg-purple-100'
+                              : 'border-gray-200 bg-white hover:border-purple-300'
+                          }`}
+                        >
+                          <div className="text-xl">{s.icon}</div>
+                          <div className="text-sm font-medium mt-1">{s.label}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 天気選択（天気連動選択時のみ表示） */}
+                {promotionType === 'weather' && (
+                  <div className="mb-6 p-4 bg-white rounded-lg border border-purple-200">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">天気を選択</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {[
+                        { id: 'sunny', icon: '☀️', label: '晴れ' },
+                        { id: 'rainy', icon: '🌧️', label: '雨' },
+                        { id: 'cloudy', icon: '☁️', label: '曇り' },
+                        { id: 'snow', icon: '⛄', label: '雪' }
+                      ].map((w) => (
+                        <button
+                          key={w.id}
+                          onClick={() => setSeasonalContext(w.id)}
+                          className={`p-3 rounded-lg border-2 transition-all ${
+                            seasonalContext === w.id
+                              ? 'border-purple-500 bg-purple-100'
+                              : 'border-gray-200 bg-white hover:border-purple-300'
+                          }`}
+                        >
+                          <div className="text-xl">{w.icon}</div>
+                          <div className="text-sm font-medium mt-1">{w.label}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* アクションボタン */}
+            {selectedCategory && selectedSubCategory && selectedBusinessType && promotionType && (
               <div className="mt-8 flex space-x-4">
                 <button
                   onClick={handlePromotionGeneration}
@@ -763,7 +883,7 @@ export default function TemplatesPage() {
                     isGenerating
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-green-600 hover:bg-green-700'
-                  } text-white px-6 py-3 rounded-lg font-medium flex items-center`}
+                  } text-white px-6 py-3 rounded-lg font-medium flex items-center shadow-lg hover:shadow-xl transition-all`}
                 >
                   <span className="mr-2">🎉</span>
                   {isGenerating ? 'AI生成中...' : 'プロモーション企画+スケジュール生成 (GPT-5-mini)'}
