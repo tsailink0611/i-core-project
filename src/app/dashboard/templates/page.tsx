@@ -767,22 +767,9 @@ ${selectedContext}
                   </select>
                 </div>
               </div>
-            </div>
 
-            {/* プロモーション企画選択エリア */}
-            {availablePromotions && (
-              <Suspense fallback={<div className="mt-6 p-6 bg-blue-50 rounded-lg animate-pulse h-64"></div>}>
-                <PromotionSelector
-                  availablePromotions={availablePromotions}
-                  selectedPromotion={selectedPromotion}
-                  onPromotionSelect={handlePromotionSelect}
-                />
-              </Suspense>
-            )}
-
-            {/* プロモーション種別選択 */}
-            {selectedCategory && selectedSubCategory && selectedBusinessType && (
-              <div className="mt-8 bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border-2 border-purple-200">
+              {/* プロモーション種別選択 - カスタマイズフォーム内に配置 */}
+              <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border-2 border-purple-200">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                   🎯 プロモーション種別を選択
                   <span className="ml-2 text-sm font-normal text-gray-600">(AI生成の質が向上します)</span>
@@ -871,6 +858,17 @@ ${selectedContext}
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* プロモーション企画選択エリア */}
+            {availablePromotions && (
+              <Suspense fallback={<div className="mt-6 p-6 bg-blue-50 rounded-lg animate-pulse h-64"></div>}>
+                <PromotionSelector
+                  availablePromotions={availablePromotions}
+                  selectedPromotion={selectedPromotion}
+                  onPromotionSelect={handlePromotionSelect}
+                />
+              </Suspense>
             )}
 
             {/* アクションボタン */}
