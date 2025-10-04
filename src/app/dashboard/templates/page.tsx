@@ -101,6 +101,56 @@ export default function TemplatesPage() {
   const [seasonalContext, setSeasonalContext] = useState<string>('')
   const [showPromotionSelector, setShowPromotionSelector] = useState(false)
 
+  // Load edit message data from localStorage when page loads
+  useEffect(() => {
+    const editMessageData = localStorage.getItem('l-core-edit-message')
+    if (editMessageData) {
+      try {
+        const data = JSON.parse(editMessageData)
+
+        // Set selected message and show form
+        setSelectedMessage(data.content || '')
+        setShowMessageForm(true)
+
+        // Set schedule settings
+        if (data.scheduleSettings) {
+          setScheduleSettings(prev => ({
+            ...prev,
+            sendDate: data.scheduleSettings.sendDate || '',
+            sendTime: data.scheduleSettings.sendTime || '',
+            targetCondition: data.scheduleSettings.targetAudience || ''
+          }))
+        }
+
+        // Set business details if available
+        if (data.businessTemplate) {
+          const businessType = data.businessTemplate.businessType || ''
+          const parts = businessType.split(' > ')
+
+          if (parts.length >= 3) {
+            setSelectedCategory(parts[0])
+            setSelectedSubCategory(parts[1])
+            setSelectedBusinessType(parts[2])
+            setShowCustomization(true)
+          }
+        }
+
+        // Set schedule title
+        if (data.title) {
+          setScheduleSettings(prev => ({
+            ...prev,
+            title: data.title
+          }))
+        }
+
+        // Clear the localStorage item after loading
+        localStorage.removeItem('l-core-edit-message')
+      } catch (error) {
+        console.error('Failed to load edit message data:', error)
+      }
+    }
+  }, [])
+
   const resetSelection = useCallback(() => {
     measureUserInteraction('template-reset-selection')
     setSelectedCategory('')
