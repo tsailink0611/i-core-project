@@ -2,6 +2,8 @@
 import { BUSINESS_CATEGORIES } from '@/constants/businessCategories'
 import type { SimplifiedBusinessTemplate } from '@/types/business'
 
+export type { SimplifiedBusinessTemplate }
+
 // 3大カテゴリに絞った業種分類（統一定数を使用）
 export const simplifiedBusinessCategories = BUSINESS_CATEGORIES
 

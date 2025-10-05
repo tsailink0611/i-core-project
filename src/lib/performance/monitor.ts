@@ -93,6 +93,10 @@ class PerformanceMonitor {
     this.metrics.push(metric)
   }
 
+  addMetric(metric: PerformanceMetric) {
+    this.metrics.push(metric)
+  }
+
   getMetrics(type?: PerformanceMetric['type'], limit: number = 50): PerformanceMetric[] {
     let filtered = this.metrics
     if (type) {
@@ -180,7 +184,7 @@ export function measureWebVitals() {
   const observer = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
       if (entry.entryType === 'largest-contentful-paint') {
-        performanceMonitor.metrics.push({
+        performanceMonitor.addMetric({
           name: 'LCP',
           duration: entry.startTime,
           timestamp: Date.now(),
@@ -201,7 +205,7 @@ export function measureWebVitals() {
   // Measure First Input Delay (FID)
   const fidObserver = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
-      performanceMonitor.metrics.push({
+      performanceMonitor.addMetric({
         name: 'FID',
         duration: (entry as any).processingStart - entry.startTime,
         timestamp: Date.now(),

@@ -37,14 +37,15 @@ export default function SimplifiedTemplatesPage() {
             name: businessTemplate.storeName || businessTemplate.businessType,
             category: businessTemplate.category,
             subCategory: businessTemplate.subCategory,
-            description: businessTemplate.features || `${businessTemplate.businessType}の専門店`,
+            storeName: businessTemplate.storeName || `${businessTemplate.businessType} 〇〇`,
             targetCustomers: businessTemplate.targetCustomers || [],
             businessHours: businessTemplate.businessHours || '',
             priceRange: businessTemplate.priceRange || '',
             atmosphere: businessTemplate.atmosphere || '',
-            features: businessTemplate.features || '',
+            features: businessTemplate.features || `${businessTemplate.businessType}の専門店`,
             goals: businessTemplate.goals || '',
-            messageStyle: businessTemplate.messageStyle || '親しみやすい'
+            messageStyle: businessTemplate.messageStyle || '親しみやすい',
+            persona: `あなたは${businessTemplate.businessType}のオーナーとして、L-core（LINE公式アカウント販促システム）の運営責任者です。`
           }
 
           setSelectedTemplate(simplifiedTemplate)

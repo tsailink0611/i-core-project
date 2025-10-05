@@ -75,7 +75,7 @@ const MetricCard = ({ title, value, subtitle, trend, color = 'blue' }: {
 }
 
 const SimpleChart = ({ data, title }: SimpleChartProps) => {
-  const maxValue = Math.max(...data.map(d => Math.max(d.sent, d.opened, d.replied)))
+  const maxValue = Math.max(...data.map(d => Math.max(d.sent || 0, d.opened || 0, d.replied || 0)))
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -89,28 +89,28 @@ const SimpleChart = ({ data, title }: SimpleChartProps) => {
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-blue-600 h-2 rounded-full"
-                    style={{ width: `${(item.sent / maxValue) * 100}%` }}
+                    style={{ width: `${((item.sent || 0) / maxValue) * 100}%` }}
                   />
                 </div>
-                <span className="text-xs text-gray-500 w-12">{item.sent}</span>
+                <span className="text-xs text-gray-500 w-12">{item.sent || 0}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-green-600 h-2 rounded-full"
-                    style={{ width: `${(item.opened / maxValue) * 100}%` }}
+                    style={{ width: `${((item.opened || 0) / maxValue) * 100}%` }}
                   />
                 </div>
-                <span className="text-xs text-gray-500 w-12">{item.opened}</span>
+                <span className="text-xs text-gray-500 w-12">{item.opened || 0}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-yellow-600 h-2 rounded-full"
-                    style={{ width: `${(item.replied / maxValue) * 100}%` }}
+                    style={{ width: `${((item.replied || 0) / maxValue) * 100}%` }}
                   />
                 </div>
-                <span className="text-xs text-gray-500 w-12">{item.replied}</span>
+                <span className="text-xs text-gray-500 w-12">{item.replied || 0}</span>
               </div>
             </div>
           </div>
@@ -160,6 +160,9 @@ export default function AnalyticsPage() {
                 <span className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
                   分析
                 </span>
+                <Link href="/dashboard/cost" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  コスト管理
+                </Link>
                 <Link href="/dashboard/settings" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   設定
                 </Link>

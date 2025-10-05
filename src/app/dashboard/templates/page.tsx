@@ -93,7 +93,10 @@ export default function TemplatesPage() {
     sendTime: '',
     frequency: 'once',
     title: '',
-    campaignType: ''
+    campaignType: '',
+    dayOfWeek: '',
+    dayOfMonth: '',
+    targetCondition: ''
   })
   const [availablePromotions, setAvailablePromotions] = useState<BusinessPromotions | null>(null)
   const [selectedPromotion, setSelectedPromotion] = useState<PromotionTemplate | null>(null)
@@ -359,13 +362,33 @@ ${selectedContext}
 
       const data = await response.json()
       if (data.suggestions && data.suggestions.length > 0) {
+        // 最初の提案を自動的にメッセージフォームに反映
+        const firstSuggestion = data.suggestions[0]
+        const enhancedData = parseEnhancedResponse(firstSuggestion)
+
+        if (enhancedData) {
+          // Enhanced形式の場合、詳細情報を抽出
+          setSelectedMessage(enhancedData.message)
+          setScheduleSettings(prev => ({
+            ...prev,
+            title: enhancedData.title || `${businessDetails.storeName || 'お店'}からのお知らせ`
+          }))
+        } else {
+          // シンプル形式の場合
+          setSelectedMessage(firstSuggestion)
+        }
+
+        // メッセージフォームを自動表示
+        setShowMessageForm(true)
+
+        // 残りの提案もaiMessagesに保存（後で選択できるように）
         setAiMessages(data.suggestions)
       } else {
-        setAiMessages(['プロモーション企画の生成に失敗しました。'])
+        alert('プロモーション企画の生成に失敗しました。')
       }
     } catch (error) {
       console.error('プロモーション生成エラー:', error)
-      setAiMessages(['エラーが発生しました。業種と店舗情報を確認してください。'])
+      alert('エラーが発生しました。業種と店舗情報を確認してください。')
     } finally {
       setIsGenerating(false)
     }
@@ -604,7 +627,10 @@ ${selectedContext}
         sendTime: '',
         frequency: 'once',
         title: '',
-        campaignType: ''
+        campaignType: '',
+        dayOfWeek: '',
+        dayOfMonth: '',
+        targetCondition: ''
       })
       alert(`メッセージが保存されました！\n配信予定: ${scheduleSettings.sendDate} ${scheduleSettings.sendTime}`)
     } catch (error) {
@@ -817,9 +843,10 @@ ${selectedContext}
                   </select>
                 </div>
               </div>
+            </div>
 
-              {/* プロモーション種別選択 - カスタマイズフォーム内に配置 */}
-              <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border-2 border-purple-200">
+            {/* プロモーション種別選択 - カスタマイズフォーム内に配置 */}
+            <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg border-2 border-purple-200">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                   🎯 プロモーション種別を選択
                   <span className="ml-2 text-sm font-normal text-gray-600">(AI生成の質が向上します)</span>
@@ -907,8 +934,132 @@ ${selectedContext}
                     </div>
                   </div>
                 )}
-              </div>
+
             </div>
+
+            {/* スケジュール頻度設定 - プロモーション種別選択後に表示 */}
+            {promotionType && (
+              <div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border-2 border-green-300 shadow-md">
+                <h4 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                  📅 配信スケジュール設定
+                  <span className="ml-2 text-sm font-normal text-gray-600">(頻度と日時を設定)</span>
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* 配信頻度選択 */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      配信頻度
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { id: 'once', label: '1回のみ', icon: '📅' },
+                        { id: 'weekly', label: '週1回', icon: '📆' },
+                        { id: 'biweekly', label: '隔週', icon: '🗓️' },
+                        { id: 'monthly', label: '月1回', icon: '📊' }
+                      ].map((freq) => (
+                        <button
+                          key={freq.id}
+                          onClick={() => handleScheduleChange('frequency', freq.id)}
+                          className={`p-3 rounded-lg border-2 transition-all text-left ${
+                            scheduleSettings.frequency === freq.id
+                              ? 'border-green-500 bg-green-50'
+                              : 'border-gray-200 bg-white hover:border-green-300'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg">{freq.icon}</span>
+                            <span className="text-sm font-medium">{freq.label}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 配信日時設定 */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      初回配信日時
+                    </label>
+                    <div className="space-y-3">
+                      <div>
+                        <input
+                          type="date"
+                          value={scheduleSettings.sendDate}
+                          onChange={(e) => handleScheduleChange('sendDate', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                          placeholder="配信日"
+                        />
+                      </div>
+                      <div>
+                        <input
+                          type="time"
+                          value={scheduleSettings.sendTime}
+                          onChange={(e) => handleScheduleChange('sendTime', e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                          placeholder="配信時間"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 曜日指定（週1回・隔週の場合のみ表示） */}
+                  {(scheduleSettings.frequency === 'weekly' || scheduleSettings.frequency === 'biweekly') && (
+                    <div className="col-span-full">
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        配信曜日
+                      </label>
+                      <div className="grid grid-cols-7 gap-2">
+                        {[
+                          { id: 'monday', label: '月', full: '月曜日' },
+                          { id: 'tuesday', label: '火', full: '火曜日' },
+                          { id: 'wednesday', label: '水', full: '水曜日' },
+                          { id: 'thursday', label: '木', full: '木曜日' },
+                          { id: 'friday', label: '金', full: '金曜日' },
+                          { id: 'saturday', label: '土', full: '土曜日' },
+                          { id: 'sunday', label: '日', full: '日曜日' }
+                        ].map((day) => (
+                          <button
+                            key={day.id}
+                            onClick={() => handleScheduleChange('dayOfWeek', day.id)}
+                            className={`p-3 rounded-lg border-2 transition-all ${
+                              scheduleSettings.dayOfWeek === day.id
+                                ? 'border-green-500 bg-green-100 font-bold'
+                                : 'border-gray-200 bg-white hover:border-green-300'
+                            }`}
+                            title={day.full}
+                          >
+                            {day.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 日付指定（月1回の場合のみ表示） */}
+                  {scheduleSettings.frequency === 'monthly' && (
+                    <div className="col-span-full">
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        配信日（毎月）
+                      </label>
+                      <select
+                        value={scheduleSettings.dayOfMonth || ''}
+                        onChange={(e) => handleScheduleChange('dayOfMonth', e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="">日付を選択</option>
+                        {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
+                          <option key={day} value={day}>
+                            毎月{day}日
+                          </option>
+                        ))}
+                        <option value="last">毎月末日</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* プロモーション企画選択エリア */}
             {availablePromotions && (
@@ -939,142 +1090,6 @@ ${selectedContext}
               </div>
             )}
 
-            {/* AI生成メッセージ表示エリア - Enhanced */}
-            {aiMessages.length > 0 && (
-              <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  🤖 AI生成メッセージ (GPT-5-mini)
-                </h3>
-                <div className="space-y-6">
-                  {aiMessages.map((message, index) => {
-                    const enhancedData = parseEnhancedResponse(message)
-
-                    return (
-                      <div key={index} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                        {enhancedData ? (
-                          // Enhanced format display
-                          <div className="p-6">
-                            {/* Header with title and actions */}
-                            <div className="flex justify-between items-start mb-4">
-                              <div className="flex-1">
-                                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                                  🎉 {enhancedData.title}
-                                </h4>
-                                <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                                  パターン {index + 1}
-                                </span>
-                              </div>
-                              <div className="flex flex-col space-y-3 ml-4">
-                                <button
-                                  onClick={() => handleMessageSelect(enhancedData.message)}
-                                  className="px-6 py-4 text-lg text-white bg-green-600 hover:bg-green-700 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
-                                >
-                                  📝 このメッセージを使用する
-                                </button>
-                                <button
-                                  onClick={() => navigator.clipboard.writeText(enhancedData.message)}
-                                  className="px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
-                                >
-                                  📋 コピー
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Message content */}
-                            <div className="mb-6">
-                              <h5 className="text-sm font-medium text-gray-700 mb-2">💬 メッセージ内容</h5>
-                              <div className="p-4 bg-gray-50 rounded-lg border-l-4 border-green-500">
-                                <p className="text-gray-800 leading-relaxed">{enhancedData.message}</p>
-                              </div>
-                            </div>
-
-                            {/* Schedule information grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              {enhancedData.timing && (
-                                <div className="p-4 bg-blue-50 rounded-lg">
-                                  <h6 className="text-sm font-medium text-blue-800 mb-1 flex items-center">
-                                    ⏰ 配信タイミング
-                                  </h6>
-                                  <p className="text-sm text-blue-700">{enhancedData.timing}</p>
-                                </div>
-                              )}
-
-                              {enhancedData.frequency && (
-                                <div className="p-4 bg-purple-50 rounded-lg">
-                                  <h6 className="text-sm font-medium text-purple-800 mb-1 flex items-center">
-                                    🔄 配信頻度
-                                  </h6>
-                                  <p className="text-sm text-purple-700">{enhancedData.frequency}</p>
-                                </div>
-                              )}
-
-                              {enhancedData.effect && (
-                                <div className="p-4 bg-green-50 rounded-lg">
-                                  <h6 className="text-sm font-medium text-green-800 mb-1 flex items-center">
-                                    🎯 期待効果
-                                  </h6>
-                                  <p className="text-sm text-green-700">{enhancedData.effect}</p>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Additional information */}
-                            {(enhancedData.reason || enhancedData.seasonal) && (
-                              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {enhancedData.reason && (
-                                  <div className="p-4 bg-yellow-50 rounded-lg">
-                                    <h6 className="text-sm font-medium text-yellow-800 mb-1 flex items-center">
-                                      💡 配信理由
-                                    </h6>
-                                    <p className="text-sm text-yellow-700">{enhancedData.reason}</p>
-                                  </div>
-                                )}
-
-                                {enhancedData.seasonal && (
-                                  <div className="p-4 bg-orange-50 rounded-lg">
-                                    <h6 className="text-sm font-medium text-orange-800 mb-1 flex items-center">
-                                      🌸 季節考慮
-                                    </h6>
-                                    <p className="text-sm text-orange-700">{enhancedData.seasonal}</p>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          // Fallback: Simple format display for backward compatibility
-                          <div className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <span className="text-sm font-medium text-gray-600">
-                                パターン {index + 1}
-                              </span>
-                              <div className="flex space-x-2">
-                                <button
-                                  onClick={() => navigator.clipboard.writeText(message)}
-                                  className="text-sm text-blue-600 hover:text-blue-700"
-                                >
-                                  📋 コピー
-                                </button>
-                                <button
-                                  onClick={() => handleMessageSelect(message)}
-                                  className="text-sm text-green-600 hover:text-green-700 font-medium"
-                                >
-                                  📝 使用する
-                                </button>
-                              </div>
-                            </div>
-                            <p className="text-gray-800 whitespace-pre-wrap">{message}</p>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-                <div className="mt-4 text-sm text-gray-500">
-                  ※ これらは{businessDetails.storeName || 'お店'}の情報を基にAIが自動生成したサンプルメッセージです。
-                </div>
-              </div>
-            )}
 
             {/* メッセージ設定フォーム */}
             {showMessageForm && (

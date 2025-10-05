@@ -1,50 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-
-// ダミーデータ
-const mockMessages = [
-  {
-    id: 1,
-    title: '新商品のご案内',
-    content: '【NEW】秋の新商品が入荷しました！限定20%OFFで販売中です。詳細はこちら→',
-    status: 'sent',
-    sentAt: '2025-09-21 10:30',
-    recipients: 1200,
-    responses: 45,
-    type: 'text'
-  },
-  {
-    id: 2,
-    title: 'キャンペーン情報',
-    content: '🎉会員様限定！特別セールのお知らせです。今なら送料無料でお届けします。',
-    status: 'scheduled',
-    scheduledAt: '2025-09-22 09:00',
-    recipients: 800,
-    responses: 0,
-    type: 'text'
-  },
-  {
-    id: 3,
-    title: '商品画像付きメッセージ',
-    content: '人気商品の詳細画像をお送りします',
-    status: 'draft',
-    recipients: 0,
-    responses: 0,
-    type: 'image'
-  },
-  {
-    id: 4,
-    title: 'アンケート調査',
-    content: 'お客様満足度向上のため、簡単なアンケートにご協力ください。',
-    status: 'sent',
-    sentAt: '2025-09-20 14:15',
-    recipients: 500,
-    responses: 156,
-    type: 'template'
-  }
-]
+import { useRouter } from 'next/navigation'
+import { getSavedMessages, updateMessage, type SavedMessage } from '@/lib/messageStorage'
 
 const StatusBadge = ({ status }: { status: string }) => {
   const styles = {
@@ -81,15 +40,108 @@ const TypeIcon = ({ type }: { type: string }) => {
 }
 
 export default function MessagesPage() {
+  const router = useRouter()
+  const [messages, setMessages] = useState<SavedMessage[]>([])
   const [selectedTab, setSelectedTab] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+  const [resendingMessageId, setResendingMessageId] = useState<string | null>(null)
 
-  const filteredMessages = mockMessages.filter(message => {
+  // Load messages from localStorage on mount
+  useEffect(() => {
+    const loadMessages = () => {
+      const savedMessages = getSavedMessages()
+      setMessages(savedMessages)
+    }
+
+    loadMessages()
+
+    // Refresh messages when tab becomes visible
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadMessages()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
+
+  const filteredMessages = messages.filter(message => {
     const matchesSearch = message.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          message.content.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesTab = selectedTab === 'all' || message.status === selectedTab
     return matchesSearch && matchesTab
   })
+
+  const handleResend = async (message: SavedMessage) => {
+    if (!confirm(`「${message.title}」を再送信しますか？\n\nメッセージ: ${message.content.substring(0, 50)}...`)) {
+      return
+    }
+
+    setResendingMessageId(message.id)
+
+    try {
+      // Send message via LINE API
+      const response = await fetch('/api/line/send-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message.content,
+          targetAudience: message.scheduleSettings.targetAudience || 'all'
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('メッセージの送信に失敗しました')
+      }
+
+      // Update message status to sent
+      updateMessage(message.id, {
+        status: 'sent',
+        sentAt: new Date().toISOString()
+      })
+
+      // Reload messages
+      setMessages(getSavedMessages())
+
+      alert('メッセージを再送信しました')
+    } catch (error) {
+      console.error('Resend error:', error)
+      alert('メッセージの再送信に失敗しました。\nエラー: ' + (error instanceof Error ? error.message : '不明なエラー'))
+    } finally {
+      setResendingMessageId(null)
+    }
+  }
+
+  const handleEditAndSend = (message: SavedMessage) => {
+    // Store message data in localStorage for the templates page to retrieve
+    localStorage.setItem('l-core-edit-message', JSON.stringify({
+      title: message.title,
+      content: message.content,
+      scheduleSettings: message.scheduleSettings,
+      businessTemplate: message.businessTemplate
+    }))
+
+    // Navigate to templates page
+    router.push('/dashboard/templates')
+  }
+
+  const formatDateTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    } catch {
+      return dateString
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -114,13 +166,16 @@ export default function MessagesPage() {
                 <Link href="/dashboard/analytics" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   分析
                 </Link>
+                <Link href="/dashboard/cost" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  コスト管理
+                </Link>
                 <Link href="/dashboard/settings" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   設定
                 </Link>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/dashboard/messages/new" className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+              <Link href="/dashboard/templates" className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
                 新規メッセージ
               </Link>
               <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
@@ -211,21 +266,24 @@ export default function MessagesPage() {
                         {message.content}
                       </p>
                       <div className="flex items-center space-x-6 text-sm text-gray-500">
-                        {message.status === 'sent' && (
+                        {message.status === 'sent' && message.sentAt && (
                           <>
-                            <span>送信日時: {message.sentAt}</span>
-                            <span>配信数: {message.recipients.toLocaleString()}名</span>
-                            <span>応答数: {message.responses}件</span>
+                            <span>送信日時: {formatDateTime(message.sentAt)}</span>
+                            <span>配信数: {(message.recipients || 0).toLocaleString()}名</span>
+                            <span>応答数: {(message.responses || 0)}件</span>
                           </>
                         )}
                         {message.status === 'scheduled' && (
                           <>
-                            <span>配信予定: {message.scheduledAt}</span>
-                            <span>配信予定数: {message.recipients.toLocaleString()}名</span>
+                            <span>配信予定: {message.scheduleSettings.sendDate} {message.scheduleSettings.sendTime}</span>
+                            <span>対象: {message.scheduleSettings.targetAudience || '全会員'}</span>
                           </>
                         )}
                         {message.status === 'draft' && (
-                          <span>下書き保存済み</span>
+                          <>
+                            <span>下書き保存済み</span>
+                            <span>作成日時: {formatDateTime(message.createdAt)}</span>
+                          </>
                         )}
                       </div>
                     </div>
@@ -235,39 +293,55 @@ export default function MessagesPage() {
                   <div className="flex items-center space-x-2 ml-4">
                     {message.status === 'draft' && (
                       <>
-                        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        <button
+                          onClick={() => handleEditAndSend(message)}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
                           編集
                         </button>
-                        <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium hover:bg-blue-700">
-                          送信
+                        <button
+                          onClick={() => handleResend(message)}
+                          disabled={resendingMessageId === message.id}
+                          className="bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400"
+                        >
+                          {resendingMessageId === message.id ? '送信中...' : '送信'}
                         </button>
                       </>
                     )}
                     {message.status === 'scheduled' && (
                       <>
-                        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        <button
+                          onClick={() => handleEditAndSend(message)}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
                           編集
                         </button>
-                        <button className="text-red-600 hover:text-red-800 text-sm font-medium">
-                          キャンセル
+                        <button
+                          onClick={() => handleResend(message)}
+                          disabled={resendingMessageId === message.id}
+                          className="bg-green-600 text-white px-3 py-1 rounded text-sm font-medium hover:bg-green-700 disabled:bg-gray-400"
+                        >
+                          {resendingMessageId === message.id ? '送信中...' : '今すぐ送信'}
                         </button>
                       </>
                     )}
                     {message.status === 'sent' && (
                       <>
-                        <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                          詳細
+                        <button
+                          onClick={() => handleResend(message)}
+                          disabled={resendingMessageId === message.id}
+                          className="text-green-600 hover:text-green-800 text-sm font-medium disabled:text-gray-400"
+                        >
+                          {resendingMessageId === message.id ? '送信中...' : '再送信'}
                         </button>
-                        <button className="text-green-600 hover:text-green-800 text-sm font-medium">
-                          複製
+                        <button
+                          onClick={() => handleEditAndSend(message)}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          編集して送信
                         </button>
                       </>
                     )}
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                      </svg>
-                    </button>
                   </div>
                 </div>
               </div>
@@ -281,7 +355,7 @@ export default function MessagesPage() {
               <p className="text-gray-500 mb-6">
                 {searchTerm ? '検索条件に一致するメッセージが見つかりませんでした。' : '新しいメッセージを作成して始めましょう。'}
               </p>
-              <Link href="/dashboard/messages/new" className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+              <Link href="/dashboard/templates" className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
                 新規メッセージ作成
               </Link>
             </div>
@@ -296,7 +370,7 @@ export default function MessagesPage() {
               <div>
                 <p className="text-sm font-medium text-gray-500">総送信数</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {mockMessages.filter(m => m.status === 'sent').reduce((sum, m) => sum + m.recipients, 0).toLocaleString()}
+                  {messages.filter(m => m.status === 'sent').reduce((sum, m) => sum + (m.recipients || 0), 0).toLocaleString()}
                 </p>
               </div>
             </div>
@@ -308,7 +382,7 @@ export default function MessagesPage() {
               <div>
                 <p className="text-sm font-medium text-gray-500">総応答数</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {mockMessages.filter(m => m.status === 'sent').reduce((sum, m) => sum + m.responses, 0)}
+                  {messages.filter(m => m.status === 'sent').reduce((sum, m) => sum + (m.responses || 0), 0)}
                 </p>
               </div>
             </div>
@@ -321,9 +395,9 @@ export default function MessagesPage() {
                 <p className="text-sm font-medium text-gray-500">平均応答率</p>
                 <p className="text-2xl font-bold text-gray-900">
                   {(() => {
-                    const sentMessages = mockMessages.filter(m => m.status === 'sent')
-                    const totalSent = sentMessages.reduce((sum, m) => sum + m.recipients, 0)
-                    const totalResponses = sentMessages.reduce((sum, m) => sum + m.responses, 0)
+                    const sentMessages = messages.filter(m => m.status === 'sent')
+                    const totalSent = sentMessages.reduce((sum, m) => sum + (m.recipients || 0), 0)
+                    const totalResponses = sentMessages.reduce((sum, m) => sum + (m.responses || 0), 0)
                     return totalSent > 0 ? `${((totalResponses / totalSent) * 100).toFixed(1)}%` : '0%'
                   })()}
                 </p>

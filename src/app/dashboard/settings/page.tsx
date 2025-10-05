@@ -41,6 +41,9 @@ export default function SettingsPage() {
                 <Link href="/dashboard/analytics" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                   分析
                 </Link>
+                <Link href="/dashboard/cost" className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                  コスト管理
+                </Link>
                 <span className="bg-blue-100 text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
                   設定
                 </span>
