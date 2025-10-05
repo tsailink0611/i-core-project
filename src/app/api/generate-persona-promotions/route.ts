@@ -15,48 +15,11 @@ export async function POST(request: NextRequest) {
         const { generateMessage } = await import('@/lib/openai/client')
 
         // ペルソナAIによるプロモーション提案プロンプト
-        const promotionPrompt = `${personaPrompt}
-
-【重要指示】必ず以下の形式で、この業種に最適なプロモーション企画を5つ提案してください。他の形式は一切禁止です：
-
-1. 【企画名】: 具体的な企画名
-   内容: 企画の詳細説明
-   実施時期: いつ実施するか
-   期待効果: どんな効果を狙うか
-
-2. 【企画名】: 2つ目の具体的な企画名
-   内容: 企画の詳細説明
-   実施時期: いつ実施するか
-   期待効果: どんな効果を狙うか
-
-3. 【企画名】: 3つ目の具体的な企画名
-   内容: 企画の詳細説明
-   実施時期: いつ実施するか
-   期待効果: どんな効果を狙うか
-
-4. 【企画名】: 4つ目の具体的な企画名
-   内容: 企画の詳細説明
-   実施時期: いつ実施するか
-   期待効果: どんな効果を狙うか
-
-5. 【企画名】: 5つ目の具体的な企画名
-   内容: 企画の詳細説明
-   実施時期: いつ実施するか
-   期待効果: どんな効果を狙うか
-
-各企画は以下の観点で考えてください：
-- ${businessTemplate.category}の${businessTemplate.subCategory}の特性に合った自然な企画
-- 実施しやすい現実的な内容
-- ターゲット層に響く魅力的な提案
-- 季節性や時期を考慮した提案
-- SNSやLINEと相性の良い企画
-
-決して一般的すぎず、${businessTemplate.category}の${businessTemplate.subCategory}という業種の特徴を活かした具体的で実用的な提案をお願いします。`
-
+        // personaPromptは既にフロントエンドで詳細な指示を含んでいるため、そのまま使用
         const response = await generateMessage(
           {
             ...businessTemplate,
-            aiPrompt: promotionPrompt
+            aiPrompt: personaPrompt  // フロントエンドからの詳細プロンプトをそのまま使用
           },
           'promotion'
         )

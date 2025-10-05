@@ -35,10 +35,14 @@ export async function generateMessage(
   messageType: 'greeting' | 'promotion' | 'announcement' | 'seasonal' = 'promotion',
   promotionContext?: PromotionTemplate
 ): Promise<string> {
-  // プロモーション企画コンテキストを取得
+  // カスタムAIプロンプトがある場合は、それを優先使用
+  const hasCustomPrompt = !!businessTemplate.aiPrompt
+
+  // プロモーション企画コンテキストを取得(カスタムプロンプトがない場合のみ)
   let promotionInfo = ''
-  if (promotionContext) {
-    promotionInfo = `
+  if (!hasCustomPrompt) {
+    if (promotionContext) {
+      promotionInfo = `
 実施予定のプロモーション企画：
 - 企画名：${promotionContext.title}
 - 内容：${promotionContext.description}
@@ -46,25 +50,29 @@ export async function generateMessage(
 - 期待効果：${promotionContext.expectedEffect}
 - 参考例文：${promotionContext.messageExample}
 `
-  } else if (businessTemplate.category && businessTemplate.subCategory && businessTemplate.businessType) {
-    // 季節のプロモーションを自動取得
-    const seasonalPromotions = getSeasonalPromotions(
-      businessTemplate.category,
-      businessTemplate.subCategory,
-      businessTemplate.businessType
-    )
-    if (seasonalPromotions.length > 0) {
-      const promo = seasonalPromotions[0]
-      promotionInfo = `
+    } else if (businessTemplate.category && businessTemplate.subCategory && businessTemplate.businessType) {
+      // 季節のプロモーションを自動取得
+      const seasonalPromotions = getSeasonalPromotions(
+        businessTemplate.category,
+        businessTemplate.subCategory,
+        businessTemplate.businessType
+      )
+      if (seasonalPromotions.length > 0) {
+        const promo = seasonalPromotions[0]
+        promotionInfo = `
 現在実施可能な季節企画：
 - 企画名：${promo.title}
 - 内容：${promo.description}
 - ターゲット：${Array.isArray(promo.target) ? promo.target.join('、') : (promo.target || '一般のお客様')}
 `
+      }
     }
   }
 
-  const systemPrompt = `あなたは${businessTemplate.storeName}のプロモーション・マーケティングアシスタントです。
+  // カスタムプロンプトがある場合は簡潔なシステムプロンプト（店舗情報のみ）、ない場合は詳細な指示
+  const systemPrompt = hasCustomPrompt
+    ? `あなたは${businessTemplate.storeName}のLINE公式アカウント運用担当のAIアシスタントです。ユーザーの指示に従って、プロモーション企画を提案してください。`
+    : `あなたは${businessTemplate.storeName}のプロモーション・マーケティングアシスタントです。
 【店舗情報】
 - 業種：${businessTemplate.category || ''} > ${businessTemplate.subCategory || ''} > ${businessTemplate.businessType || ''}
 - 店舗名：${businessTemplate.storeName}
@@ -75,7 +83,6 @@ export async function generateMessage(
 - 営業時間：${businessTemplate.businessHours}
 - 目標：${businessTemplate.goals}
 - メッセージトーン：${businessTemplate.messageStyle}
-${businessTemplate.aiPrompt || ''}
 
 ${promotionInfo}
 
@@ -87,19 +94,19 @@ ${promotionInfo}
 - 店舗の特徴や強みを活かした内容に
 - ターゲット層（${Array.isArray(businessTemplate.targetCustomers) ? businessTemplate.targetCustomers.join('、') : (businessTemplate.targetCustomers || '一般のお客様')}）に響く表現で`
 
-  // aiPromptが設定されている場合は、それを直接使用
-  const customPrompt = businessTemplate.aiPrompt
+  // カスタムプロンプトがある場合はそのまま使用、ない場合はデフォルトプロンプト
+  const userPrompt = hasCustomPrompt
+    ? businessTemplate.aiPrompt
+    : {
+        greeting: '初めてのお客様向けの挨拶メッセージを作成してください。店舗の魅力と特徴を伝え、親しみやすい第一印象を与えてください。',
+        promotion: promotionContext
+          ? `「${promotionContext.title}」のプロモーションメッセージを作成してください。企画の魅力を伝え、お客様の来店を促してください。`
+          : '今週のおすすめや特別キャンペーンのメッセージを作成してください。店舗の強みを活かしたお得感のある企画を提案してください。',
+        announcement: '重要なお知らせ（営業時間変更や新サービスなど）のメッセージを作成してください。',
+        seasonal: '現在の季節に合わせた特別企画やメニューのメッセージを作成してください。季節感を演出し、この時期だけの特別感を表現してください。'
+      }[messageType]
 
-  const userPrompt = customPrompt || {
-    greeting: '初めてのお客様向けの挨拶メッセージを作成してください。店舗の魅力と特徴を伝え、親しみやすい第一印象を与えてください。',
-    promotion: promotionContext
-      ? `「${promotionContext.title}」のプロモーションメッセージを作成してください。企画の魅力を伝え、お客様の来店を促してください。`
-      : '今週のおすすめや特別キャンペーンのメッセージを作成してください。店舗の強みを活かしたお得感のある企画を提案してください。',
-    announcement: '重要なお知らせ（営業時間変更や新サービスなど）のメッセージを作成してください。',
-    seasonal: '現在の季節に合わせた特別企画やメニューのメッセージを作成してください。季節感を演出し、この時期だけの特別感を表現してください。'
-  }[messageType]
-
-  console.log('Custom Prompt Check:', { customPrompt, messageType, hasCustom: !!customPrompt })
+  console.log('Custom Prompt Check:', { hasCustomPrompt, messageType, promptLength: typeof userPrompt === 'string' ? userPrompt.length : 0 })
 
   try {
     const openai = getOpenAI()
@@ -108,21 +115,33 @@ ${promotionInfo}
     // デバッグログ: 送信するプロンプトを確認
     console.log('=== AI API Debug ===')
     console.log('Model:', model)
-    console.log('Business Template aiPrompt:', businessTemplate.aiPrompt)
+    console.log('Has Custom Prompt:', hasCustomPrompt)
     console.log('Message Type:', messageType)
-    console.log('System Prompt:', systemPrompt)
-    console.log('User Prompt:', userPrompt)
-    console.log('==================')
+    console.log('System Prompt Length:', systemPrompt.length)
+    console.log('User Prompt Length:', typeof userPrompt === 'string' ? userPrompt.length : 0)
+    console.log('\n--- FULL SYSTEM PROMPT ---')
+    console.log(systemPrompt)
+    console.log('\n--- FULL USER PROMPT ---')
+    console.log(userPrompt)
+    console.log('==================\n')
 
     const response = await openai.chat.completions.create({
       model,
       messages: [
         { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt }
+        { role: 'user', content: userPrompt || '' }
       ],
-      max_completion_tokens: 2000, // GPT-4o-mini用の正しいパラメータ（詳細プロンプト対応）
+      max_completion_tokens: 4000, // GPT-5-miniの推論トークン + 生成トークン用に増量
       temperature: 1,
     })
+
+    console.log('\n=== OpenAI RESPONSE ===')
+    console.log('Response Object:', JSON.stringify(response, null, 2))
+    console.log('Choices:', response.choices)
+    console.log('First Choice:', response.choices[0])
+    console.log('Message:', response.choices[0]?.message)
+    console.log('Content:', response.choices[0]?.message?.content)
+    console.log('======================\n')
 
     const content = response.choices[0]?.message?.content?.trim()
     if (!content) {
