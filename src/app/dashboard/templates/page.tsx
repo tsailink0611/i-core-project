@@ -350,8 +350,17 @@ ${selectedContext}
             atmosphere: businessDetails.atmosphere || '',
             priceRange: businessDetails.priceRange || '',
             targetCustomers: businessDetails.targetCustomers || [],
+            businessHours: businessDetails.businessHours || '',
+            goals: businessDetails.goals || '',
+            messageStyle: businessDetails.messageStyle || '',
             promotionType: promotionType,
-            seasonalContext: seasonalContext
+            seasonalContext: seasonalContext,
+            scheduleFrequency: scheduleSettings.frequency,
+            scheduleDayOfWeek: scheduleSettings.dayOfWeek,
+            scheduleDayOfMonth: scheduleSettings.dayOfMonth,
+            scheduleSendDate: scheduleSettings.sendDate,
+            scheduleSendTime: scheduleSettings.sendTime,
+            aiPrompt: detailedPrompt  // 詳細プロンプトをaiPromptとして渡す
           }
         })
       })
