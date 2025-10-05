@@ -1,0 +1,298 @@
+app:
+  description: 不動産賃貸物件検索システム - 6つのナレッジベースを並列検索してユーザー問い合わせに回答
+  icon: 🏢
+  icon_background: '#4A90E2'
+  mode: workflow
+  name: 不動産LINE検索システム
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables:
+    - name: DIFY_DATASET_SUUMO
+      value: ""
+    - name: DIFY_DATASET_JISSHA
+      value: ""
+    - name: DIFY_DATASET_MOTOTSUKE
+      value: ""
+    - name: DIFY_DATASET_COMPANY
+      value: ""
+    - name: DIFY_DATASET_SERVICE
+      value: ""
+    - name: DIFY_DATASET_OTHER
+      value: ""
+  features:
+    file_upload:
+      enabled: false
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+  graph:
+    edges:
+      - id: start-to-suumo
+        source: start_node
+        source_handle: source
+        target: kb_suumo
+        target_handle: target
+      - id: start-to-jissha
+        source: start_node
+        source_handle: source
+        target: kb_jissha
+        target_handle: target
+      - id: start-to-mototsuke
+        source: start_node
+        source_handle: source
+        target: kb_mototsuke
+        target_handle: target
+      - id: start-to-company
+        source: start_node
+        source_handle: source
+        target: kb_company
+        target_handle: target
+      - id: start-to-service
+        source: start_node
+        source_handle: source
+        target: kb_service
+        target_handle: target
+      - id: start-to-other
+        source: start_node
+        source_handle: source
+        target: kb_other
+        target_handle: target
+      - id: suumo-to-template
+        source: kb_suumo
+        source_handle: source
+        target: template_node
+        target_handle: target
+      - id: jissha-to-template
+        source: kb_jissha
+        source_handle: source
+        target: template_node
+        target_handle: target
+      - id: mototsuke-to-template
+        source: kb_mototsuke
+        source_handle: source
+        target: template_node
+        target_handle: target
+      - id: company-to-template
+        source: kb_company
+        source_handle: source
+        target: template_node
+        target_handle: target
+      - id: service-to-template
+        source: kb_service
+        source_handle: source
+        target: template_node
+        target_handle: target
+      - id: other-to-template
+        source: kb_other
+        source_handle: source
+        target: template_node
+        target_handle: target
+      - id: template-to-llm
+        source: template_node
+        source_handle: source
+        target: llm_node
+        target_handle: target
+      - id: llm-to-answer
+        source: llm_node
+        source_handle: source
+        target: answer_node
+        target_handle: target
+    nodes:
+      - id: start_node
+        data:
+          title: 開始
+          type: start
+          variables:
+            - label: ユーザー質問
+              max_length: 1000
+              required: true
+              type: text-input
+              variable: query
+        height: 51
+        position:
+          x: 80
+          y: 282
+        type: custom
+        width: 242
+      - id: kb_suumo
+        data:
+          title: SUUMO物件検索
+          type: knowledge-retrieval
+          query: "{{#start_node.query#}}"
+          dataset_ids: ["{{#env.DIFY_DATASET_SUUMO#}}"]
+          retrieval_mode: single
+          top_k: 3
+          score_threshold: 0.5
+        height: 90
+        position:
+          x: 400
+          y: 150
+        type: custom
+        width: 244
+      - id: kb_jissha
+        data:
+          title: 自社管理物件検索
+          type: knowledge-retrieval
+          query: "{{#start_node.query#}}"
+          dataset_ids: ["{{#env.DIFY_DATASET_JISSHA#}}"]
+          retrieval_mode: single
+          top_k: 3
+          score_threshold: 0.5
+        height: 90
+        position:
+          x: 400
+          y: 250
+        type: custom
+        width: 244
+      - id: kb_mototsuke
+        data:
+          title: 元付け業者物件検索
+          type: knowledge-retrieval
+          query: "{{#start_node.query#}}"
+          dataset_ids: ["{{#env.DIFY_DATASET_MOTOTSUKE#}}"]
+          retrieval_mode: single
+          top_k: 3
+          score_threshold: 0.5
+        height: 90
+        position:
+          x: 400
+          y: 350
+        type: custom
+        width: 244
+      - id: kb_company
+        data:
+          title: 会社情報検索
+          type: knowledge-retrieval
+          query: "{{#start_node.query#}}"
+          dataset_ids: ["{{#env.DIFY_DATASET_COMPANY#}}"]
+          retrieval_mode: single
+          top_k: 2
+          score_threshold: 0.5
+        height: 90
+        position:
+          x: 400
+          y: 450
+        type: custom
+        width: 244
+      - id: kb_service
+        data:
+          title: サービス情報検索
+          type: knowledge-retrieval
+          query: "{{#start_node.query#}}"
+          dataset_ids: ["{{#env.DIFY_DATASET_SERVICE#}}"]
+          retrieval_mode: single
+          top_k: 2
+          score_threshold: 0.5
+        height: 90
+        position:
+          x: 400
+          y: 550
+        type: custom
+        width: 244
+      - id: kb_other
+        data:
+          title: その他情報検索
+          type: knowledge-retrieval
+          query: "{{#start_node.query#}}"
+          dataset_ids: ["{{#env.DIFY_DATASET_OTHER#}}"]
+          retrieval_mode: single
+          top_k: 2
+          score_threshold: 0.5
+        height: 90
+        position:
+          x: 400
+          y: 650
+        type: custom
+        width: 244
+      - id: template_node
+        data:
+          title: 検索結果統合
+          type: template
+          template: |
+            ## 検索結果
+
+            ### SUUMO物件情報
+            {{#kb_suumo.result#}}
+
+            ### 自社管理物件情報
+            {{#kb_jissha.result#}}
+
+            ### 元付け業者物件情報
+            {{#kb_mototsuke.result#}}
+
+            ### 会社情報
+            {{#kb_company.result#}}
+
+            ### サービス情報
+            {{#kb_service.result#}}
+
+            ### その他情報
+            {{#kb_other.result#}}
+
+            ### ユーザー質問
+            {{#start_node.query#}}
+        height: 90
+        position:
+          x: 700
+          y: 400
+        type: custom
+        width: 244
+      - id: llm_node
+        data:
+          title: 回答生成
+          type: llm
+          model:
+            provider: openai
+            name: gpt-4
+            mode: chat
+            completion_params:
+              temperature: 0.7
+              max_tokens: 1000
+          prompt_template:
+            - role: system
+              text: |
+                あなたは不動産の専門家です。提供された情報を基に、ユーザーの質問に対して正確で有用な回答を生成してください。
+
+                回答の際は以下を心がけてください：
+                1. 提供された情報のみを使用する
+                2. 情報がない場合は「該当する情報が見つかりませんでした」と回答する
+                3. 物件情報は具体的に記載する
+                4. 料金や条件は正確に伝える
+                5. 必要に応じて追加質問を促す
+            - role: user
+              text: "{{#template_node.output#}}"
+        height: 90
+        position:
+          x: 1000
+          y: 400
+        type: custom
+        width: 244
+      - id: answer_node
+        data:
+          title: 回答
+          type: answer
+          answer: "{{#llm_node.text#}}"
+        height: 90
+        position:
+          x: 1300
+          y: 400
+        type: custom
+        width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 1
+  rag_pipeline_variables: []
