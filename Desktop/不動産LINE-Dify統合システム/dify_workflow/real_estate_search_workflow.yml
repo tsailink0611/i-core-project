@@ -1,0 +1,629 @@
+app:
+  description: 不動産賃貸物件検索システム - 6つのナレッジベースを並列検索してユーザー問い合わせに回答
+  icon: 🏢
+  icon_background: '#4A90E2'
+  mode: workflow
+  name: 不動産LINE検索システム
+kind: app
+version: 0.1.3
+workflow:
+  conversation_variables: []
+  environment_variables:
+    - id: dataset_id_suumo
+      name: DIFY_DATASET_SUUMO
+      value_type: string
+    - id: dataset_id_jissha
+      name: DIFY_DATASET_JISSHA
+      value_type: string
+    - id: dataset_id_mototsuke
+      name: DIFY_DATASET_MOTOTSUKE
+      value_type: string
+    - id: dataset_id_company
+      name: DIFY_DATASET_COMPANY
+      value_type: string
+    - id: dataset_id_service
+      name: DIFY_DATASET_SERVICE
+      value_type: string
+    - id: dataset_id_other
+      name: DIFY_DATASET_OTHER
+      value_type: string
+  features:
+    file_upload:
+      enabled: false
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+      # Start → 6つのナレッジ検索ノード (並列実行)
+      - data:
+          isInIteration: false
+          sourceType: start
+          targetType: knowledge-retrieval
+        id: start-to-kb1
+        source: '1'
+        sourceHandle: source
+        target: kb_suumo
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: start
+          targetType: knowledge-retrieval
+        id: start-to-kb2
+        source: '1'
+        sourceHandle: source
+        target: kb_jissha
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: start
+          targetType: knowledge-retrieval
+        id: start-to-kb3
+        source: '1'
+        sourceHandle: source
+        target: kb_mototsuke
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: start
+          targetType: knowledge-retrieval
+        id: start-to-kb4
+        source: '1'
+        sourceHandle: source
+        target: kb_company
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: start
+          targetType: knowledge-retrieval
+        id: start-to-kb5
+        source: '1'
+        sourceHandle: source
+        target: kb_service
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: start
+          targetType: knowledge-retrieval
+        id: start-to-kb6
+        source: '1'
+        sourceHandle: source
+        target: kb_other
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      # 6つのナレッジ検索結果 → Template (結合)
+      - data:
+          isInIteration: false
+          sourceType: knowledge-retrieval
+          targetType: template-transform
+        id: kb1-to-template
+        source: kb_suumo
+        sourceHandle: source
+        target: knowledge_combiner
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: knowledge-retrieval
+          targetType: template-transform
+        id: kb2-to-template
+        source: kb_jissha
+        sourceHandle: source
+        target: knowledge_combiner
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: knowledge-retrieval
+          targetType: template-transform
+        id: kb3-to-template
+        source: kb_mototsuke
+        sourceHandle: source
+        target: knowledge_combiner
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: knowledge-retrieval
+          targetType: template-transform
+        id: kb4-to-template
+        source: kb_company
+        sourceHandle: source
+        target: knowledge_combiner
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: knowledge-retrieval
+          targetType: template-transform
+        id: kb5-to-template
+        source: kb_service
+        sourceHandle: source
+        target: knowledge_combiner
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      - data:
+          isInIteration: false
+          sourceType: knowledge-retrieval
+          targetType: template-transform
+        id: kb6-to-template
+        source: kb_other
+        sourceHandle: source
+        target: knowledge_combiner
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      # Template → LLM
+      - data:
+          isInIteration: false
+          sourceType: template-transform
+          targetType: llm
+        id: template-to-llm
+        source: knowledge_combiner
+        sourceHandle: source
+        target: answer_generator
+        targetHandle: target
+        type: custom
+        zIndex: 0
+      # LLM → Answer
+      - data:
+          isInIteration: false
+          sourceType: llm
+          targetType: answer
+        id: llm-to-answer
+        source: answer_generator
+        sourceHandle: source
+        target: answer
+        targetHandle: target
+        type: custom
+        zIndex: 0
+    nodes:
+      # 1. Start Node
+      - data:
+          desc: ユーザーからの質問を受け取る
+          selected: false
+          title: 開始
+          type: start
+          variables:
+            - label: ユーザー質問
+              max_length: 1000
+              required: true
+              type: text-input
+              variable: query
+        height: 90
+        id: '1'
+        position:
+          x: 80
+          y: 282
+        positionAbsolute:
+          x: 80
+          y: 282
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # 2-7. Knowledge Retrieval Nodes (並列6個)
+      # KB1: SUUMO物件
+      - data:
+          dataset_ids:
+            - "{{#dataset_id_suumo#}}"
+          desc: SUUMO物件情報を検索
+          query_variable_selector:
+            - '1'
+            - query
+          retrieval_mode: multiple
+          multiple_retrieval_config:
+            reranking_enable: true
+            reranking_mode: reranking_model
+            reranking_model:
+              completion_params: {}
+              mode: chat
+              name: gpt-4
+              provider: openai
+            score_threshold: 0.7
+            score_threshold_enabled: true
+            top_k: 5
+          selected: false
+          title: SUUMO物件検索
+          type: knowledge-retrieval
+        height: 90
+        id: kb_suumo
+        position:
+          x: 384
+          y: 100
+        positionAbsolute:
+          x: 384
+          y: 100
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # KB2: 自社管理物件
+      - data:
+          dataset_ids:
+            - "{{#dataset_id_jissha#}}"
+          desc: 自社管理物件情報を検索
+          query_variable_selector:
+            - '1'
+            - query
+          retrieval_mode: multiple
+          multiple_retrieval_config:
+            reranking_enable: true
+            reranking_mode: reranking_model
+            reranking_model:
+              completion_params: {}
+              mode: chat
+              name: gpt-4
+              provider: openai
+            score_threshold: 0.7
+            score_threshold_enabled: true
+            top_k: 5
+          selected: false
+          title: 自社管理物件検索
+          type: knowledge-retrieval
+        height: 90
+        id: kb_jissha
+        position:
+          x: 384
+          y: 210
+        positionAbsolute:
+          x: 384
+          y: 210
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # KB3: 元付け業者物件
+      - data:
+          dataset_ids:
+            - "{{#dataset_id_mototsuke#}}"
+          desc: 元付け業者物件情報を検索
+          query_variable_selector:
+            - '1'
+            - query
+          retrieval_mode: multiple
+          multiple_retrieval_config:
+            reranking_enable: true
+            reranking_mode: reranking_model
+            reranking_model:
+              completion_params: {}
+              mode: chat
+              name: gpt-4
+              provider: openai
+            score_threshold: 0.7
+            score_threshold_enabled: true
+            top_k: 5
+          selected: false
+          title: 元付け業者物件検索
+          type: knowledge-retrieval
+        height: 90
+        id: kb_mototsuke
+        position:
+          x: 384
+          y: 320
+        positionAbsolute:
+          x: 384
+          y: 320
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # KB4: 会社情報
+      - data:
+          dataset_ids:
+            - "{{#dataset_id_company#}}"
+          desc: 会社情報を検索
+          query_variable_selector:
+            - '1'
+            - query
+          retrieval_mode: multiple
+          multiple_retrieval_config:
+            reranking_enable: true
+            reranking_mode: reranking_model
+            reranking_model:
+              completion_params: {}
+              mode: chat
+              name: gpt-4
+              provider: openai
+            score_threshold: 0.7
+            score_threshold_enabled: true
+            top_k: 3
+          selected: false
+          title: 会社情報検索
+          type: knowledge-retrieval
+        height: 90
+        id: kb_company
+        position:
+          x: 384
+          y: 430
+        positionAbsolute:
+          x: 384
+          y: 430
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # KB5: サービス情報
+      - data:
+          dataset_ids:
+            - "{{#dataset_id_service#}}"
+          desc: サービス・契約情報を検索
+          query_variable_selector:
+            - '1'
+            - query
+          retrieval_mode: multiple
+          multiple_retrieval_config:
+            reranking_enable: true
+            reranking_mode: reranking_model
+            reranking_model:
+              completion_params: {}
+              mode: chat
+              name: gpt-4
+              provider: openai
+            score_threshold: 0.7
+            score_threshold_enabled: true
+            top_k: 3
+          selected: false
+          title: サービス情報検索
+          type: knowledge-retrieval
+        height: 90
+        id: kb_service
+        position:
+          x: 384
+          y: 540
+        positionAbsolute:
+          x: 384
+          y: 540
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # KB6: その他
+      - data:
+          dataset_ids:
+            - "{{#dataset_id_other#}}"
+          desc: その他の情報を検索
+          query_variable_selector:
+            - '1'
+            - query
+          retrieval_mode: multiple
+          multiple_retrieval_config:
+            reranking_enable: true
+            reranking_mode: reranking_model
+            reranking_model:
+              completion_params: {}
+              mode: chat
+              name: gpt-4
+              provider: openai
+            score_threshold: 0.7
+            score_threshold_enabled: true
+            top_k: 2
+          selected: false
+          title: その他情報検索
+          type: knowledge-retrieval
+        height: 90
+        id: kb_other
+        position:
+          x: 384
+          y: 650
+        positionAbsolute:
+          x: 384
+          y: 650
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # 8. Template Node (ナレッジ結合)
+      - data:
+          desc: 6つのナレッジベース検索結果を整形して結合
+          selected: false
+          template: |
+            # ナレッジベース検索結果
+
+            ## SUUMO物件情報
+            {% for item in kb_suumo.result %}
+            ### [スコア: {{ item.metadata.score | default('N/A') }}] {{ item.title }}
+            {{ item.content | replace('\n', '\n') }}
+            ---
+            {% endfor %}
+
+            ## 自社管理物件情報
+            {% for item in kb_jissha.result %}
+            ### [スコア: {{ item.metadata.score | default('N/A') }}] {{ item.title }}
+            {{ item.content | replace('\n', '\n') }}
+            ---
+            {% endfor %}
+
+            ## 元付け業者物件情報
+            {% for item in kb_mototsuke.result %}
+            ### [スコア: {{ item.metadata.score | default('N/A') }}] {{ item.title }}
+            {{ item.content | replace('\n', '\n') }}
+            ---
+            {% endfor %}
+
+            ## 会社情報
+            {% for item in kb_company.result %}
+            ### [スコア: {{ item.metadata.score | default('N/A') }}] {{ item.title }}
+            {{ item.content | replace('\n', '\n') }}
+            ---
+            {% endfor %}
+
+            ## サービス・契約情報
+            {% for item in kb_service.result %}
+            ### [スコア: {{ item.metadata.score | default('N/A') }}] {{ item.title }}
+            {{ item.content | replace('\n', '\n') }}
+            ---
+            {% endfor %}
+
+            ## その他情報
+            {% for item in kb_other.result %}
+            ### [スコア: {{ item.metadata.score | default('N/A') }}] {{ item.title }}
+            {{ item.content | replace('\n', '\n') }}
+            ---
+            {% endfor %}
+          title: ナレッジ結合
+          type: template-transform
+          variables:
+            - value_selector:
+                - kb_suumo
+                - result
+              variable: kb_suumo
+            - value_selector:
+                - kb_jissha
+                - result
+              variable: kb_jissha
+            - value_selector:
+                - kb_mototsuke
+                - result
+              variable: kb_mototsuke
+            - value_selector:
+                - kb_company
+                - result
+              variable: kb_company
+            - value_selector:
+                - kb_service
+                - result
+              variable: kb_service
+            - value_selector:
+                - kb_other
+                - result
+              variable: kb_other
+        height: 90
+        id: knowledge_combiner
+        position:
+          x: 708
+          y: 350
+        positionAbsolute:
+          x: 708
+          y: 350
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # 9. LLM Node (回答生成)
+      - data:
+          context:
+            enabled: true
+            variable_selector:
+              - knowledge_combiner
+              - output
+          desc: ナレッジベースの情報をもとに回答を生成
+          model:
+            completion_params:
+              frequency_penalty: 0.0
+              max_tokens: 2000
+              presence_penalty: 0.0
+              temperature: 0.3
+              top_p: 0.9
+            mode: chat
+            name: gpt-4
+            provider: openai
+          prompt_template:
+            - role: system
+              text: |
+                あなたは株式会社東京賃貸ホームズの賃貸物件検索AIアシスタントです。
+
+                以下の役割を担います:
+                1. ユーザーの質問に対して、提供されたナレッジベース情報をもとに正確かつ親切に回答
+                2. 物件情報、会社情報、サービス情報など、複数カテゴリの情報を適切に統合
+                3. 賃貸不動産の専門用語を分かりやすく説明
+                4. 具体的な物件提案や詳細情報の提供
+
+                回答時の注意点:
+                - ナレッジベースに情報がある場合は、必ずその情報を優先して使用
+                - 複数の物件候補がある場合は、比較しやすく整理して提示
+                - 賃料、初期費用、設備などの具体的な数値は正確に伝える
+                - 情報が不足している場合は、正直に「ナレッジベースに該当情報がございません」と伝える
+                - 丁寧で親しみやすい口調を心がける
+
+                ナレッジベース情報:
+                {{#context#}}
+            - role: user
+              text: '{{#1.query#}}'
+          selected: false
+          title: 回答生成
+          type: llm
+          vision:
+            enabled: false
+        height: 90
+        id: answer_generator
+        position:
+          x: 1032
+          y: 350
+        positionAbsolute:
+          x: 1032
+          y: 350
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+
+      # 10. Answer Node
+      - data:
+          answer: '{{#answer_generator.text#}}'
+          desc: ''
+          selected: false
+          title: 直接返信
+          type: answer
+          variables: []
+        height: 90
+        id: answer
+        position:
+          x: 1356
+          y: 350
+        positionAbsolute:
+          x: 1356
+          y: 350
+        selected: false
+        sourcePosition: right
+        targetPosition: left
+        type: custom
+        width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.8

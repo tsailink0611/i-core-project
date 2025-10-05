@@ -1,0 +1,36 @@
+# LINE Bot 依存関係
+
+# Webフレームワーク
+Flask==3.0.0
+gunicorn==21.2.0
+
+# LINE Messaging API SDK
+line-bot-sdk==3.9.0
+
+# HTTPクライアント
+requests==2.31.0
+
+# 環境変数管理
+python-dotenv==1.0.0
+
+# ログ管理
+python-json-logger==2.0.7
+
+# データ検証
+pydantic==2.5.2
+
+# Redis (会話履歴管理用 - オプション)
+redis==5.0.1
+
+# データベース (オプション)
+# SQLAlchemy==2.0.23
+# psycopg2-binary==2.9.9  # PostgreSQL
+# PyMySQL==1.1.0  # MySQL
+
+# モニタリング (オプション)
+# sentry-sdk==1.39.1
+
+# テスト
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0
