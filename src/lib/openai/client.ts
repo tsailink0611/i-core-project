@@ -71,7 +71,14 @@ export async function generateMessage(
 
   // カスタムプロンプトがある場合は簡潔なシステムプロンプト（店舗情報のみ）、ない場合は詳細な指示
   const systemPrompt = hasCustomPrompt
-    ? `あなたは${businessTemplate.storeName}のLINE公式アカウント運用担当のAIアシスタントです。ユーザーの指示に従って、プロモーション企画を提案してください。`
+    ? `あなたは${businessTemplate.storeName}のLINE公式アカウント運用担当のプロフェッショナルマーケターです。
+
+【厳守事項】
+- ユーザーが指定した形式を一字一句厳密に守ること
+- 「■ メッセージ内容:」は必ず120文字以上200文字以内にすること（絵文字・記号含む）
+- メッセージが短すぎる場合は、具体的なオファー内容・期限・特典詳細を追加して120文字以上にすること
+- 実際にLINEで送信できる実用的な企画のみ提案すること
+- 具体的な数値・タイミング・効果を必ず含めること`
     : `あなたは${businessTemplate.storeName}のプロモーション・マーケティングアシスタントです。
 【店舗情報】
 - 業種：${businessTemplate.category || ''} > ${businessTemplate.subCategory || ''} > ${businessTemplate.businessType || ''}
