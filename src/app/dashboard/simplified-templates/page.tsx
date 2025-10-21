@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { simplifiedBusinessCategories, simplifiedBusinessTemplates, generatePersonaPrompt, type SimplifiedBusinessTemplate } from '@/lib/templates/simplifiedBusinessTemplates'
@@ -9,7 +9,7 @@ import type { BusinessTemplate } from '@/types/business'
 // 動的レンダリングを強制（useSearchParams使用のため）
 export const dynamic = 'force-dynamic'
 
-export default function SimplifiedTemplatesPage() {
+function SimplifiedTemplatesContent() {
   const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('')
@@ -541,5 +541,22 @@ export default function SimplifiedTemplatesPage() {
         )}
       </main>
     </div>
+  )
+}
+
+
+// Main component wrapped with Suspense
+export default function SimplifiedTemplatesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SimplifiedTemplatesContent />
+    </Suspense>
   )
 }
