@@ -5,6 +5,9 @@ import { db } from '@/lib/firebase'
 import { collection, addDoc, getDocs, query, where, orderBy, Timestamp } from 'firebase/firestore'
 import Link from 'next/link'
 
+// Force dynamic rendering (Firebase requires client-side only)
+export const dynamic = 'force-dynamic'
+
 interface Coupon {
   id: string
   storeId: string

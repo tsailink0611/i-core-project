@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { auth } from '../../../lib/firebase'
 
+// Force dynamic rendering (Firebase requires client-side only)
+export const dynamic = 'force-dynamic'
+
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '../lib/firebase'
 
+// Force dynamic rendering (Firebase requires client-side only)
+export const dynamic = 'force-dynamic'
+
 export default function RootPage() {
   const router = useRouter()
 
