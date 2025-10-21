@@ -1,0 +1,47 @@
+name: Preview Deployment
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches:
+      - develop
+      - 'feature/**'
+
+jobs:
+  deploy-info:
+    name: Deployment Info
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: PR Preview Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Deployment Status
+
+              **Branch:** \`${context.payload.pull_request.head.ref}\`
+
+              ### Preview URL will be available soon
+              Vercel will automatically deploy this PR. Check the Vercel bot comment below for the preview URL.
+
+              ### What's being deployed:
+              - Latest commit: ${context.sha.substring(0, 7)}
+              - Author: @${context.payload.pull_request.user.login}
+
+              ---
+              *This is an automated preview deployment. The URL will be available in ~2 minutes.*`
+            })
+
+      - name: Development Deploy Info
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          echo "### 🌍 Staging Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "Branch: develop" >> $GITHUB_STEP_SUMMARY
+          echo "Environment: Staging" >> $GITHUB_STEP_SUMMARY
+          echo "Vercel will deploy to staging environment" >> $GITHUB_STEP_SUMMARY

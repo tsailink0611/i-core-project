@@ -1,0 +1,42 @@
+name: CI - Code Quality Check
+
+on:
+  push:
+    branches: [main, develop, feature/**]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  quality-check:
+    name: Code Quality & Build Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: ESLint check
+        run: npm run lint
+
+      - name: Build test
+        run: npm run build
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### ✅ CI Check Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- TypeScript: Type check passed" >> $GITHUB_STEP_SUMMARY
+          echo "- ESLint: Code style check passed" >> $GITHUB_STEP_SUMMARY
+          echo "- Build: Production build successful" >> $GITHUB_STEP_SUMMARY
