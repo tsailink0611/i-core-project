@@ -12,9 +12,9 @@ describe('StatCard Component', () => {
   it('renders with basic props', () => {
     render(<StatCard {...defaultProps} />)
 
-    expect(getByText('Test Metric')).toBeInTheDocument()
-    expect(getByText('1,234')).toBeInTheDocument()
-    expect(getByText('Test subtitle')).toBeInTheDocument()
+    expect(screen.getByText('Test Metric')).toBeInTheDocument()
+    expect(screen.getByText('1,234')).toBeInTheDocument()
+    expect(screen.getByText('Test subtitle')).toBeInTheDocument()
   })
 
   it('formats numbers correctly', () => {
@@ -58,22 +58,22 @@ describe('StatCard Component', () => {
       <StatCard title="Test" value={100} trend={positiveTrend} />
     )
 
-    expect(getByText('↗')).toBeInTheDocument()
-    expect(getByText('5.2%')).toBeInTheDocument()
-    expect(getByText('5.2%').closest('div')).toHaveClass('text-green-600')
+    expect(screen.getByText('↗')).toBeInTheDocument()
+    expect(screen.getByText('5.2%')).toBeInTheDocument()
+    expect(screen.getByText('5.2%').closest('div')).toHaveClass('text-green-600')
 
     const negativeTrend = { value: -3.1, isPositive: false }
     rerender(<StatCard title="Test" value={100} trend={negativeTrend} />)
 
-    expect(getByText('↘')).toBeInTheDocument()
-    expect(getByText('3.1%')).toBeInTheDocument()
-    expect(getByText('3.1%').closest('div')).toHaveClass('text-red-600')
+    expect(screen.getByText('↘')).toBeInTheDocument()
+    expect(screen.getByText('3.1%')).toBeInTheDocument()
+    expect(screen.getByText('3.1%').closest('div')).toHaveClass('text-red-600')
   })
 
   it('renders without optional props', () => {
     render(<StatCard title="Minimal" value={42} />)
 
-    expect(getByText('Minimal')).toBeInTheDocument()
-    expect(getByText('42')).toBeInTheDocument()
+    expect(screen.getByText('Minimal')).toBeInTheDocument()
+    expect(screen.getByText('42')).toBeInTheDocument()
   })
 })

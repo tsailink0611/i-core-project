@@ -120,7 +120,7 @@ describe('ApiClient', () => {
 
       const client = new ApiClient('/api')
       await expect(
-        client.get('/test', {}, { timeout: 100 })
+        client.get('/test')
       ).rejects.toThrow('Request timeout')
     }, 1000)
   })
