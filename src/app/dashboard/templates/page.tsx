@@ -103,6 +103,8 @@ export default function TemplatesPage() {
   const [promotionType, setPromotionType] = useState<string>('')
   const [seasonalContext, setSeasonalContext] = useState<string>('')
   const [showPromotionSelector, setShowPromotionSelector] = useState(false)
+  const [isSendingToLine, setIsSendingToLine] = useState(false)
+  const [sendError, setSendError] = useState<string | null>(null)
 
   // Load edit message data from localStorage when page loads
   useEffect(() => {
@@ -647,6 +649,44 @@ ${selectedContext}
       alert('メッセージの保存に失敗しました。')
     }
   }, [selectedMessage, scheduleSettings, businessDetails, selectedCategory, selectedSubCategory, selectedBusinessType])
+
+  const handleSendToLine = useCallback(async () => {
+    if (!selectedMessage) {
+      alert('送信するメッセージを選択してください。')
+      return
+    }
+
+    const userId = prompt('LINE User IDを入力してください:\n(空欄の場合は全員に送信します)')
+
+    setIsSendingToLine(true)
+    setSendError(null)
+
+    try {
+      const response = await fetch('/api/line/send-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: userId || undefined,
+          message: selectedMessage,
+          broadcast: !userId
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.details || data.error || '送信失敗')
+      }
+
+      alert(userId ? `LINEメッセージを送信しました！\n送信先: ${userId}` : 'LINEメッセージを全員に送信しました!')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '不明なエラー'
+      setSendError(errorMessage)
+      alert(`送信に失敗しました: ${errorMessage}`)
+    } finally {
+      setIsSendingToLine(false)
+    }
+  }, [selectedMessage])
 
   // Memoized business categories for performance
   const businessCategories = useMemo(() => BUSINESS_CATEGORIES, [])
@@ -1202,6 +1242,17 @@ ${selectedContext}
                       }`}
                     >
                       💾 メッセージを保存
+                    </button>
+                    <button
+                      onClick={handleSendToLine}
+                      disabled={!selectedMessage || isSendingToLine}
+                      className={`px-6 py-3 rounded-lg font-medium text-white    transition-colors ${
+                        !selectedMessage || isSendingToLine
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg'
+                      }`}
+                    >
+                      {isSendingToLine ? '送信中...' : '📱 LINEでテスト送信'}
                     </button>
                   </div>
                 </div>
