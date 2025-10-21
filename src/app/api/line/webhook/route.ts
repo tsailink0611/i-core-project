@@ -171,7 +171,9 @@ export async function POST(request: NextRequest) {
         console.log('✅ New follower:', event.source.userId)
 
         // ウェルカムメッセージを送信
-        await sendWelcomeMessage(event.source.userId)
+        if (event.source.userId) {
+          await sendWelcomeMessage(event.source.userId)
+        }
 
       } else if (event.type === 'unfollow') {
         console.log('❌ User unfollowed:', event.source.userId)

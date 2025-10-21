@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { simplifiedBusinessCategories, simplifiedBusinessTemplates, generatePersonaPrompt, type SimplifiedBusinessTemplate } from '@/lib/templates/simplifiedBusinessTemplates'
 import type { BusinessTemplate } from '@/types/business'
 
+// 動的レンダリングを強制（useSearchParams使用のため）
+export const dynamic = 'force-dynamic'
+
 export default function SimplifiedTemplatesPage() {
   const searchParams = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState<string>('')
