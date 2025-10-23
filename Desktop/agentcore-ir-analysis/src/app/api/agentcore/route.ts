@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
     const { query } = await request.json()
     
     // AgentCore日本語エージェントに転送
-    const response = await fetch('http://localhost:8081/invocations', {
+    const response = await fetch('http://localhost:8080/invocations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

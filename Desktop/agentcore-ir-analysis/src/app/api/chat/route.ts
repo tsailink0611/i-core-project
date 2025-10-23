@@ -1,17 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
+import path from 'path'
+import { spawn } from 'child_process'
 
 async function callAgentCore(query: string) {
   try {
-    const response = await fetch('http://localhost:8081/invocations', {
+    const response = await fetch('http://localhost:8080/invocations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
       body: JSON.stringify({ query }),
     })
-    
-    const result = await response.text()
-    
+
+    let result = await response.text()
+
+    // JSONとして返ってきている場合はパースする
+    try {
+      const parsed = JSON.parse(result)
+      result = parsed
+    } catch {
+      // JSON文字列がクォートで囲まれている場合
+      if (result.startsWith('"') && result.endsWith('"')) {
+        result = JSON.parse(result)
+      }
+    }
+
     return {
       final_answer: result,
       reasoning: ['Amazon Bedrock AgentCore による分析'],

@@ -8,6 +8,12 @@ from typing import Dict, Any, List
 import boto3
 import json
 import re
+from s3_pdf_loader import (
+    list_pdfs_in_s3,
+    get_pdf_content,
+    embed_text_with_titan,
+    calculate_cosine_similarity
+)
 
 app = BedrockAgentCoreApp()
 
@@ -53,14 +59,19 @@ def invoke(payload: dict) -> str:
 def analyze_japanese_query(query: str) -> Dict[str, Any]:
     """日本語クエリの詳細分析"""
     
-    # 企業名抽出
+    # 企業名抽出（より多くのパターンに対応）
     company_patterns = [
-        r'(トヨタ|TOYOTA|toyota)',
-        r'(ソニー|SONY|sony)', 
+        r'(トヨタ|TOYOTA|toyota|トヨタ自動車)',
+        r'(三菱UFJ|MUFG|三菱|三菱UFJフィナンシャル)',
+        r'(武田薬品|Takeda|武田|タケダ)',
+        r'(ソニー|SONY|sony)',
         r'(任天堂|Nintendo|nintendo)',
         r'(ソフトバンク|SoftBank|softbank)',
         r'(楽天|Rakuten|rakuten)',
-        r'(パナソニック|Panasonic|panasonic)'
+        r'(パナソニック|Panasonic|panasonic)',
+        r'(日産|NISSAN|nissan)',
+        r'(ホンダ|HONDA|honda)',
+        r'(オリエンタルランド|OLC)'
     ]
     
     detected_companies = []
@@ -128,23 +139,67 @@ def search_japanese_documents(query: str, analysis: Dict) -> Dict[str, Any]:
         query_embedding = embedding_result.get("embedding")
         
         if query_embedding:
-            # 実際のベクター検索（簡略化）
+            # S3から実データのPDFを取得
+            print(f"[検索] {company}のPDFを検索中...")
+            pdf_keys = list_pdfs_in_s3(company)
+
+            if not pdf_keys:
+                return {
+                    "status": "success",
+                    "search_query": search_query,
+                    "company": company,
+                    "documents_found": 0,
+                    "top_matches": [],
+                    "similarity_scores": [],
+                    "key_findings": [f"{company}のPDFがS3に見つかりませんでした"]
+                }
+
+            # 各PDFの類似度を計算
+            similarities = []
+            for pdf_key in pdf_keys[:10]:  # 最大10件まで処理
+                print(f"[処理] {pdf_key}")
+                content = get_pdf_content(pdf_key)
+
+                if content['text']:
+                    # PDFのテキストをベクトル化（トークン制限対策：5000文字まで）
+                    doc_embedding = embed_text_with_titan(content['text'][:5000])
+
+                    if doc_embedding:
+                        # 類似度計算
+                        similarity = calculate_cosine_similarity(query_embedding, doc_embedding)
+                        similarities.append({
+                            "key": pdf_key,
+                            "similarity": similarity,
+                            "text": content['text']
+                        })
+
+            # 類似度でソート
+            similarities.sort(key=lambda x: x['similarity'], reverse=True)
+            top_results = similarities[:3]
+
+            # キーワードから重要な発見事項を抽出
+            key_findings = []
+            for result in top_results:
+                text_snippet = result['text'][:500]
+                # 数値パターンを探す
+                if '%' in text_snippet or '億円' in text_snippet or '百万円' in text_snippet:
+                    lines = text_snippet.split('\n')
+                    for line in lines[:5]:
+                        if line.strip() and len(line) > 10:
+                            key_findings.append(line.strip())
+                            if len(key_findings) >= 3:
+                                break
+                if len(key_findings) >= 3:
+                    break
+
             return {
                 "status": "success",
                 "search_query": search_query,
                 "company": company,
-                "documents_found": 5,
-                "top_matches": [
-                    f"{company}_2024年第1四半期決算短信.pdf",
-                    f"{company}_2023年度有価証券報告書.pdf", 
-                    f"{company}_中期経営計画2024-2026.pdf"
-                ],
-                "similarity_scores": [0.89, 0.82, 0.76],
-                "key_findings": [
-                    f"{company}の売上高は前年同期比12.5%増",
-                    "営業利益率は8.2%で業界平均を上回る",
-                    "自己資本比率は65.4%で財務健全性良好"
-                ]
+                "documents_found": len(pdf_keys),
+                "top_matches": [r['key'] for r in top_results],
+                "similarity_scores": [r['similarity'] for r in top_results],
+                "key_findings": key_findings if key_findings else [f"{company}の文書から重要情報を分析中"]
             }
         else:
             return {"status": "error", "message": "埋め込み生成に失敗しました"}
@@ -227,87 +282,101 @@ def analyze_business_trends(query: str, analysis: Dict) -> Dict[str, Any]:
     }
 
 def generate_japanese_response(query: str, results: List[Dict], analysis: Dict) -> str:
-    """日本語統合レスポンス生成"""
-    
-    company = analysis.get('primary_company', 'ご指定の企業')
-    
-    response_parts = [
-        f"🎯 『{query}』の分析結果をお報告いたします\n",
-        f"📊 **{company} 包括分析レポート**",
-        "=" * 50
-    ]
-    
+    """Claude 4.5 Haikuによる日本語統合レスポンス生成"""
+
+    # 検索結果を整形してClaudeに渡す
+    context_data = []
+
     for result in results:
         if result.get("status") == "success":
-            
-            # 文書検索結果
             if "documents_found" in result:
-                response_parts.extend([
-                    "\n📋 **文書検索結果**",
-                    f"検索対象: {result['company']}",
-                    f"発見文書数: {result['documents_found']}件",
-                    "\n🔍 **主要文書**:"
-                ])
-                
-                for i, doc in enumerate(result['top_matches'], 1):
-                    similarity = result['similarity_scores'][i-1]
-                    response_parts.append(f"  {i}. {doc} (関連度: {similarity:.0%})")
-                
-                if result.get('key_findings'):
-                    response_parts.extend([
-                        "\n💡 **主要発見事項**:"
-                    ])
-                    for finding in result['key_findings']:
-                        response_parts.append(f"  • {finding}")
-            
-            # 財務計算結果
+                context_data.append(f"""
+文書検索結果:
+- 企業: {result.get('company', '不明')}
+- 発見文書数: {result.get('documents_found', 0)}件
+- 主要文書: {', '.join(result.get('top_matches', [])[:3])}
+- 関連度: {', '.join([f"{s:.0%}" for s in result.get('similarity_scores', [])[:3]])}
+- 重要発見: {'; '.join(result.get('key_findings', [])[:5])}
+""")
+
             if "calculated_metrics" in result:
-                response_parts.extend([
-                    "\n📈 **財務指標分析**",
-                    f"分析期間: {result['period']}"
-                ])
-                
-                if result['calculated_metrics']:
-                    response_parts.append("\n🧮 **算出指標**:")
-                    for metric, value in result['calculated_metrics'].items():
-                        response_parts.append(f"  • {metric}: {value}")
-                
-                response_parts.extend([
-                    "\n💰 **基礎データ**:"
-                ])
-                for item, value in result['base_data'].items():
-                    response_parts.append(f"  • {item}: {value}")
-            
-            # トレンド分析結果
+                metrics_str = ', '.join([f"{k}: {v}" for k, v in result.get('calculated_metrics', {}).items()])
+                context_data.append(f"""
+財務指標:
+- 期間: {result.get('period', '不明')}
+- 計算結果: {metrics_str}
+""")
+
             if "trend_analysis" in result:
-                response_parts.extend([
-                    "\n📊 **トレンド分析**"
-                ])
-                
-                for trend_type, data in result['trend_analysis'].items():
-                    response_parts.append(f"\n📈 **{trend_type}**:")
-                    for period, value in data.items():
-                        response_parts.append(f"  • {period}: {value}")
-                
-                if result.get('insights'):
-                    response_parts.extend([
-                        "\n🔮 **インサイト**:"
-                    ])
-                    for insight in result['insights']:
-                        response_parts.append(f"  • {insight}")
-        
-        else:
-            response_parts.append(f"\n⚠️ **エラー**: {result.get('message', '処理中にエラーが発生')}")
-    
-    response_parts.extend([
-        "\n" + "=" * 50,
-        "🤖 **Amazon Bedrock AgentCore による分析完了**",
-        f"📅 処理日時: 2024年9月11日",
-        f"🔍 分析対象: {company}",
-        f"📝 元クエリ: {analysis['original_query']}"
-    ])
-    
-    return "\n".join(response_parts)
+                context_data.append(f"トレンド分析: {result.get('trend_analysis', {})}")
+
+    # Claude 4.5 Haikuに分析を依頼
+    bedrock_runtime = boto3.client("bedrock-runtime", region_name="us-east-1")
+
+    prompt = f"""あなたは企業IR分析の専門家です。以下の情報を基に、ユーザーの質問に対して包括的で分かりやすい分析レポートを日本語で作成してください。
+
+ユーザーの質問:
+{query}
+
+検索・分析結果:
+{chr(10).join(context_data)}
+
+以下の形式でレポートを作成してください:
+1. 概要（2-3行）
+2. 主要な発見事項（箇条書き）
+3. 財務状況の評価（該当する場合）
+4. 今後の見通しや示唆
+
+プロフェッショナルかつ具体的に、数値やデータを活用して分析してください。"""
+
+    try:
+        response = bedrock_runtime.invoke_model(
+            modelId="anthropic.claude-4-5-haiku-20251022-v1:0",  # Claude 4.5 Haiku
+            body=json.dumps({
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 4096,
+                "temperature": 0.7,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            })
+        )
+
+        response_body = json.loads(response.get('body').read())
+        claude_analysis = response_body.get('content', [{}])[0].get('text', '')
+
+        # Claude 4.5 Haikuの分析結果を返す
+        return f"""🎯 『{query}』の分析結果
+
+{claude_analysis}
+
+---
+🤖 **分析エンジン**: Amazon Bedrock - Claude 4.5 Haiku
+📅 **分析日時**: 2025年10月24日
+🔍 **分析対象**: {analysis.get('primary_company', 'IR文書')}
+"""
+
+    except Exception as e:
+        print(f"[エラー] Claude 4.5 Haiku呼び出し失敗: {str(e)}")
+
+        # フォールバック: シンプルな結果表示
+        fallback_response = [
+            f"🎯 『{query}』の分析結果",
+            "",
+            "📊 **検索結果**:"
+        ]
+
+        for result in results:
+            if result.get("status") == "success" and "documents_found" in result:
+                fallback_response.append(f"- 発見文書: {result['documents_found']}件")
+                fallback_response.append(f"- 主要文書: {', '.join(result.get('top_matches', [])[:3])}")
+
+        fallback_response.append(f"\n⚠️ AI分析エンジンエラー: {str(e)}")
+
+        return "\n".join(fallback_response)
 
 # メイン実行（HTTPサーバー起動）
 if __name__ == "__main__":
