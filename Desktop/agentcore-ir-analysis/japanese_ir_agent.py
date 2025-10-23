@@ -331,7 +331,7 @@ def generate_japanese_response(query: str, results: List[Dict], analysis: Dict) 
 
     try:
         response = bedrock_runtime.invoke_model(
-            modelId="anthropic.claude-4-5-haiku-20251022-v1:0",  # Claude 4.5 Haiku
+            modelId="us.anthropic.claude-haiku-4-5-20251001-v1:0",  # Claude Haiku 4.5 (Cross-Region Inference Profile)
             body=json.dumps({
                 "anthropic_version": "bedrock-2023-05-31",
                 "max_tokens": 4096,
@@ -348,19 +348,19 @@ def generate_japanese_response(query: str, results: List[Dict], analysis: Dict) 
         response_body = json.loads(response.get('body').read())
         claude_analysis = response_body.get('content', [{}])[0].get('text', '')
 
-        # Claude 4.5 Haikuの分析結果を返す
+        # Claude Haiku 4.5の分析結果を返す
         return f"""🎯 『{query}』の分析結果
 
 {claude_analysis}
 
 ---
-🤖 **分析エンジン**: Amazon Bedrock - Claude 4.5 Haiku
+🤖 **分析エンジン**: Amazon Bedrock - Claude Haiku 4.5
 📅 **分析日時**: 2025年10月24日
 🔍 **分析対象**: {analysis.get('primary_company', 'IR文書')}
 """
 
     except Exception as e:
-        print(f"[エラー] Claude 4.5 Haiku呼び出し失敗: {str(e)}")
+        print(f"[エラー] Claude Haiku 4.5呼び出し失敗: {str(e)}")
 
         # フォールバック: シンプルな結果表示
         fallback_response = [
